@@ -82,7 +82,7 @@ BootstrapResult CurveBootstrapper::build(Date valuation, std::vector<MarketQuote
         } else if (q.instrument == Instrument::Swap) {
             // All coupons, including those between the last known and new pillar,
             // use precisely the same log-linear curve as subsequent pricing.
-            const Swap swap{valuation, q.maturity, 1.0, q.rate, Side::Payer, c};
+            const PreparedSwap swap{Swap{valuation, q.maturity, 1.0, q.rate, Side::Payer, c}};
             const auto objective = [&](double log_df) {
                 auto candidate = nodes;
                 candidate.push_back({end, DiscountFactor{std::exp(log_df)}});

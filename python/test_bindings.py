@@ -27,6 +27,12 @@ expected = (1e6*(1-1.04/1.0499) - 1e6*(1-1.04/1.0501))/2
 assert abs(risk.parallel_quote_dv01(v, quotes, swap)-expected) < 1e-8
 assert abs(risk.quote_risk(v, quotes, swap)[0].dv01-expected) < 1e-8
 assert risk.zero_risk(curve, swap)[0].dv01 < 0
+assert abs(r.price_prepared(curve, r.PreparedSwap(swap)).pv-result.pv) < 1e-10
+scenarios = risk.prepare_scenarios(v, quotes)
+assert scenarios.calibration_count == 5
+reports = scenarios.portfolio([swap, swap], "test")
+assert len(reports) == 2 and abs(reports[0].parallel_quote_dv01-expected) < 1e-8
+assert abs(risk.portfolio_parallel_dv01(v, quotes, [swap])[0]-expected) < 1e-8
 try:
     curve.discount(v.add_months(13))
 except IndexError:

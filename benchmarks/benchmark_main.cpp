@@ -61,6 +61,18 @@ int main(int argc, char **argv) {
         const auto curve = bootstrapper.build(v, quotes).curve;
         const Swap trade{v, v.add_months(60), 1e6, SimpleRate{0.037}};
         const RiskEngine risk;
+        const PreparedSwap prepared{trade};
+        std::vector<Swap> portfolio;
+        portfolio.reserve(20);
+        for (int i = 0; i < 20; ++i) {
+            auto t = trade;
+            t.maturity = v.add_months(12 + i * 3);
+            portfolio.push_back(t);
+        }
+        const auto shared_risk = risk.portfolio_parallel_dv01(v, quotes, portfolio);
+        for (std::size_t i = 0; i < portfolio.size(); ++i)
+            if (std::abs(shared_risk[i] - risk.parallel_quote_dv01(v, quotes, portfolio[i])) > 1e-8)
+                throw std::runtime_error("Shared and independent risk disagree before timing");
         std::vector<YearFraction> queries;
         queries.reserve(10000);
         for (int i = 0; i < 10000; ++i)
@@ -92,6 +104,7 @@ int main(int argc, char **argv) {
         measure(out, "calibration_8_quotes", samples, 8,
                 [&] { return bootstrapper.build(v, quotes).curve.nodes().back().discount.value; });
         measure(out, "swap_pricing", samples, 1, [&] { return price(curve, trade).pv; });
+        measure(out, "swap_pricing_prepared", samples, 1, [&] { return price(curve, prepared).pv; });
         measure(out, "parallel_quote_dv01", samples, 1,
                 [&] { return risk.parallel_quote_dv01(v, quotes, trade); });
         measure(out, "quote_key_rates_8", samples, 8, [&] {
@@ -108,12 +121,14 @@ int main(int argc, char **argv) {
         });
         measure(out, "portfolio_parallel_dv01_20", samples, 20, [&] {
             double total = 0;
-            for (int i = 0; i < 20; ++i) {
-                auto t = trade;
-                t.maturity = v.add_months(12 + i * 3);
+            for (const auto &t : portfolio) {
                 total += risk.parallel_quote_dv01(v, quotes, t);
             }
             return total;
+        });
+        measure(out, "portfolio_parallel_dv01_shared_20", samples, 20, [&] {
+            const auto values = risk.portfolio_parallel_dv01(v, quotes, portfolio);
+            return std::accumulate(values.begin(), values.end(), 0.0);
         });
         if (file.is_open())
             file.close();

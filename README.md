@@ -10,6 +10,11 @@ risk. It includes a command-line application, optional Python bindings,
 GoogleTest tests, a separate Python reference, QuantLib comparisons and measured
 benchmarks. All supplied quotes are hypothetical; this is a single-curve model.
 
+The [validation/reuse update](docs/validation-upgrade.md) adds measured
+[coverage](docs/coverage.md), independent QuantLib rate-helper bootstrapping,
+nondefault convention checks and reusable portfolio scenarios. The initial
+execution report and benchmark results below are retained as baseline evidence.
+
 ## Features
 
 - Gregorian dates, leap years, month/year tenors, month-end schedules and short

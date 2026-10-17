@@ -1,22 +1,35 @@
 #include "rates/swap_pricer.hpp"
+#include <utility>
 
 namespace rates {
+PreparedSwap::PreparedSwap(Swap trade) : trade_(std::move(trade)) {
+    trade_.validate(trade_.effective);
+    const auto &c = trade_.conventions;
+    fixed_ = make_schedule(trade_.effective, trade_.maturity, c.fixed_months, c.fixed_day_count, c.calendar,
+                           c.business_day, c.end_of_month);
+    floating_ = make_schedule(trade_.effective, trade_.maturity, c.floating_months, c.floating_day_count,
+                              c.calendar, c.business_day, c.end_of_month);
+}
 SwapResult price(const DiscountCurve &curve, const Swap &swap) {
-    swap.validate(curve.valuation_date());
+    return price(curve, PreparedSwap{swap});
+}
+SwapResult price(const DiscountCurve &curve, const PreparedSwap &prepared) {
+    const auto &swap = prepared.trade();
+    if (swap.effective < curve.valuation_date())
+        throw std::invalid_argument(
+            "Historical fixings/accrued swaps are unsupported: effective date precedes valuation");
     const auto &c = swap.conventions;
-    const auto fixed = make_schedule(swap.effective, swap.maturity, c.fixed_months, c.fixed_day_count,
-                                     c.calendar, c.business_day, c.end_of_month);
-    const auto floating = make_schedule(swap.effective, swap.maturity, c.floating_months,
-                                        c.floating_day_count, c.calendar, c.business_day, c.end_of_month);
     SwapResult result{};
-    for (const auto &period : fixed) {
+    result.fixed_flows.reserve(prepared.fixed_periods().size());
+    result.floating_flows.reserve(prepared.floating_periods().size());
+    for (const auto &period : prepared.fixed_periods()) {
         const double df = curve.discount(period.payment).value;
         const double amount = swap.notional * swap.fixed_rate.value * period.accrual.value;
         result.annuity += period.accrual.value * df;
         result.fixed_pv += amount * df;
         result.fixed_flows.push_back({period, swap.fixed_rate.value, amount, df, amount * df});
     }
-    for (const auto &period : floating) {
+    for (const auto &period : prepared.floating_periods()) {
         const double fwd = curve.forward(period.start, period.end, c.floating_day_count).value;
         const double df = curve.discount(period.payment).value;
         const double amount = swap.notional * fwd * period.accrual.value;

@@ -7,6 +7,10 @@ option(RATES_BUILD_BENCHMARKS "Build measured benchmarks" ON)
 option(RATES_BUILD_PYTHON "Build optional pybind11 interface" OFF)
 option(RATES_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF)
 option(RATES_CLANG_TIDY "Run clang-tidy while compiling" OFF)
+option(RATES_COVERAGE "Instrument project code for LLVM line/branch coverage" OFF)
+if(RATES_COVERAGE AND (NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR MSVC))
+  message(FATAL_ERROR "RATES_COVERAGE requires Clang with the GNU-style driver and matching LLVM tools")
+endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(rates_engine STATIC src/date.cpp src/conventions.cpp src/schedule.cpp
   src/discount_curve.cpp src/swap_pricer.cpp src/curve_bootstrapper.cpp src/risk_engine.cpp)
@@ -16,6 +20,10 @@ set_target_properties(rates_engine PROPERTIES CXX_EXTENSIONS OFF POSITION_INDEPE
 target_include_directories(rates_engine PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 function(rates_checks target)
+  if(RATES_COVERAGE)
+    target_compile_options(${target} PRIVATE -O0 -g -fprofile-instr-generate -fcoverage-mapping)
+    target_link_options(${target} PUBLIC -fprofile-instr-generate)
+  endif()
   if(MSVC)
     target_compile_options(${target} PRIVATE /W4 /permissive- /EHsc)
   else()
@@ -67,6 +75,19 @@ if(BUILD_TESTING)
     --output ${CMAKE_CURRENT_BINARY_DIR}/validation)
   add_test(NAME cli_contract COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/python/test_cli.py $<TARGET_FILE:rates_cli>)
+  add_test(NAME convention_validation COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/python/validate_conventions.py --cli $<TARGET_FILE:rates_cli>
+    --output ${CMAKE_CURRENT_BINARY_DIR}/conventions)
+  if(RATES_COVERAGE)
+    find_program(LLVM_COV_EXECUTABLE NAMES llvm-cov REQUIRED)
+    find_program(LLVM_PROFDATA_EXECUTABLE NAMES llvm-profdata REQUIRED)
+    add_custom_target(coverage
+      COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python/measure_coverage.py
+        --build-dir ${CMAKE_CURRENT_BINARY_DIR} --tests $<TARGET_FILE:rates_tests>
+        --cli $<TARGET_FILE:rates_cli> --llvm-cov ${LLVM_COV_EXECUTABLE}
+        --llvm-profdata ${LLVM_PROFDATA_EXECUTABLE}
+      DEPENDS rates_tests rates_cli USES_TERMINAL VERBATIM)
+  endif()
 endif()
 if(RATES_BUILD_PYTHON)
   find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)

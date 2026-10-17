@@ -1,0 +1,21 @@
+{
+  "comparisons": 2193,
+  "passed": 2193,
+  "source_counts": {
+    "python": 1206,
+    "quantlib_schedule": 612,
+    "quantlib_pricing": 36,
+    "quantlib_helpers": 339
+  },
+  "quantlib_version": "1.44",
+  "helper_cases": [
+    "annual_act365_holidays",
+    "quarterly_thirtye",
+    "forward_start_stub_receiver",
+    "negative_helper_quotes",
+    "zero_helper_quotes",
+    "irregular_helper_pillars"
+  ],
+  "failures": [],
+  "helper_scope": "Independent quote-only DepositRateHelper/SwapRateHelper calibration; no engine node inputs"
+}

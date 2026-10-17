@@ -100,13 +100,36 @@ PYBIND11_MODULE(pyrates, module) {
         .def_readonly("annuity", &SwapResult::annuity)
         .def_readonly("fixed_flows", &SwapResult::fixed_flows)
         .def_readonly("floating_flows", &SwapResult::floating_flows);
-    module.def("price", &price);
+    py::class_<PreparedSwap>(module, "PreparedSwap").def(py::init<Swap>());
+    module.def("price", py::overload_cast<const DiscountCurve &, const Swap &>(&price));
+    module.def("price_prepared", py::overload_cast<const DiscountCurve &, const PreparedSwap &>(&price));
     py::class_<RiskBucket>(module, "RiskBucket")
         .def_readonly("label", &RiskBucket::label)
         .def_readonly("maturity", &RiskBucket::maturity)
         .def_readonly("dv01", &RiskBucket::dv01);
+    py::class_<RiskReport>(module, "RiskReport")
+        .def_readonly("base", &RiskReport::base)
+        .def_readonly("parallel_quote_dv01", &RiskReport::parallel_quote_dv01)
+        .def_readonly("quote_buckets", &RiskReport::quote_buckets)
+        .def_readonly("zero_nodes", &RiskReport::zero_nodes);
+    py::class_<RiskScenarios>(module, "RiskScenarios")
+        .def_property_readonly("calibration_count", &RiskScenarios::calibration_count)
+        .def("report", &RiskScenarios::report)
+        .def("portfolio", &RiskScenarios::portfolio);
     py::class_<RiskEngine>(module, "RiskEngine")
         .def(py::init<CurveBootstrapper>(), py::arg("bootstrapper") = CurveBootstrapper{})
+        .def(
+            "prepare_scenarios",
+            [](const RiskEngine &r, Date v, const std::vector<MarketQuote> &q, double bump) {
+                return r.prepare_scenarios(v, q, BasisPoints{bump});
+            },
+            py::arg("valuation"), py::arg("quotes"), py::arg("bump_bps") = 1.0)
+        .def(
+            "portfolio_parallel_dv01",
+            [](const RiskEngine &r, Date v, const std::vector<MarketQuote> &q,
+               const std::vector<Swap> &trades,
+               double bump) { return r.portfolio_parallel_dv01(v, q, trades, BasisPoints{bump}); },
+            py::arg("valuation"), py::arg("quotes"), py::arg("trades"), py::arg("bump_bps") = 1.0)
         .def(
             "parallel_quote_dv01",
             [](const RiskEngine &r, Date v, const std::vector<MarketQuote> &q, const Swap &t, double bump) {

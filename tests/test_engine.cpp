@@ -362,3 +362,129 @@ TEST(Regression, PublishedDemoValues) {
     EXPECT_NEAR(result.floating_pv, 172191.410250982, 2e-5);
     EXPECT_NEAR(RiskEngine{}.parallel_quote_dv01(valuation, quotes(), trade()), -451.94430030424, 0.002);
 }
+TEST(PreparedPricing, OwnsSchedulesAndPreservesValuationChecks) {
+    auto original = trade();
+    const PreparedSwap prepared{original};
+    original.fixed_rate = SimpleRate{0.09};
+    original.conventions.fixed_months = 12;
+    for (double rate : {-0.01, 0.0, 0.06}) {
+        const auto curve = flat(rate);
+        EXPECT_DOUBLE_EQ(price(curve, prepared).pv, price(curve, trade()).pv);
+        EXPECT_EQ(prepared.fixed_periods().size(), 10U);
+        EXPECT_EQ(prepared.floating_periods().size(), 20U);
+    }
+    DiscountCurve later{valuation.add_days(1), {{valuation.add_months(120), DiscountFactor{0.8}}}};
+    EXPECT_THROW(price(later, prepared), std::invalid_argument);
+}
+TEST(ScenarioReuse, MatchesIndependentPerTradeRiskForHeterogeneousPortfolio) {
+    const RiskEngine engine;
+    auto q = quotes();
+    std::reverse(q.begin(), q.end());
+    const auto scenarios = engine.prepare_scenarios(valuation, q, BasisPoints{0.5});
+    EXPECT_EQ(scenarios.calibration_count(), 19U);
+    EXPECT_EQ(scenarios.quote_shocks().size(), 8U);
+    EXPECT_EQ(scenarios.zero_shocks().size(), 8U);
+    EXPECT_LT(scenarios.parallel().up.discount(valuation.add_months(60)).value,
+              scenarios.parallel().down.discount(valuation.add_months(60)).value);
+    std::vector<Swap> portfolio{trade(), trade(), trade()};
+    portfolio[1].side = Side::Receiver;
+    portfolio[1].notional *= 2;
+    portfolio[1].maturity = valuation.add_months(24);
+    portfolio[2].effective = valuation.add_months(3);
+    portfolio[2].maturity = valuation.add_months(53);
+    portfolio[2].conventions.fixed_months = 12;
+    portfolio[2].conventions.fixed_day_count = DayCount::Actual365Fixed;
+    const auto reused = scenarios.portfolio(portfolio, "test");
+    const auto direct = engine.portfolio_report(valuation, q, portfolio, "test", BasisPoints{0.5});
+    const auto parallel = engine.portfolio_parallel_dv01(valuation, q, portfolio, BasisPoints{0.5});
+    for (std::size_t i = 0; i < portfolio.size(); ++i) {
+        EXPECT_DOUBLE_EQ(reused[i].base.pv, price(scenarios.base_curve(), portfolio[i]).pv);
+        EXPECT_DOUBLE_EQ(reused[i].parallel_quote_dv01, parallel[i]);
+        EXPECT_DOUBLE_EQ(reused[i].base.pv, direct[i].base.pv);
+        const auto independent = engine.quote_risk(valuation, q, portfolio[i], BasisPoints{0.5});
+        const auto zeros = engine.zero_risk(scenarios.base_curve(), portfolio[i], BasisPoints{0.5});
+        for (std::size_t j = 0; j < independent.size(); ++j) {
+            EXPECT_EQ(reused[i].quote_buckets[j].label, independent[j].label);
+            EXPECT_DOUBLE_EQ(reused[i].quote_buckets[j].dv01, independent[j].dv01);
+            EXPECT_DOUBLE_EQ(reused[i].zero_nodes[j].dv01, zeros[j].dv01);
+        }
+    }
+}
+TEST(ScenarioReuse, SnapshotIsolationAndFailureSafety) {
+    const RiskEngine engine;
+    auto q = quotes();
+    const auto scenarios = engine.prepare_scenarios(valuation, q);
+    const double pv = scenarios.report(trade(), "original").base.pv;
+    for (auto &quote : q)
+        quote.rate = SimpleRate{quote.rate.value + 0.01};
+    EXPECT_DOUBLE_EQ(scenarios.report(trade(), "still-original").base.pv, pv);
+    EXPECT_GT(std::abs(engine.prepare_scenarios(valuation, q).report(trade(), "new").base.pv - pv), 1000);
+    auto invalid = trade();
+    invalid.maturity = valuation.add_months(121);
+    EXPECT_THROW(scenarios.portfolio({trade(), invalid}, "bad"), std::out_of_range);
+    EXPECT_DOUBLE_EQ(scenarios.report(trade(), "after-failure").base.pv, pv);
+    EXPECT_THROW(scenarios.portfolio({}, "empty"), std::invalid_argument);
+    EXPECT_THROW(engine.portfolio_report(valuation, q, {}, "empty"), std::invalid_argument);
+    EXPECT_THROW(engine.portfolio_parallel_dv01(valuation, q, {}), std::invalid_argument);
+    EXPECT_THROW(engine.prepare_scenarios(valuation, {}), std::invalid_argument);
+    EXPECT_THROW(engine.prepare_scenarios(valuation, q, BasisPoints{1e6}), std::runtime_error);
+    EXPECT_THROW(engine.parallel_quote_dv01(valuation, q, trade(), BasisPoints{1e-20}), std::runtime_error);
+}
+TEST(NumericalFailures, InvalidConversionsAndOverflow) {
+    const auto infinity = std::numeric_limits<double>::infinity();
+    EXPECT_THROW(rate_to_discount(infinity, YearFraction{1}, Compounding::Simple), std::invalid_argument);
+    EXPECT_THROW(rate_to_discount(0.03, YearFraction{0}, Compounding::Continuous), std::invalid_argument);
+    EXPECT_THROW(rate_to_discount(-1000, YearFraction{1}, Compounding::Continuous), std::invalid_argument);
+    EXPECT_THROW(rate_to_discount(0.03, YearFraction{1}, static_cast<Compounding>(255)),
+                 std::invalid_argument);
+    EXPECT_THROW(discount_to_rate(DiscountFactor{0.9}, YearFraction{0}, Compounding::Continuous),
+                 std::invalid_argument);
+    EXPECT_THROW(discount_to_rate(DiscountFactor{0.9}, YearFraction{1}, static_cast<Compounding>(255)),
+                 std::invalid_argument);
+    EXPECT_THROW(discount_to_rate(DiscountFactor{1e-308}, YearFraction{1e-308}, Compounding::Simple),
+                 std::overflow_error);
+    EXPECT_THROW(year_fraction(valuation, valuation.add_days(1), static_cast<DayCount>(255)),
+                 std::invalid_argument);
+    auto huge = trade();
+    huge.notional = 1e308;
+    huge.fixed_rate = SimpleRate{1e308};
+    EXPECT_THROW(price(flat(0.03), huge), std::overflow_error);
+    EXPECT_THROW(flat(0.03).forward(valuation, valuation, DayCount::Actual360), std::invalid_argument);
+}
+TEST(NumericalFailures, SolverEndpointsAndUnattainableAccuracy) {
+    EXPECT_DOUBLE_EQ(bisect([](double x) { return x; }, 0, 1, {}).root, 0);
+    EXPECT_DOUBLE_EQ(bisect([](double x) { return x - 1; }, 0, 1, {}).root, 1);
+    EXPECT_THROW(bisect([](double x) { return x < 0.1 ? -1.0 : 1.0; }, -1, 1, {1e-12, 0.5, 100}),
+                 std::runtime_error);
+    for (const auto settings :
+         {SolverSettings{-1, 1e-14, 200}, SolverSettings{1e-12, 0, 200}, SolverSettings{1e-12, 1e-14, 0}})
+        EXPECT_THROW(CurveBootstrapper(Conventions{}, settings), std::invalid_argument);
+    const std::vector<MarketQuote> deposit{quotes().front()};
+    EXPECT_THROW(CurveBootstrapper(Conventions{}, {1e-20, 1e-14, 200}).build(valuation, deposit),
+                 std::runtime_error);
+    EXPECT_THROW(CurveBootstrapper{}.build(Date{2025, 1, 4}, quotes()), std::invalid_argument);
+    auto q = quotes();
+    q[0].instrument = static_cast<Instrument>(255);
+    EXPECT_THROW(CurveBootstrapper{}.build(valuation, q), std::invalid_argument);
+}
+TEST(Conventions, InvalidContractsAndZeroThirtyEAccrual) {
+    auto c = Conventions{};
+    c.fixed_months = 121;
+    EXPECT_THROW(c.validate(), std::invalid_argument);
+    c = {};
+    c.floating_months = 0;
+    EXPECT_THROW(c.validate(), std::invalid_argument);
+    EXPECT_THROW(Calendar{}.adjust(valuation, static_cast<BusinessDay>(255)), std::invalid_argument);
+    EXPECT_THROW(make_schedule(Date{2025, 1, 30}, Date{2025, 1, 31}, 1, DayCount::ThirtyE360, Calendar{},
+                               BusinessDay::Unadjusted),
+                 std::invalid_argument);
+    auto t = trade();
+    t.side = static_cast<Side>(255);
+    EXPECT_THROW(price(flat(0.03), t), std::invalid_argument);
+    t = trade();
+    t.notional = std::numeric_limits<double>::infinity();
+    EXPECT_THROW(price(flat(0.03), t), std::invalid_argument);
+    EXPECT_THROW(Date(1899, 12, 31), std::invalid_argument);
+    EXPECT_THROW(valuation.add_days(110001), std::out_of_range);
+    EXPECT_EQ(Calendar({valuation}).holidays().size(), 1U);
+}

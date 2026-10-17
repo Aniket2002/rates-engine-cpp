@@ -1,0 +1,14 @@
+{
+  "description": "Synthetic validation fixtures; no real market observations.",
+  "cases": [
+    {"name":"annual_act365_holidays","valuation":"2025-01-02","fixed_months":12,"floating_months":6,"fixed_dc":"ACT365F","floating_dc":"ACT365F","deposit_dc":"ACT365F","adjustment":"following","holidays":["2025-02-03","2026-01-02"],"helpers":true},
+    {"name":"quarterly_thirtye","valuation":"2025-01-02","fixed_months":3,"floating_months":3,"fixed_dc":"ACT360","floating_dc":"30E360","deposit_dc":"30E360","eom":false,"helpers":true},
+    {"name":"unadjusted_leap_stub","valuation":"2024-01-31","fixed_dc":"ACT365F","adjustment":"unadjusted","eom":false,"trade_months":19,"extra_days":9},
+    {"name":"following_calendar_eom","valuation":"2024-01-31","adjustment":"following","holidays":["2024-04-30","2024-05-01"],"trade_months":20,"extra_days":11},
+    {"name":"modified_eom_holidays","valuation":"2024-01-31","holidays":["2024-02-29","2024-03-29"],"trade_months":19,"extra_days":7},
+    {"name":"forward_start_stub_receiver","valuation":"2025-01-02","effective_months":3,"trade_months":19,"extra_days":7,"side":"receiver","helpers":true},
+    {"name":"negative_helper_quotes","valuation":"2025-01-02","fixed_dc":"ACT365F","eom":false,"flat_quote":-0.004,"helpers":true},
+    {"name":"zero_helper_quotes","valuation":"2025-01-02","flat_quote":0,"helpers":true},
+    {"name":"irregular_helper_pillars","valuation":"2025-01-02","months":[1,4,7,18,30,54,90,120],"eom":false,"trade_months":79,"extra_days":7,"helpers":true}
+  ]
+}

@@ -10,6 +10,21 @@ from datetime import date, timedelta
 import math
 
 
+@dataclass(frozen=True)
+class Conventions:
+    fixed_months: int = 6
+    floating_months: int = 3
+    fixed_dc: str = "30E360"
+    floating_dc: str = "ACT360"
+    deposit_dc: str = "ACT360"
+    adjustment: str = "modified-following"
+    eom: bool = True
+    holidays: tuple = ()
+
+
+DEFAULT = Conventions()
+
+
 def add_months(start, months, eom=True):
     ordinal = start.year * 12 + start.month - 1 + months
     year, month = divmod(ordinal, 12)
@@ -19,13 +34,17 @@ def add_months(start, months, eom=True):
     return date(year, month, day)
 
 
-def adjust(day):
+def adjust(day, conventions=DEFAULT):
+    if conventions.adjustment == "unadjusted":
+        return day
+    def closed(d):
+        return d.weekday() >= 5 or d in conventions.holidays
     candidate = day
-    while candidate.weekday() >= 5:
+    while closed(candidate):
         candidate += timedelta(days=1)
-    if candidate.month != day.month:
+    if conventions.adjustment == "modified-following" and candidate.month != day.month:
         candidate = day
-        while candidate.weekday() >= 5:
+        while closed(candidate):
             candidate -= timedelta(days=1)
     return candidate
 
@@ -41,13 +60,13 @@ def fraction(start, end, convention):
     raise ValueError(convention)
 
 
-def schedule(start, maturity, months, dc):
+def schedule(start, maturity, months, dc, conventions=DEFAULT):
     periods = []
     previous = start
     offset = months
     while True:
-        raw = min(add_months(start, offset), maturity)
-        end = adjust(raw)
+        raw = min(add_months(start, offset, conventions.eom), maturity)
+        end = adjust(raw, conventions)
         if end <= previous:
             raise ValueError("Collapsed reference schedule")
         periods.append((previous, end, fraction(previous, end, dc)))
@@ -76,10 +95,10 @@ class Curve:
         return math.exp((1-weight) * math.log(dfs[j-1]) + weight * math.log(dfs[j]))
 
 
-def price(curve, effective, maturity, notional, coupon, side="payer"):
-    fixed = schedule(effective, maturity, 6, "30E360")
+def price(curve, effective, maturity, notional, coupon, side="payer", conventions=DEFAULT):
+    fixed = schedule(effective, maturity, conventions.fixed_months, conventions.fixed_dc, conventions)
     annuity = math.fsum(alpha * curve.discount(end) for _, end, alpha in fixed)
-    floating_unit = curve.discount(effective) - curve.discount(adjust(maturity))
+    floating_unit = curve.discount(effective) - curve.discount(adjust(maturity, conventions))
     fixed_pv = notional * coupon * annuity
     floating_pv = notional * floating_unit
     return {"fixed_pv": fixed_pv, "floating_pv": floating_pv,
@@ -87,17 +106,17 @@ def price(curve, effective, maturity, notional, coupon, side="payer"):
             "par_rate": floating_unit / annuity, "annuity": annuity}
 
 
-def bootstrap(valuation, quotes):
+def bootstrap(valuation, quotes, conventions=DEFAULT):
     nodes = []
-    for quote in sorted(quotes, key=lambda q: adjust(q["maturity"])):
-        end = adjust(quote["maturity"])
+    for quote in sorted(quotes, key=lambda q: adjust(q["maturity"], conventions)):
+        end = adjust(quote["maturity"], conventions)
         rate = quote["rate"]
         if quote["type"] == "deposit":
-            df = 1 / (1 + rate * fraction(valuation, end, "ACT360"))
+            df = 1 / (1 + rate * fraction(valuation, end, conventions.deposit_dc))
         else:
             def objective(x):
                 candidate = Curve(valuation, nodes + [(end, math.exp(x))])
-                return price(candidate, valuation, quote["maturity"], 1, 0)["par_rate"] - rate
+                return price(candidate, valuation, quote["maturity"], 1, 0, conventions=conventions)["par_rate"] - rate
 
             lo, hi = -50.0, 50.0
             if objective(lo) * objective(hi) > 0:
@@ -126,7 +145,7 @@ def quote_risk(valuation, quotes, trade, bucket=None, bump=1.0):
     def value(sign):
         shocked = [dict(q, rate=q["rate"] + (sign*bump*1e-4 if bucket is None or i == bucket else 0))
                    for i, q in enumerate(quotes)]
-        return price(bootstrap(valuation, shocked), **trade)["pv"]
+        return price(bootstrap(valuation, shocked, trade.get("conventions", DEFAULT)), **trade)["pv"]
     return (value(-1)-value(1))/(2*bump)
 
 
