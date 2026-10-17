@@ -57,7 +57,7 @@ cmake --preset debug
 cmake --build --preset debug --parallel 4
 ctest --preset debug
 cmake --install build/release --prefix install
-cmake -S examples/consumer -B build/consumer -G Ninja -DCMAKE_PREFIX_PATH="$PWD/install"
+cmake -S examples/consumer -B build/consumer -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$PWD/install"
 cmake --build build/consumer
 ./build/consumer/consumer
 ```

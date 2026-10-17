@@ -123,6 +123,13 @@ Observed development failures and corrections:
    the findings. Static compilation subsequently passed.
 4. Review found that empty quote-bucket requests could return an empty result.
    They now raise a descriptive error, with a regression test.
+5. The first CI run passed all engine tests on all four compiler/platform jobs,
+   plus Linux sanitizers/static checks, but the Windows installed-consumer link
+   failed with `LNK2038` runtime/iterator ABI mismatches. The consumer's build
+   type had been omitted, so MSVC selected Debug against the Release library.
+   The CI and reproduction commands now explicitly match the consumer build
+   type to the installed library. The original failure remains available in
+   [CI run 39006939138](https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39006939138).
 
 No numerical validation failures were observed in the executed reference
 comparisons. Reports preserve any failure encountered by future runs rather

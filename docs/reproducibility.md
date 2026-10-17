@@ -77,12 +77,14 @@ ctest --preset release
 
 ```powershell
 cmake --install build/release --prefix install
-cmake -S examples/consumer -B build/consumer -G Ninja -DCMAKE_CXX_COMPILER=clang++ "-DCMAKE_PREFIX_PATH=$PWD/install"
+cmake -S examples/consumer -B build/consumer -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ "-DCMAKE_PREFIX_PATH=$PWD/install"
 cmake --build build/consumer
 .\build\consumer\consumer.exe
 ```
 
-For MSVC omit the compiler override. For POSIX use `./build/consumer/consumer`.
+For MSVC omit the compiler override. The consumer configuration must match the
+installed library: MSVC Debug and Release have different runtime/iterator ABIs.
+For POSIX use `./build/consumer/consumer`.
 
 ## Formatting/static checks and sanitizers
 
