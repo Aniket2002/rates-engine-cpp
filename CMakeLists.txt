@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(rates_engine VERSION 1.0.0 LANGUAGES CXX)
+project(rates_engine VERSION 2.0.0 LANGUAGES CXX)
 include(CTest)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -13,7 +13,8 @@ if(RATES_COVERAGE AND (NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR MSVC))
 endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(rates_engine STATIC src/date.cpp src/conventions.cpp src/schedule.cpp
-  src/discount_curve.cpp src/swap_pricer.cpp src/curve_bootstrapper.cpp src/risk_engine.cpp)
+  src/discount_curve.cpp src/swap_pricer.cpp src/curve_bootstrapper.cpp src/risk_engine.cpp
+  src/portfolio.cpp src/history.cpp)
 add_library(rates::rates_engine ALIAS rates_engine)
 target_compile_features(rates_engine PUBLIC cxx_std_20)
 set_target_properties(rates_engine PROPERTIES CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)
@@ -45,6 +46,9 @@ rates_checks(rates_engine)
 add_executable(rates_cli apps/rates_cli.cpp)
 target_link_libraries(rates_cli PRIVATE rates_engine)
 rates_checks(rates_cli)
+add_executable(rates_batch apps/rates_batch.cpp)
+target_link_libraries(rates_batch PRIVATE rates_engine)
+rates_checks(rates_batch)
 if(RATES_BUILD_BENCHMARKS)
   add_executable(rates_benchmark benchmarks/benchmark_main.cpp)
   target_link_libraries(rates_benchmark PRIVATE rates_engine)
@@ -52,6 +56,12 @@ if(RATES_BUILD_BENCHMARKS)
     RATES_BUILD_CONFIG="$<CONFIG>" RATES_COMPILER="${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}"
     RATES_PLATFORM="${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
   rates_checks(rates_benchmark)
+  add_executable(rates_portfolio_benchmark benchmarks/portfolio_benchmark.cpp)
+  target_link_libraries(rates_portfolio_benchmark PRIVATE rates_engine)
+  target_compile_definitions(rates_portfolio_benchmark PRIVATE
+    RATES_BUILD_CONFIG="$<CONFIG>" RATES_COMPILER="${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}"
+    RATES_PLATFORM="${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+  rates_checks(rates_portfolio_benchmark)
 endif()
 if(BUILD_TESTING)
   find_package(GTest CONFIG QUIET)
@@ -64,12 +74,17 @@ if(BUILD_TESTING)
       GIT_TAG v1.17.0 GIT_SHALLOW TRUE)
     FetchContent_MakeAvailable(googletest)
   endif()
-  add_executable(rates_tests tests/test_engine.cpp)
+  add_executable(rates_tests tests/test_engine.cpp tests/test_v2.cpp)
   target_link_libraries(rates_tests PRIVATE rates_engine GTest::gtest_main)
   rates_checks(rates_tests)
   include(GoogleTest)
   gtest_discover_tests(rates_tests DISCOVERY_MODE PRE_TEST)
   find_package(Python3 COMPONENTS Interpreter REQUIRED)
+  if(RATES_BUILD_BENCHMARKS)
+    add_test(NAME performance_contract COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/python/check_performance.py --benchmark $<TARGET_FILE:rates_portfolio_benchmark>
+      --output ${CMAKE_CURRENT_BINARY_DIR}/performance-contract.csv)
+  endif()
   add_test(NAME independent_python COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/python/validate_results.py --cli $<TARGET_FILE:rates_cli>
     --output ${CMAKE_CURRENT_BINARY_DIR}/validation)
@@ -78,15 +93,17 @@ if(BUILD_TESTING)
   add_test(NAME convention_validation COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/python/validate_conventions.py --cli $<TARGET_FILE:rates_cli>
     --output ${CMAKE_CURRENT_BINARY_DIR}/conventions)
+  add_test(NAME batch_replay_contract COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/python/test_batch.py $<TARGET_FILE:rates_batch>)
   if(RATES_COVERAGE)
     find_program(LLVM_COV_EXECUTABLE NAMES llvm-cov REQUIRED)
     find_program(LLVM_PROFDATA_EXECUTABLE NAMES llvm-profdata REQUIRED)
     add_custom_target(coverage
       COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python/measure_coverage.py
         --build-dir ${CMAKE_CURRENT_BINARY_DIR} --tests $<TARGET_FILE:rates_tests>
-        --cli $<TARGET_FILE:rates_cli> --llvm-cov ${LLVM_COV_EXECUTABLE}
+        --cli $<TARGET_FILE:rates_cli> --batch $<TARGET_FILE:rates_batch> --llvm-cov ${LLVM_COV_EXECUTABLE}
         --llvm-profdata ${LLVM_PROFDATA_EXECUTABLE}
-      DEPENDS rates_tests rates_cli USES_TERMINAL VERBATIM)
+      DEPENDS rates_tests rates_cli rates_batch USES_TERMINAL VERBATIM)
   endif()
 endif()
 if(RATES_BUILD_PYTHON)

@@ -1,5 +1,8 @@
 # Benchmark method and observed measurements
 
+This page records the original v1 baseline. Current portfolio p50/p95/p99,
+shared-scenario comparisons and Linux profiling are described in [v2](v2.md).
+
 Recorded 2026-10-17 on Windows AMD64, Intel Core i9-11900H @ 2.50GHz
 (8 cores / 16 logical processors), portable LLVM-MinGW Clang 23.1.3, Release
 `-O3 -DNDEBUG`. Single process/thread; no CPU affinity, frequency lock or

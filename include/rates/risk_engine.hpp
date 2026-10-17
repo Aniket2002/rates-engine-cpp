@@ -33,6 +33,7 @@ class RiskScenarios {
     const std::vector<CurveShock> &zero_shocks() const { return zeros_; }
     std::size_t calibration_count() const { return calibrations_; }
     RiskReport report(const Swap &trade, std::string curve_id) const;
+    RiskReport report(const PreparedSwap &trade, std::string curve_id) const;
     std::vector<RiskReport> portfolio(const std::vector<Swap> &trades, const std::string &curve_id) const;
 
   private:

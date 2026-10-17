@@ -58,7 +58,10 @@ RiskScenarios::RiskScenarios(DiscountCurve base, CurveShock parallel, std::vecto
     : base_(std::move(base)), parallel_(std::move(parallel)), quotes_(std::move(quotes)),
       zeros_(std::move(zeros)), bump_bps_(bump_bps), tolerance_(tolerance), calibrations_(calibrations) {}
 RiskReport RiskScenarios::report(const Swap &trade, std::string id) const {
-    const PreparedSwap prepared{trade};
+    return report(PreparedSwap{trade}, std::move(id));
+}
+RiskReport RiskScenarios::report(const PreparedSwap &prepared, std::string id) const {
+    const auto &trade = prepared.trade();
     return {base_.valuation_date(),
             std::move(id),
             trade,

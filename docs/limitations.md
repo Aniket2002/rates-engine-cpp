@@ -13,24 +13,32 @@
 - Bootstrap solves within log-discount bounds [-50,50]. Pathological or
   inconsistent inputs may fail; failure is surfaced. No claim is made that
   arbitrary mixed quotes satisfy a complete arbitrage analysis.
-- Quote risk uses expensive full rebootstrap per scenario. No adjoints,
-  automatic differentiation, parallel execution or portfolio scenario reuse.
-- CLI handles one trade, strict unquoted CSV and one common convention set.
+- Quote risk uses full rebootstrap per scenario, shared across a portfolio.
+  No adjoints, automatic differentiation or parallel execution.
+- `rates_cli` handles one trade with configurable conventions; `rates_batch`
+  supports portfolios using default conventions and strict unquoted CSV.
   Export files are written after computation; disk failure can leave partial
   files and is reported with nonzero exit status.
-- Python reference scenarios use the documented default conventions. Explicit
-  holiday and alternate day-count functionality is covered in C++ tests; the
-  external comparison does not validate every configurable combination.
-- QuantLib comparison validates an independently constructed QuantLib swap on
-  matching node discounts. Independent curve calibration is checked by Python,
-  not QuantLib rate helpers. No QuantLib performance comparison is claimed.
+- Independent Python and QuantLib tests cover selected alternate day counts,
+  holidays, business-day rules and irregular schedules, not every combination.
+- QuantLib rate helpers independently calibrate six compatible cases. Irregular
+  forward-stub calibration contracts are excluded from helper comparisons where
+  QuantLib's schedule conventions differ; irregular trade schedules are checked
+  separately. No QuantLib performance comparison is claimed.
 - Benchmarks describe one machine and workload. They are not service latency
-  guarantees. Coverage percentages have not been measured.
+  guarantees. Measured coverage identifies remaining unexecuted paths; it does
+  not establish mathematical completeness.
+- Historical replay uses synthetic full snapshots, an in-memory timestamp/offset
+  index and immutable local files. The first snapshot defines the quote-label
+  universe; there is no independent feed completeness manifest. File size and
+  modification time detect ordinary mutation, not adversarial tampering.
+- Replay values at the selected snapshot's valuation date. It does not roll
+  curves to a later query date or supply missing past fixings. The example is
+  intraday; trades with already-started coupons fail explicitly.
 
 This is a reproducible quantitative engineering project, not a complete
 institutional derivatives platform or a claim of production readiness.
 
-Next improvements: cache prepared schedules, reuse bumped curves across trades,
-add explicit front/long stubs and payment lags, expand convention-specific
+Next improvements: add explicit front/long stubs and payment lags, expand convention-specific
 external validation, then introduce distinct forwarding and collateral curves
 with independently validated instruments and data assumptions.

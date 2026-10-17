@@ -1,0 +1,42 @@
+name: replay-and-profile
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '20 5 * * 1'
+permissions:
+  contents: read
+jobs:
+  simulation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build valgrind
+      - run: cmake -S . -B build/profile -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_TESTING=OFF
+      - run: cmake --build build/profile --parallel 2
+      - name: Synthetic historical batch
+        run: |
+          python python/generate_replay.py --out results/input --trades 1000
+          build/profile/rates_batch --history results/input/quote_history.csv --portfolio results/input/portfolio.csv --replay-from 2025-01-02T10:00:00Z --replay-to 2025-01-02T10:15:00Z --step-seconds 120 --max-age-seconds 300 --out results/replay
+      - name: Scaling and regression checks
+        run: |
+          build/profile/rates_portfolio_benchmark results/scaling.csv 101 10000
+          python python/check_performance.py --benchmark build/profile/rates_portfolio_benchmark --output results/regression.csv
+      - name: Linux CPU instruction and heap profiles
+        run: |
+          for mode in cached uncached independent; do
+            valgrind --tool=callgrind --error-exitcode=1 --callgrind-out-file=results/callgrind-$mode.out build/profile/rates_portfolio_benchmark results/cpu-$mode.csv 1 100 $mode
+            callgrind_annotate --inclusive=yes --tree=calling results/callgrind-$mode.out > results/cpu-$mode.txt
+            valgrind --tool=massif --massif-out-file=results/massif-$mode.out build/profile/rates_portfolio_benchmark results/heap-$mode.csv 1 100 $mode
+            ms_print results/massif-$mode.out > results/heap-$mode.txt
+          done
+          python python/summarize_profiles.py results
+          lscpu > results/cpu-environment.txt
+          c++ --version > results/compiler.txt
+          uname -a > results/platform.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: replay-performance-profiles
+          path: results/

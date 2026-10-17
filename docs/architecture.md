@@ -10,7 +10,8 @@ library -> CLI / benchmarks / optional pybind11 module
 ```
 
 Public APIs live in `include/rates`; library translation units live in `src`.
-Financial code has no filesystem or CSV dependency. The CLI owns strict input
+Financial pricing code has no filesystem or CSV dependency. The separate
+`HistoricalQuoteStore` module owns indexed quote-file access. The CLI owns strict input
 parsing, console presentation and structured exports. Schedule generation is
 independent of both curves and valuation. The optional Python extension calls
 the same compiled library; `reference_pricer.py` is a separate validation-only
@@ -33,9 +34,11 @@ and is deliberately sequential.
 We use bisection in C++ because its bracket and convergence behavior are easy
 to audit. Python uses safeguarded Newton and telescoping PV as independent
 paths. Small vectors are favored over abstraction-heavy instrument hierarchies.
-Full pricing during bootstrapping is intentionally simple but rebuilds schedules
-and cash-flow vectors; benchmarks expose that cost. No performance improvement
-is claimed without measured comparison.
+Bootstrapping prepares schedules once per instrument, outside its root solve.
+`RiskScenarios` owns immutable base/shocked curves, and `PortfolioRiskEngine`
+shares immutable schedules for equal dates and conventions. Pricing still creates
+cash-flow vectors; the Linux profiles expose remaining allocation costs.
+The [v2 design](v2.md) describes replay, aggregation and benchmark boundaries.
 
 The `rates_engine` static target requires C++20 for the standard Gregorian
 chrono calendar. Most financial calculations use C++17-compatible constructs,

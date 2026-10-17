@@ -36,8 +36,11 @@ absolute tolerance is specific to the fixtures, not a universal risk tolerance.
 Shocks must be finite and positive. A shocked quote set that cannot calibrate
 raises an exception identifying the quote bucket and decimal shift. The
 engine does not drop failing buckets or return zero as a failure value.
-Parallel risk and every bucket are computed independently; shared scenario
-curve caching across a portfolio is a future performance improvement.
+`prepare_scenarios` builds a base curve, two parallel shocks and two shocks per
+quote: `3 + 2*K` calibrations. Zero shocks alter the base curve without calibration.
+The immutable scenario object is reused across trades. `PortfolioRiskEngine`
+uses compensated summation and reports failed trades separately; its aggregates
+cover only successfully priced trades. Batch output explicitly marks partial results.
 
 `RiskReport` contains valuation date, curve identifier, trade, base valuation,
 par rate, leg PVs, both risk coordinate vectors, parallel quote DV01, bump size

@@ -1,6 +1,6 @@
 # rates-engine-cpp
 
-A C++20 interest-rate curve, swap pricing and risk library with independent
+A C++20 interest-rate curve, swap pricing and portfolio risk library with independent
 numerical validation. Built to demonstrate financial mathematics, numerical
 engineering and maintainable C++ through a reproducible, auditable project.
 
@@ -12,7 +12,10 @@ benchmarks. All supplied quotes are hypothetical; this is a single-curve model.
 
 The [validation/reuse update](docs/validation-upgrade.md) adds measured
 [coverage](docs/coverage.md), independent QuantLib rate-helper bootstrapping,
-nondefault convention checks and reusable portfolio scenarios. The initial
+nondefault convention checks and reusable portfolio scenarios. [Version 2](docs/v2.md)
+adds portfolio aggregation, shared schedules, timestamp-indexed historical replay,
+operational JSON summaries, scaling benchmarks and Linux profiling automation.
+The initial
 execution report and benchmark results below are retained as baseline evidence.
 
 ## Features
@@ -118,16 +121,20 @@ The validation script has no third-party dependency unless QuantLib comparison
 is requested. It performs independent calendar, coupon, safeguarded-Newton
 calibration, pricing and risk calculations in Python. QuantLib separately
 prices matched swaps on matching node discounts; it does not replace the engine
-or independently bootstrap the quotes. Without QuantLib the report explicitly
+or independently bootstrap the quotes in that original script. The additional
+`validate_conventions.py` independently bootstraps six compatible convention
+cases using QuantLib rate helpers and validates nine convention cases overall.
+Without QuantLib the report explicitly
 records its absence. CSV comparisons include absolute error, relative error
 where meaningful, tolerance and status; failures are retained and return a
 nonzero exit status.
 
 Tests cover analytical one-period swaps, flat positive/zero/negative curves,
 sloping curves, irregular pillars, long swaps, pricing identities, risk signs,
-finite-difference stability and malformed inputs. No coverage percentage is
-claimed. See the [execution report](docs/execution_report.md) for observed counts
-and platform results.
+finite-difference stability, malformed inputs, portfolio failures and replay
+isolation. [Measured coverage](docs/coverage.md) includes line and branch reports.
+See the [v2 report](docs/v2.md) for current results and the
+[initial execution report](docs/execution_report.md) for baseline evidence.
 
 For Python, add `build/release` to `sys.path`, then:
 
@@ -173,8 +180,16 @@ represent modern collateralized multi-curve valuation. It has no real market
 feeds, named holiday databases, stochastic options, XVA or production-readiness
 claim. Full boundaries are in [limitations](docs/limitations.md).
 
-Priorities for extension: prepared-schedule caching, portfolio scenario reuse,
-broader convention-specific validation, richer schedules, then separately
-validated collateral and forwarding curves. Correctness precedes performance.
+Portfolio batch and replay example (all supplied data is synthetic):
+
+```sh
+./build/release/rates_batch --as-of 2025-01-02T10:02:00Z --max-age-seconds 300 --out results/batch
+./build/release/rates_batch --replay-from 2025-01-02T10:00:00Z --replay-to 2025-01-02T10:15:00Z --step-seconds 120 --out results/replay
+./build/release/rates_portfolio_benchmark results/scaling.csv 101 10000
+```
+
+See the [operational runbook](ops/runbook.md) for failures,
+freshness policy and the scheduled simulation. Future model extensions include
+richer schedules and separately validated collateral and forwarding curves.
 
 MIT licensed; dependencies retain their own licenses.

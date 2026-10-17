@@ -5,10 +5,22 @@ namespace rates {
 PreparedSwap::PreparedSwap(Swap trade) : trade_(std::move(trade)) {
     trade_.validate(trade_.effective);
     const auto &c = trade_.conventions;
-    fixed_ = make_schedule(trade_.effective, trade_.maturity, c.fixed_months, c.fixed_day_count, c.calendar,
-                           c.business_day, c.end_of_month);
-    floating_ = make_schedule(trade_.effective, trade_.maturity, c.floating_months, c.floating_day_count,
-                              c.calendar, c.business_day, c.end_of_month);
+    schedules_ = std::make_shared<Schedules>(
+        Schedules{make_schedule(trade_.effective, trade_.maturity, c.fixed_months, c.fixed_day_count,
+                                c.calendar, c.business_day, c.end_of_month),
+                  make_schedule(trade_.effective, trade_.maturity, c.floating_months, c.floating_day_count,
+                                c.calendar, c.business_day, c.end_of_month)});
+}
+PreparedSwap::PreparedSwap(Swap trade, std::shared_ptr<const Schedules> schedules)
+    : trade_(std::move(trade)), schedules_(std::move(schedules)) {
+    trade_.validate(trade_.effective);
+}
+PreparedSwap PreparedSwap::with_economics(double notional, SimpleRate coupon, Side side) const {
+    auto changed = trade_;
+    changed.notional = notional;
+    changed.fixed_rate = coupon;
+    changed.side = side;
+    return PreparedSwap{std::move(changed), schedules_};
 }
 SwapResult price(const DiscountCurve &curve, const Swap &swap) {
     return price(curve, PreparedSwap{swap});

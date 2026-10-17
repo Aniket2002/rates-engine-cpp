@@ -114,7 +114,7 @@ PYBIND11_MODULE(pyrates, module) {
         .def_readonly("zero_nodes", &RiskReport::zero_nodes);
     py::class_<RiskScenarios>(module, "RiskScenarios")
         .def_property_readonly("calibration_count", &RiskScenarios::calibration_count)
-        .def("report", &RiskScenarios::report)
+        .def("report", py::overload_cast<const Swap &, std::string>(&RiskScenarios::report, py::const_))
         .def("portfolio", &RiskScenarios::portfolio);
     py::class_<RiskEngine>(module, "RiskEngine")
         .def(py::init<CurveBootstrapper>(), py::arg("bootstrapper") = CurveBootstrapper{})

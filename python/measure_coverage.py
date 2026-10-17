@@ -20,6 +20,7 @@ def main():
     parser.add_argument("--build-dir", type=Path, required=True)
     parser.add_argument("--tests", type=Path, required=True)
     parser.add_argument("--cli", type=Path, required=True)
+    parser.add_argument("--batch", type=Path, required=True)
     parser.add_argument("--llvm-cov", default="llvm-cov")
     parser.add_argument("--llvm-profdata", default="llvm-profdata")
     args = parser.parse_args()
@@ -37,7 +38,7 @@ def main():
     profile = output / "merged.profdata"
     subprocess.run([args.llvm_profdata, "merge", "-sparse", *map(str, raw), "-o", str(profile)], check=True)
     sources = sorted(ROOT.joinpath("src").glob("*.cpp")) + sorted(ROOT.joinpath("include/rates").glob("*.hpp"))
-    common = [str(args.tests.resolve()), "-object", str(args.cli.resolve()),
+    common = [str(args.tests.resolve()), "-object", str(args.cli.resolve()), "-object", str(args.batch.resolve()),
               "-instr-profile=" + str(profile), *map(str, sources)]
     export = subprocess.check_output([args.llvm_cov, "export", *common], text=True)
     (output / "coverage.json").write_text(export, encoding="utf-8")
