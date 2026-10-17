@@ -1,0 +1,9 @@
+workload,mean_us,median_us,min_us,iterations,workload_size,compiler,configuration,platform
+discount_10000,150.768,140.2,138,25,10000,Clang-23.1.3,Release,Windows-AMD64
+discount_linear_scan_baseline_10000,238.328,238.3,231.9,25,10000,Clang-23.1.3,Release,Windows-AMD64
+calibration_8_quotes,1192.616,1180.7,1119.1,25,8,Clang-23.1.3,Release,Windows-AMD64
+swap_pricing,5.772,5.7,5.5,25,1,Clang-23.1.3,Release,Windows-AMD64
+parallel_quote_dv01,2179.908,2172.6,2113.4,25,1,Clang-23.1.3,Release,Windows-AMD64
+quote_key_rates_8,17023.608,17220.5,15050.3,25,8,Clang-23.1.3,Release,Windows-AMD64
+zero_node_risk_8,92.348,92.6,88.2,25,8,Clang-23.1.3,Release,Windows-AMD64
+portfolio_parallel_dv01_20,43560.132,43376.5,37909.6,25,20,Clang-23.1.3,Release,Windows-AMD64

@@ -1,0 +1,10 @@
+/build*/
+/.tools/
+/.venv/
+__pycache__/
+*.pyc
+/results/
+/install/
+.env
+.DS_Store
+Thumbs.db

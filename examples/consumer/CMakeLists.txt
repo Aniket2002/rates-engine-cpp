@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.24)
+project(rates_consumer LANGUAGES CXX)
+find_package(rates_engine 1 CONFIG REQUIRED)
+add_executable(consumer main.cpp)
+target_link_libraries(consumer PRIVATE rates::rates_engine)

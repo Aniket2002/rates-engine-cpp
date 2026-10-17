@@ -1,0 +1,17 @@
+metric,value
+valuation_date,2025-01-02
+curve_id,synthetic-single-curve
+effective,2025-01-02
+maturity,2030-01-02
+side,payer
+notional,1000000
+fixed_coupon,0.036999999999999998
+fixed_pv,167660.05735082837
+floating_pv,172191.41025098207
+pv,4531.3529001536954
+par_rate,0.037999999999730749
+annuity,4.5313529013737401
+parallel_quote_dv01,-451.94430030423973
+bump_bps,1
+calibration_tolerance,9.9999999999999998e-13
+shock_definition,(PV_down-PV_up)/(2*bump_bps)
