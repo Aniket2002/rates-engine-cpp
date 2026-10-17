@@ -1,0 +1,44 @@
+{
+    "run_url":  "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39007088486",
+    "commit":  "3148d00ddad33995380efa09caf5f002040e9b1a",
+    "status":  "completed",
+    "conclusion":  "success",
+    "jobs":  [
+                 {
+                     "name":  "sanitizers",
+                     "status":  "completed",
+                     "conclusion":  "success",
+                     "url":  "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39007088486/job/117321651180"
+                 },
+                 {
+                     "name":  "builds (windows-latest, cl, Release)",
+                     "status":  "completed",
+                     "conclusion":  "success",
+                     "url":  "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39007088486/job/117321651302"
+                 },
+                 {
+                     "name":  "static",
+                     "status":  "completed",
+                     "conclusion":  "success",
+                     "url":  "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39007088486/job/117321651337"
+                 },
+                 {
+                     "name":  "builds (ubuntu-latest, clang++, Debug)",
+                     "status":  "completed",
+                     "conclusion":  "success",
+                     "url":  "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39007088486/job/117321651342"
+                 },
+                 {
+                     "name":  "builds (macos-latest, clang++, Release)",
+                     "status":  "completed",
+                     "conclusion":  "success",
+                     "url":  "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39007088486/job/117321651353"
+                 },
+                 {
+                     "name":  "builds (ubuntu-latest, g++, Release)",
+                     "status":  "completed",
+                     "conclusion":  "success",
+                     "url":  "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39007088486/job/117321651377"
+                 }
+             ]
+}

@@ -69,6 +69,22 @@ See [methodology](methodology.md) and [conventions](conventions.md).
 - Local combined ASan/UBSan was not run: this Windows build does not support
   the project's combined sanitizer configuration. CI contains a Linux job.
 
+The corrected [GitHub Actions run 39007088486](https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39007088486)
+completed successfully for implementation commit `3148d00`. All six jobs passed:
+
+| CI job | Observed result |
+| --- | --- |
+| Linux GCC Release | Build, 32 CTest checks, QuantLib validation, installed consumer passed |
+| Linux Clang Debug | Build, 32 CTest checks, QuantLib validation, installed consumer passed |
+| Windows MSVC Release | Build, 32 CTest checks, QuantLib validation, installed consumer passed |
+| macOS AppleClang Release | Build, 32 CTest checks, QuantLib validation, installed consumer passed |
+| Linux Clang ASan + UBSan | Build and 31 CTest checks passed |
+| Static | Formatting and clang-tidy compilation passed |
+
+The CI summary is retained in [ci-report.json](results/ci-report.json). The
+subsequent documentation-only commit records these results and skips a redundant
+CI rerun; it does not change the tested implementation or workflow.
+
 ## 6. Unit/integration results
 
 29 GoogleTest cases passed, including 50 deterministic randomized flat-curve
@@ -80,7 +96,8 @@ payment-frequency and explicit-holiday scenario.
 
 ## 7. Python and QuantLib results
 
-1,285/1,285 numerical comparisons passed across nine scenarios. QuantLib 1.44
+1,285/1,285 numerical comparisons passed across nine scenarios: 1,190 independent
+Python checks, 59 analytical target-node checks and 36 QuantLib checks. QuantLib 1.44
 was available and external comparisons executed. Python independently
 bootstraps, prices and shocks curves. QuantLib uses matching C++ node discounts
 and independently constructs/prices matched vanilla swaps. It does not
@@ -146,9 +163,9 @@ CSV results come from executed programs, not illustrative values.
 No required core engine feature remains as a placeholder. Optional extrapolation
 was intentionally not added (unsupported requests throw). C++17 compatibility,
 coverage measurement, independent QuantLib rate-helper bootstrapping and the
-model extensions in the limitations document are not implemented. Local Unix
-sanitizer/MSVC/macOS execution is delegated to the supplied CI workflow and
-must be assessed from its actual run status.
+model extensions in the limitations document are not implemented. Unix sanitizer,
+MSVC and macOS checks were executed successfully on GitHub-hosted runners as
+reported above; they were not executed on the local Windows-MinGW environment.
 
 ## 12. Next improvements
 
