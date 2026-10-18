@@ -4,11 +4,27 @@ A C++20 interest-rate curve, swap pricing and portfolio risk library with indepe
 numerical validation. Built to demonstrate financial mathematics, numerical
 engineering and maintainable C++ through a reproducible, auditable project.
 
-The engine calibrates synthetic deposit/swap quotes, prices vanilla swaps,
+The engine calibrates deposit/swap quotes and continuously compounded zero yields, prices vanilla swaps,
 and calculates signed parallel quote DV01, quote-bucket risk and zero-node
 risk. It includes a command-line application, optional Python bindings,
 GoogleTest tests, a separate Python reference, QuantLib comparisons and measured
-benchmarks. All supplied quotes are hypothetical; this is a single-curve model.
+benchmarks. It now includes **249 real historical Federal Reserve Treasury curves
+from 2025**, with ten zero-rate tenors per date, alongside synthetic test fixtures.
+The [historical-data guide](docs/real-historical-data.md) documents source,
+conversion, reuse terms and a completed 24,900-trade-valuation replay.
+This is a single-curve model; sample swap portfolios remain hypothetical.
+The integration passes **53 local checks**, with **98.93% library line coverage
+and 89.04% branch coverage**; independent historical validation includes QuantLib.
+
+Run the pinned historical dataset without network access:
+
+```sh
+python python/replay_fed_history.py --batch build/release/rates_batch --data data/fed-gsw --out results/fed-replay
+```
+
+These are fitted Treasury curve estimates from the downloaded vintage. The
+replay is retrospective: original publication times and historical vintages are
+unavailable. The Treasury curve is a valuation proxy for the sample swaps.
 
 The [validation/reuse update](docs/validation-upgrade.md) adds measured
 [coverage](docs/coverage.md), independent QuantLib rate-helper bootstrapping,
@@ -18,7 +34,7 @@ operational JSON summaries, scaling benchmarks and Linux profiling automation.
 The initial
 execution report and benchmark results below are retained as baseline evidence.
 
-V2 verification: **50 local checks passed**, **98.92% measured library line
+Original v2 verification: **50 local checks passed**, **98.92% measured library line
 coverage**, and all seven main CI jobs passed. On the recorded Linux synthetic
 100-trade workload, shared full risk including setup was **56.8x faster** than
 independent per-trade reports. The [v2 report](docs/v2.md) includes p50/p95/p99
@@ -180,13 +196,13 @@ baseline recomputes times/logs. It is not a QuantLib comparison. See
 
 ## Scope and next steps
 
-The synthetic model uses one curve for projection and discounting, forward-only
+The model uses one curve for projection and discounting, forward-only
 coupons, zero settlement/payment lag and no historical fixings. It does not
-represent modern collateralized multi-curve valuation. It has no real market
+represent modern collateralized multi-curve valuation. It has no live market
 feeds, named holiday databases, stochastic options, XVA or production-readiness
 claim. Full boundaries are in [limitations](docs/limitations.md).
 
-Portfolio batch and replay example (all supplied data is synthetic):
+Synthetic fixture batch and replay example:
 
 ```sh
 ./build/release/rates_batch --as-of 2025-01-02T10:02:00Z --max-age-seconds 300 --out results/batch

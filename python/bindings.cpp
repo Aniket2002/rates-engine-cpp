@@ -22,7 +22,8 @@ PYBIND11_MODULE(pyrates, module) {
     py::enum_<Side>(module, "Side").value("Payer", Side::Payer).value("Receiver", Side::Receiver);
     py::enum_<Instrument>(module, "Instrument")
         .value("Deposit", Instrument::Deposit)
-        .value("Swap", Instrument::Swap);
+        .value("Swap", Instrument::Swap)
+        .value("ContinuousZero", Instrument::ContinuousZero);
     py::class_<Calendar>(module, "Calendar")
         .def(py::init<std::set<Date>>(), py::arg("holidays") = std::set<Date>{})
         .def("adjust", &Calendar::adjust);

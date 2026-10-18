@@ -19,6 +19,8 @@ jobs:
         run: |
           python python/generate_replay.py --out results/input --trades 1000
           build/profile/rates_batch --history results/input/quote_history.csv --portfolio results/input/portfolio.csv --replay-from 2025-01-02T10:00:00Z --replay-to 2025-01-02T10:15:00Z --step-seconds 120 --max-age-seconds 300 --out results/replay
+      - name: Replay pinned real Federal Reserve history
+        run: python python/replay_fed_history.py --batch build/profile/rates_batch --data data/fed-gsw --out results/fed-replay
       - name: Scaling and regression checks
         run: |
           build/profile/rates_portfolio_benchmark results/scaling.csv 101 10000

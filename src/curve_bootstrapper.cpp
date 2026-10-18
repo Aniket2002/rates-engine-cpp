@@ -59,7 +59,10 @@ BootstrapResult CurveBootstrapper::build(Date valuation, std::vector<MarketQuote
     const auto &c = conventions_;
     if (c.calendar.adjust(valuation, c.business_day) != valuation)
         throw std::invalid_argument("Valuation date must satisfy business-day convention");
-    const auto pillar = [&](const MarketQuote &q) { return c.calendar.adjust(q.maturity, c.business_day); };
+    const auto pillar = [&](const MarketQuote &q) {
+        return q.instrument == Instrument::ContinuousZero ? q.maturity
+                                                          : c.calendar.adjust(q.maturity, c.business_day);
+    };
     std::sort(quotes.begin(), quotes.end(),
               [&](const auto &a, const auto &b) { return pillar(a) < pillar(b); });
     std::vector<CurveNode> nodes;
@@ -78,6 +81,10 @@ BootstrapResult CurveBootstrapper::build(Date valuation, std::vector<MarketQuote
         if (q.instrument == Instrument::Deposit) {
             df = rate_to_discount(q.rate.value, year_fraction(valuation, end, c.deposit_day_count),
                                   Compounding::Simple)
+                     .value;
+        } else if (q.instrument == Instrument::ContinuousZero) {
+            df = rate_to_discount(q.rate.value, year_fraction(valuation, end, DayCount::Actual365Fixed),
+                                  Compounding::Continuous)
                      .value;
         } else if (q.instrument == Instrument::Swap) {
             // All coupons, including those between the last known and new pillar,
@@ -109,6 +116,8 @@ BootstrapResult CurveBootstrapper::build(Date valuation, std::vector<MarketQuote
             row.model_quote = discount_to_rate(curve.discount(row.pillar),
                                                year_fraction(valuation, row.pillar, c.deposit_day_count),
                                                Compounding::Simple);
+        else if (row.quote.instrument == Instrument::ContinuousZero)
+            row.model_quote = curve.zero(row.pillar).value;
         else
             row.model_quote =
                 price(curve, Swap{valuation, row.quote.maturity, 1.0, row.quote.rate, Side::Payer, c})

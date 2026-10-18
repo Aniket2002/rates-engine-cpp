@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
                           << "  --adjustment unadjusted|following|modified-following --eom true|false\n"
                           << "  --holidays YYYY-MM-DD,YYYY-MM-DD --bump-bps positive-number\n"
                           << "Rates are decimals; notionals and PVs use unspecified currency units. "
-                             "Synthetic data only.\n";
+                             "Quote types: deposit, swap, continuous_zero (ACT/365F exact-date pillars).\n";
                 return 0;
             }
             if (!args.contains(key) || i + 1 >= argc)
@@ -138,10 +138,12 @@ int main(int argc, char **argv) {
         const Date valuation = Date::parse(args.at("--valuation"));
         std::vector<MarketQuote> quotes;
         for (const auto &row : read_csv(args.at("--quotes"), "type,label,maturity,rate", 4)) {
-            if (row[0] != "deposit" && row[0] != "swap")
+            if (row[0] != "deposit" && row[0] != "swap" && row[0] != "continuous_zero")
                 throw std::invalid_argument("Unknown quote instrument: " + row[0]);
-            quotes.push_back({row[0] == "deposit" ? Instrument::Deposit : Instrument::Swap, row[1],
-                              Date::parse(row[2]), SimpleRate{number(row[3])}});
+            quotes.push_back({row[0] == "deposit"
+                                  ? Instrument::Deposit
+                                  : (row[0] == "swap" ? Instrument::Swap : Instrument::ContinuousZero),
+                              row[1], Date::parse(row[2]), SimpleRate{number(row[3])}});
         }
         const auto trades = read_csv(args.at("--swap"), "effective,maturity,notional,fixed_rate,side", 5);
         if (trades.size() != 1)
@@ -166,7 +168,7 @@ int main(int argc, char **argv) {
         auto nodes = output(directory, "curve.csv");
         nodes << "date,time,discount,zero,segment_forward\n";
         nodes << valuation.str() << ",0,1,,\n";
-        std::cout << std::setprecision(12) << "Synthetic single-curve calibration (rates in decimals)\n";
+        std::cout << std::setprecision(12) << "Single-curve calibration (rates in decimals)\n";
         for (const auto &d : calibration.curve.diagnostics()) {
             nodes << d.date.str() << ',' << d.time << ',' << d.discount << ',' << d.zero << ','
                   << d.segment_forward << '\n';
@@ -175,9 +177,12 @@ int main(int argc, char **argv) {
         auto residuals = output(directory, "calibration.csv");
         residuals << "instrument,label,maturity,market_quote,model_quote,residual,iterations,status\n";
         for (const auto &row : calibration.diagnostics) {
-            residuals << (row.quote.instrument == Instrument::Deposit ? "deposit" : "swap") << ','
-                      << row.quote.label << ',' << row.pillar.str() << ',' << row.quote.rate.value << ','
-                      << row.model_quote << ',' << row.residual << ',' << row.iterations << ",converged\n";
+            residuals << (row.quote.instrument == Instrument::Deposit
+                              ? "deposit"
+                              : (row.quote.instrument == Instrument::Swap ? "swap" : "continuous_zero"))
+                      << ',' << row.quote.label << ',' << row.pillar.str() << ',' << row.quote.rate.value
+                      << ',' << row.model_quote << ',' << row.residual << ',' << row.iterations
+                      << ",converged\n";
             std::cout << row.quote.label << " residual=" << row.residual << " iterations=" << row.iterations
                       << '\n';
         }

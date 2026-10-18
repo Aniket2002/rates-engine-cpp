@@ -183,3 +183,36 @@ TEST(Portfolio, AggregateOverflowFailsTheWholeCalculation) {
     EXPECT_TRUE(std::isfinite(scenarios.report(huge, "unit").base.pv));
     EXPECT_THROW(PortfolioRiskEngine{trades}.calculate(scenarios), std::overflow_error);
 }
+TEST(HistoricalZeroQuotes, ExactDatesCompoundingAndRiskCoordinates) {
+    const std::vector<MarketQuote> quotes{
+        {Instrument::ContinuousZero, "one", valuation.add_days(365), SimpleRate{-0.01}},
+        {Instrument::ContinuousZero, "two", valuation.add_days(730), SimpleRate{0}},
+        {Instrument::ContinuousZero, "three", valuation.add_days(1095), SimpleRate{0.04}}};
+    const auto built = CurveBootstrapper{}.build(valuation, quotes);
+    for (std::size_t i = 0; i < quotes.size(); ++i) {
+        const auto &row = built.diagnostics[i];
+        EXPECT_EQ(row.pillar, quotes[i].maturity); // The two-year pillar is a Saturday.
+        EXPECT_EQ(row.iterations, 0);
+        EXPECT_NEAR(built.curve.discount(row.pillar).value,
+                    std::exp(-quotes[i].rate.value * static_cast<double>(i + 1)), 1e-14);
+        EXPECT_NEAR(row.residual, 0, 1e-14);
+    }
+    const auto report = RiskEngine{}.report(valuation, quotes,
+                                            Swap{valuation, valuation.add_months(24), 1e6, SimpleRate{0.03}},
+                                            "historical-zero");
+    for (std::size_t i = 0; i < quotes.size(); ++i)
+        EXPECT_NEAR(report.quote_buckets[i].dv01, report.zero_nodes[i].dv01, 1e-7);
+    auto overflow = quotes;
+    overflow.back().rate = SimpleRate{-1000};
+    EXPECT_THROW(CurveBootstrapper{}.build(valuation, overflow), std::invalid_argument);
+}
+TEST(HistoricalZeroQuotes, FileStorePreservesContinuousZeroType) {
+    HistoryFile file;
+    file.write("2025-01-02T23:59:59Z,2025-01-02,continuous_zero,SVENY01,2026-01-02,0.041919\n");
+    const auto snapshot = HistoricalQuoteStore{file.path}.as_of(Timestamp::parse("2025-01-02T23:59:59Z"), 0);
+    ASSERT_EQ(snapshot.quotes.size(), 1U);
+    EXPECT_EQ(snapshot.quotes.front().instrument, Instrument::ContinuousZero);
+    EXPECT_NEAR(
+        CurveBootstrapper{}.build(snapshot.valuation, snapshot.quotes).curve.nodes().back().discount.value,
+        std::exp(-0.041919), 1e-14);
+}

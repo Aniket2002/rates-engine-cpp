@@ -10,7 +10,11 @@ using Clock = std::chrono::steady_clock;
 double elapsed(Clock::time_point start) {
     return std::chrono::duration<double, std::milli>(Clock::now() - start).count();
 }
+struct InputContext {
+    std::string source = "unspecified", replay_basis = "provided_timestamps";
+};
 struct Summary {
+    InputContext context;
     std::string as_of, status = "failed", category, error, calibration = "not_attempted";
     std::optional<Timestamp> observed;
     std::optional<std::int64_t> age;
@@ -30,7 +34,8 @@ std::string summary_json(const Summary &s) {
     std::ostringstream out;
     out << std::setprecision(17) << "{\"schema_version\":1,\"as_of\":" << json_string(s.as_of)
         << ",\"status\":" << json_string(s.status) << ",\"error_category\":" << json_string(s.category)
-        << ",\"error\":" << json_string(s.error)
+        << ",\"error\":" << json_string(s.error) << ",\"data_source\":" << json_string(s.context.source)
+        << ",\"replay_basis\":" << json_string(s.context.replay_basis)
         << ",\"snapshot_timestamp\":" << (s.observed ? json_string(s.observed->str()) : "null")
         << ",\"data_age_seconds\":" << (s.age ? std::to_string(*s.age) : "null")
         << ",\"calibration_status\":" << json_string(s.calibration)
@@ -103,9 +108,10 @@ std::int64_t integer(const std::string &text, bool positive) {
 }
 Summary run(Timestamp time, std::int64_t max_age, const HistoricalQuoteStore &history,
             const PortfolioRiskEngine &portfolio, std::optional<RiskScenarios> &cache,
-            std::optional<Timestamp> &cached_time, double setup_ms) {
+            std::optional<Timestamp> &cached_time, double setup_ms, const InputContext &context) {
     const auto start = Clock::now();
     Summary summary;
+    summary.context = context;
     summary.as_of = time.str();
     summary.input_trades = portfolio.size();
     summary.setup_ms = setup_ms;
@@ -158,6 +164,8 @@ int main(int argc, char **argv) try {
                                             {"--replay-from", ""},
                                             {"--replay-to", ""},
                                             {"--step-seconds", "300"},
+                                            {"--data-source", "unspecified"},
+                                            {"--replay-basis", "provided_timestamps"},
                                             {"--max-age-seconds", "900"}};
     try {
         for (int i = 1; i < argc; ++i) {
@@ -167,13 +175,18 @@ int main(int argc, char **argv) try {
                           << "  --as-of YYYY-MM-DDTHH:MM:SSZ --max-age-seconds N\n"
                           << "  or --replay-from UTC --replay-to UTC --step-seconds N\n"
                           << "Exit 0: success; 2: partial trades; 1: failed batch/data/calibration. "
-                             "Synthetic simulation.\n";
+                             "Use --data-source label and --replay-basis "
+                             "provided_timestamps|retrospective_observation_date.\n";
                 return 0;
             }
             if (!args.contains(option) || i + 1 >= argc)
                 throw std::invalid_argument("Unknown or incomplete batch option: " + option);
             args[option] = argv[++i];
         }
+        const InputContext context{args.at("--data-source"), args.at("--replay-basis")};
+        if (context.replay_basis != "provided_timestamps" &&
+            context.replay_basis != "retrospective_observation_date")
+            throw std::invalid_argument("Unsupported replay basis");
         const bool replay = !args.at("--replay-from").empty();
         if (replay ? (!args.at("--as-of").empty() || args.at("--replay-to").empty())
                    : (args.at("--as-of").empty() || !args.at("--replay-to").empty()))
@@ -197,7 +210,7 @@ int main(int argc, char **argv) try {
         int exit_code = 0;
         for (auto current = first;; current = current.add_seconds(step)) {
             const auto summary = run(current, max_age, history, portfolio, cache, cached_time,
-                                     current == first ? setup_ms : 0);
+                                     current == first ? setup_ms : 0, context);
             std::string key = current.str();
             std::erase(key, ':');
             std::erase(key, '-');
@@ -220,6 +233,7 @@ int main(int argc, char **argv) try {
         return exit_code;
     } catch (const std::exception &error) {
         Summary summary;
+        summary.context = {args.at("--data-source"), args.at("--replay-basis")};
         summary.as_of = args.at("--as-of").empty() ? args.at("--replay-from") : args.at("--as-of");
         summary.category = "invalid_input";
         if (dynamic_cast<const std::ios_base::failure *>(&error) ||

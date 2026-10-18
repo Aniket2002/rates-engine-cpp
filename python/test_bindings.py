@@ -40,3 +40,5 @@ except IndexError:
 else:
     raise AssertionError("C++ extrapolation exception was not propagated")
 print("Python bindings: analytical price, curve, calibration, both risk coordinates and exceptions passed")
+zero_quotes = [r.MarketQuote(r.Instrument.ContinuousZero, "1Y-zero", maturity, 0.04)]
+assert abs(b.build(v, zero_quotes).curve.discount(maturity) - math.exp(-0.04)) < 1e-14

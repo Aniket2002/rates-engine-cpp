@@ -32,6 +32,13 @@ New replay gaps include low-level file-read/reopen races and defensive index
 consistency failures; portfolio aggregate overflow and partial trade failures
 are exercised. The complete uncovered locations remain in the JSON/HTML report.
 
+After adding real Fed historical data and direct continuous-zero inputs, the
+same toolchain measured **835/844 lines (98.93%)** and **382/429 branch outcomes
+(89.04%)**. All 51 coverage CTest entries passed (46 GoogleTest cases plus five
+integration/independent checks). The original and v2 snapshots above remain
+baseline evidence; [historical-data coverage](results/coverage-historical.json)
+contains the latest per-file totals and uncovered branches.
+
 ```sh
 cmake -S . -B build/coverage -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++ -DRATES_COVERAGE=ON -DRATES_BUILD_BENCHMARKS=OFF
 cmake --build build/coverage --target coverage --parallel 4

@@ -1,7 +1,8 @@
 # Model and implementation boundaries
 
-- Synthetic single-curve projection and discounting. No collateral or OIS
-  discount curve, tenor basis, multi-currency support, XVA or real-market data.
+- Single-curve projection and discounting. No collateral or OIS discount curve,
+  tenor basis, multi-currency support or XVA. Real Fed fitted Treasury curves
+  provide a historical valuation proxy; the swap portfolios are hypothetical.
 - Vanilla deterministic deposits and fixed/floating swaps only. No options,
   caps, floors, convexity adjustment, stochastic models or credit risk.
 - No historical fixings, accrued trade support, floating spread/gearing,
@@ -28,13 +29,18 @@
 - Benchmarks describe one machine and workload. They are not service latency
   guarantees. Measured coverage identifies remaining unexecuted paths; it does
   not establish mathematical completeness.
-- Historical replay uses synthetic full snapshots, an in-memory timestamp/offset
+- Historical replay supports synthetic snapshots and real fitted zero curves with
+  an in-memory timestamp/offset
   index and immutable local files. The first snapshot defines the quote-label
   universe; there is no independent feed completeness manifest. File size and
   modification time detect ordinary mutation, not adversarial tampering.
 - Replay values at the selected snapshot's valuation date. It does not roll
   curves to a later query date or supply missing past fixings. The example is
-  intraday; trades with already-started coupons fail explicitly.
+  intraday in the original example; trades with already-started coupons fail explicitly.
+- Fed GSW historical data are fitted Treasury estimates from the downloaded,
+  possibly revised vintage. Original publication times are unavailable. The
+  observation-date labels support retrospective analysis, not point-in-time
+  strategy backtesting. Source zero yields are not executable swap quotes.
 
 This is a reproducible quantitative engineering project, not a complete
 institutional derivatives platform or a claim of production readiness.

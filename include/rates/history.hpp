@@ -41,7 +41,8 @@ struct QuoteSnapshot {
 };
 // File-backed full snapshots, indexed once by timestamp/byte offset. Input rows
 // must be chronological and have the same quote-label universe at each snapshot.
-// Timestamp denotes observation availability, not a future effective timestamp.
+// Timestamp is the producer's replay time. Operational inputs use availability
+// times; retrospective date labels must be identified as such by the caller.
 class HistoricalQuoteStore {
   public:
     explicit HistoricalQuoteStore(std::filesystem::path path);

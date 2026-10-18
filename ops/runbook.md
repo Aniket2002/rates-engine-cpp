@@ -1,10 +1,19 @@
-# Synthetic replay operational runbook
+# Replay operational runbook
 
 The weekly Monday workflow and manual `replay-and-profile` dispatch build and run
-a historical simulation. They publish files as GitHub Actions artifacts; there
+a synthetic simulation and the pinned real Fed historical dataset. They publish files as GitHub Actions artifacts; there
 is no live feed, trading connection or external monitoring endpoint.
 
 ## Run a batch
+
+For the real Fed history, run
+`python python/replay_fed_history.py --batch build/release/rates_batch --data data/fed-gsw --out results/fed-replay`.
+It verifies source/output hashes, replays only complete observation dates with
+zero permitted age, and marks every summary `retrospective_observation_date`.
+Inspect `data/fed-gsw/manifest.json` for provenance and missing source dates.
+This mode uses a revised historical vintage without original publication times;
+the timestamp is an observation-date label. See the [data guide](../docs/real-historical-data.md).
+The synthetic commands below remain reproducible fixtures.
 
 ```sh
 python python/generate_replay.py --out results/input --trades 1000

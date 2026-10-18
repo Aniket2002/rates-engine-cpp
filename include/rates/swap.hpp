@@ -13,11 +13,11 @@ struct Swap {
     Conventions conventions{};
     void validate(Date valuation) const;
 };
-enum class Instrument : unsigned char { Deposit, Swap };
+enum class Instrument : unsigned char { Deposit, Swap, ContinuousZero };
 struct MarketQuote {
     Instrument instrument;
     std::string label;
-    Date maturity; // Unadjusted contractual maturity; quote starts at valuation.
+    Date maturity; // Contract maturity; ContinuousZero uses this exact date without business-day adjustment.
     SimpleRate rate;
 };
 } // namespace rates

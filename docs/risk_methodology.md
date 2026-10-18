@@ -45,3 +45,9 @@ cover only successfully priced trades. Batch output explicitly marks partial res
 `RiskReport` contains valuation date, curve identifier, trade, base valuation,
 par rate, leg PVs, both risk coordinate vectors, parallel quote DV01, bump size
 and calibration tolerance. CLI `summary.csv` and `risk.csv` serialize it.
+
+For `continuous_zero` inputs, the quotes are exact-date, ACT/365F continuous zero
+yields. Quote shocks rebuild those discount nodes analytically, and quote buckets
+coincide with zero-node buckets. Historical Fed replay therefore reports fitted
+Treasury zero-yield sensitivities, not swap-par-quote hedge exposures. See the
+[historical-data guide](real-historical-data.md) for source and timing assumptions.

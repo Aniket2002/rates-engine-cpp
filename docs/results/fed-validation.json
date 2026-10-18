@@ -1,0 +1,10 @@
+{
+  "comparisons": 114,
+  "quantlib_version": "1.44",
+  "max_pv_error": 3.4924596548080444e-10,
+  "max_risk_error": 5.766196409240365e-10,
+  "max_discount_error": 0.0,
+  "max_quantlib_error": 1.1641532182693481e-10,
+  "source_observations": 249,
+  "passed": true
+}

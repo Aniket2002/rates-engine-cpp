@@ -95,6 +95,9 @@ if(BUILD_TESTING)
     --output ${CMAKE_CURRENT_BINARY_DIR}/conventions)
   add_test(NAME batch_replay_contract COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/python/test_batch.py $<TARGET_FILE:rates_batch>)
+  add_test(NAME real_historical_data COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/python/test_real_history.py --batch $<TARGET_FILE:rates_batch>
+    --cli $<TARGET_FILE:rates_cli> --out ${CMAKE_CURRENT_BINARY_DIR}/historical-validation)
   if(RATES_COVERAGE)
     find_program(LLVM_COV_EXECUTABLE NAMES llvm-cov REQUIRED)
     find_program(LLVM_PROFDATA_EXECUTABLE NAMES llvm-profdata REQUIRED)

@@ -36,7 +36,7 @@ Row parse_row(const std::string &text) {
         const auto valuation = Date::parse(fields[1]);
         if (valuation != time.date())
             throw std::invalid_argument("Snapshot valuation must equal its UTC observation date");
-        if (fields[2] != "deposit" && fields[2] != "swap")
+        if (fields[2] != "deposit" && fields[2] != "swap" && fields[2] != "continuous_zero")
             throw std::invalid_argument("Unknown history instrument");
         std::size_t consumed = 0;
         const double rate = std::stod(fields[5], &consumed);
@@ -44,8 +44,10 @@ Row parse_row(const std::string &text) {
             throw std::invalid_argument("Invalid history rate");
         return {time,
                 valuation,
-                {fields[2] == "deposit" ? Instrument::Deposit : Instrument::Swap, fields[3],
-                 Date::parse(fields[4]), SimpleRate{rate}}};
+                {fields[2] == "deposit"
+                     ? Instrument::Deposit
+                     : (fields[2] == "swap" ? Instrument::Swap : Instrument::ContinuousZero),
+                 fields[3], Date::parse(fields[4]), SimpleRate{rate}}};
     } catch (const std::exception &error) {
         throw MarketDataError(MarketDataFailure::Invalid,
                               std::string{"Invalid history row: "} + error.what());

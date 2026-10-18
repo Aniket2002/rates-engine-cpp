@@ -39,6 +39,12 @@ jobs:
         shell: bash
         run: python python/validate_conventions.py --cli build/rates_cli${{ runner.os == 'Windows' && '.exe' || '' }} --output build/conventions --require-quantlib
       - run: cmake --install build --prefix install
+      - name: Real Fed history and independent validation
+        shell: bash
+        run: python python/test_real_history.py --batch build/rates_batch${{ runner.os == 'Windows' && '.exe' || '' }} --cli build/rates_cli${{ runner.os == 'Windows' && '.exe' || '' }} --out build/historical-validation --require-quantlib
+      - name: Complete 2025 historical replay
+        if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'g++'
+        run: python python/replay_fed_history.py --batch build/rates_batch --data data/fed-gsw --out build/historical-replay
       - name: Installed consumer
         shell: bash
         run: |
@@ -53,6 +59,8 @@ jobs:
             build/validation/
             build/external-validation/
             build/conventions/
+            build/historical-validation/
+            build/historical-replay/
             build/Testing/Temporary/
   sanitizers:
     runs-on: ubuntu-latest
