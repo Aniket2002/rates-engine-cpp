@@ -45,6 +45,13 @@
 This is a reproducible quantitative engineering project, not a complete
 institutional derivatives platform or a claim of production readiness.
 
+The separate [ETF simulator](trading-simulation.md) is single-instrument long/cash,
+with fixed modeled spreads/fees and next-original-open fills. It has no liquidity,
+market-impact, corporate-action, settlement or interest model. Its first public
+TLT example covers an action-free interval and is explicitly retrospective.
+Availability checks protect the signal from future inputs under the supplied
+timestamps; they cannot certify the historical provenance of those timestamps.
+
 Next improvements: add explicit front/long stubs and payment lags, expand convention-specific
 external validation, then introduce distinct forwarding and collateral curves
 with independently validated instruments and data assumptions.

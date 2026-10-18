@@ -37,7 +37,24 @@ same toolchain measured **835/844 lines (98.93%)** and **382/429 branch outcomes
 (89.04%)**. All 51 coverage CTest entries passed (46 GoogleTest cases plus five
 integration/independent checks). The original and v2 snapshots above remain
 baseline evidence; [historical-data coverage](results/coverage-historical.json)
-contains the latest per-file totals and uncovered branches.
+contains that stage's per-file totals and uncovered branches.
+
+With the separate ETF trading module, the same toolchain measures
+**997/1008 lines (98.91%)** and **515/583 branch outcomes (88.34%)**, with all
+109 emitted functions executed. All 62 coverage CTest entries pass (56 GoogleTest
+cases and six integration/independent checks); Release additionally runs the
+performance contract and Python bindings, for 64 checks. See
+[trading-module coverage](results/coverage-trading.json). The new denominator
+includes the trading library; its CLI and Python importer remain outside scope.
+Remaining trading gaps include defensive arithmetic/statistics failures and
+compound validation condition outcomes, recorded without exclusions.
+
+This Windows LLVM run also reports zero-hash unused-inline mapping warnings when
+combining executable objects. The [diagnostic dump](results/coverage-trading-diagnostics.txt)
+lists them. They are unused mappings of header accessors/helpers; emitted versions
+have measured records. Including the simulator object does not change line totals
+versus the tests/CLI/batch objects alone. The coverage tool now preserves LLVM's
+diagnostics alongside every report so these warnings remain auditable.
 
 ```sh
 cmake -S . -B build/coverage -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++ -DRATES_COVERAGE=ON -DRATES_BUILD_BENCHMARKS=OFF

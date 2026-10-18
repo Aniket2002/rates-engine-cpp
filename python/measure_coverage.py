@@ -21,6 +21,7 @@ def main():
     parser.add_argument("--tests", type=Path, required=True)
     parser.add_argument("--cli", type=Path, required=True)
     parser.add_argument("--batch", type=Path, required=True)
+    parser.add_argument("--simulator", type=Path, required=True)
     parser.add_argument("--llvm-cov", default="llvm-cov")
     parser.add_argument("--llvm-profdata", default="llvm-profdata")
     args = parser.parse_args()
@@ -39,8 +40,12 @@ def main():
     subprocess.run([args.llvm_profdata, "merge", "-sparse", *map(str, raw), "-o", str(profile)], check=True)
     sources = sorted(ROOT.joinpath("src").glob("*.cpp")) + sorted(ROOT.joinpath("include/rates").glob("*.hpp"))
     common = [str(args.tests.resolve()), "-object", str(args.cli.resolve()), "-object", str(args.batch.resolve()),
+              "-object", str(args.simulator.resolve()),
               "-instr-profile=" + str(profile), *map(str, sources)]
-    export = subprocess.check_output([args.llvm_cov, "export", *common], text=True)
+    exported = subprocess.run([args.llvm_cov, "export", *common],
+                              capture_output=True, text=True, check=True)
+    export = exported.stdout
+    (output / "diagnostics.txt").write_text(exported.stderr, encoding="utf-8")
     (output / "coverage.json").write_text(export, encoding="utf-8")
     data = json.loads(export)["data"][0]
     files = []

@@ -1,0 +1,25 @@
+{
+  "symbol": "TLT",
+  "provider": "Yahoo Finance",
+  "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/TLT?period1=1736121600&period2=1738368000&interval=1d&events=div%2Csplits%2CcapitalGains",
+  "source_page": "https://finance.yahoo.com/quote/TLT/history/",
+  "retrieved_at_utc": "2026-10-18T08:57:34.386757+00:00",
+  "retrieval_note": "Time this import ran; source-file mode may use an earlier downloaded vintage",
+  "availability_basis": "retrospective",
+  "point_in_time_certified": false,
+  "publication_time_known": false,
+  "first_session": "2025-01-06",
+  "last_session": "2025-01-31",
+  "session_count": 18,
+  "corporate_actions_reported": 0,
+  "price_basis": "quote.open and quote.close, not dividend-adjusted adjclose",
+  "timestamp_assumption": "14:30 UTC open, 21:00 UTC close, available one second later; NOT original availability",
+  "calendar_note": "Fixed January 2025 interval only: Jan 9 and Jan 20 excluded; no early closes or DST changes",
+  "return_basis": "price_return_action_free_interval",
+  "reuse_note": "Vendor data is not covered by this repository's MIT license. No redistribution permission claimed; keep downloaded files local and review Yahoo terms for intended use.",
+  "hashes": {
+    "source.json": "88daad47a9877fd8cdc2abfc0f015ccf57014ad5f4717c3178d800489b33b8f5",
+    "prices.csv": "2674bad0681ff6177103473b9550832f460aec0d0f1150d97baab3fb1f65bbac",
+    "decisions.csv": "45e3a8e5d7da2d2a614ad6b5fdef93796099863b49f15e1841706e40d3ab1cf7"
+  }
+}

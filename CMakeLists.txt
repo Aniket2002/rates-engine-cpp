@@ -14,7 +14,7 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(rates_engine STATIC src/date.cpp src/conventions.cpp src/schedule.cpp
   src/discount_curve.cpp src/swap_pricer.cpp src/curve_bootstrapper.cpp src/risk_engine.cpp
-  src/portfolio.cpp src/history.cpp)
+  src/portfolio.cpp src/history.cpp src/trading.cpp)
 add_library(rates::rates_engine ALIAS rates_engine)
 target_compile_features(rates_engine PUBLIC cxx_std_20)
 set_target_properties(rates_engine PROPERTIES CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)
@@ -49,6 +49,9 @@ rates_checks(rates_cli)
 add_executable(rates_batch apps/rates_batch.cpp)
 target_link_libraries(rates_batch PRIVATE rates_engine)
 rates_checks(rates_batch)
+add_executable(rates_simulate apps/rates_simulate.cpp)
+target_link_libraries(rates_simulate PRIVATE rates_engine)
+rates_checks(rates_simulate)
 if(RATES_BUILD_BENCHMARKS)
   add_executable(rates_benchmark benchmarks/benchmark_main.cpp)
   target_link_libraries(rates_benchmark PRIVATE rates_engine)
@@ -74,7 +77,7 @@ if(BUILD_TESTING)
       GIT_TAG v1.17.0 GIT_SHALLOW TRUE)
     FetchContent_MakeAvailable(googletest)
   endif()
-  add_executable(rates_tests tests/test_engine.cpp tests/test_v2.cpp)
+  add_executable(rates_tests tests/test_engine.cpp tests/test_v2.cpp tests/test_trading.cpp)
   target_link_libraries(rates_tests PRIVATE rates_engine GTest::gtest_main)
   rates_checks(rates_tests)
   include(GoogleTest)
@@ -98,15 +101,19 @@ if(BUILD_TESTING)
   add_test(NAME real_historical_data COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/python/test_real_history.py --batch $<TARGET_FILE:rates_batch>
     --cli $<TARGET_FILE:rates_cli> --out ${CMAKE_CURRENT_BINARY_DIR}/historical-validation)
+  add_test(NAME trading_contract COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/python/test_trading.py --simulator $<TARGET_FILE:rates_simulate>
+    --report ${CMAKE_CURRENT_BINARY_DIR}/trading-validation.json)
   if(RATES_COVERAGE)
     find_program(LLVM_COV_EXECUTABLE NAMES llvm-cov REQUIRED)
     find_program(LLVM_PROFDATA_EXECUTABLE NAMES llvm-profdata REQUIRED)
     add_custom_target(coverage
       COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python/measure_coverage.py
         --build-dir ${CMAKE_CURRENT_BINARY_DIR} --tests $<TARGET_FILE:rates_tests>
-        --cli $<TARGET_FILE:rates_cli> --batch $<TARGET_FILE:rates_batch> --llvm-cov ${LLVM_COV_EXECUTABLE}
+        --cli $<TARGET_FILE:rates_cli> --batch $<TARGET_FILE:rates_batch>
+        --simulator $<TARGET_FILE:rates_simulate> --llvm-cov ${LLVM_COV_EXECUTABLE}
         --llvm-profdata ${LLVM_PROFDATA_EXECUTABLE}
-      DEPENDS rates_tests rates_cli rates_batch USES_TERMINAL VERBATIM)
+      DEPENDS rates_tests rates_cli rates_batch rates_simulate USES_TERMINAL VERBATIM)
   endif()
 endif()
 if(RATES_BUILD_PYTHON)

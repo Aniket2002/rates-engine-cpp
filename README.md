@@ -13,8 +13,17 @@ from 2025**, with ten zero-rate tenors per date, alongside synthetic test fixtur
 The [historical-data guide](docs/real-historical-data.md) documents source,
 conversion, reuse terms and a completed 24,900-trade-valuation replay.
 This is a single-curve model; sample swap portfolios remain hypothetical.
-The integration passes **53 local checks**, with **98.93% library line coverage
+The Fed integration baseline passed **53 local checks**, with **98.93% library line coverage
 and 89.04% branch coverage**; independent historical validation includes QuantLib.
+
+The [ETF trading simulator](docs/trading-simulation.md) adds versioned observation/
+availability times, a simple long/cash trend strategy, next-open execution with
+costs, and cash/holdings/P&L and risk reports. A real **18-session TLT demonstration**
+has been run and independently checked. Its public prices are a later download,
+so it is explicitly retrospective; original availability and fillability are
+not established. The simulator enforces supplied timestamps without certifying
+the underlying archive. Full verification now includes **64 local checks**, with
+**98.91% measured library line coverage and 88.34% branch coverage**.
 
 Run the pinned historical dataset without network access:
 

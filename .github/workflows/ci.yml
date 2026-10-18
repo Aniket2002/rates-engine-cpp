@@ -61,6 +61,7 @@ jobs:
             build/conventions/
             build/historical-validation/
             build/historical-replay/
+            build/trading-validation.json
             build/Testing/Temporary/
   sanitizers:
     runs-on: ubuntu-latest
@@ -103,4 +104,5 @@ jobs:
             build/coverage/coverage/report.txt
             build/coverage/coverage/ctest.log
             build/coverage/coverage/uncovered.txt
+            build/coverage/coverage/diagnostics.txt
             build/coverage/coverage/html/

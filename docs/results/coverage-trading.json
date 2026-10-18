@@ -1,0 +1,1226 @@
+{
+  "scope": "src/*.cpp and include/rates/*.hpp; excludes tests, CLI, bindings and dependencies",
+  "test_exit_code": 0,
+  "totals": {
+    "lines": {
+      "count": 1008,
+      "covered": 997,
+      "percent": 98.90873015873017
+    },
+    "functions": {
+      "count": 109,
+      "covered": 109,
+      "percent": 100
+    },
+    "instantiations": {
+      "count": 113,
+      "covered": 113,
+      "percent": 100
+    },
+    "regions": {
+      "count": 855,
+      "covered": 844,
+      "notcovered": 11,
+      "percent": 98.71345029239767
+    },
+    "branches": {
+      "count": 583,
+      "covered": 515,
+      "notcovered": 68,
+      "percent": 88.33619210977702
+    },
+    "mcdc": {
+      "count": 0,
+      "covered": 0,
+      "notcovered": 0,
+      "percent": 0
+    }
+  },
+  "files": [
+    {
+      "file": "include/rates/conventions.hpp",
+      "summary": {
+        "lines": {
+          "count": 4,
+          "covered": 4,
+          "percent": 100
+        },
+        "functions": {
+          "count": 1,
+          "covered": 1,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 5,
+          "covered": 5,
+          "percent": 100
+        },
+        "regions": {
+          "count": 4,
+          "covered": 4,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "branches": {
+          "count": 2,
+          "covered": 2,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": [
+        {
+          "line": 11,
+          "column": 13,
+          "true_count": 0,
+          "false_count": 11810059
+        },
+        {
+          "line": 11,
+          "column": 13,
+          "true_count": 0,
+          "false_count": 21088349
+        },
+        {
+          "line": 11,
+          "column": 13,
+          "true_count": 0,
+          "false_count": 449
+        }
+      ]
+    },
+    {
+      "file": "include/rates/curve_bootstrapper.hpp",
+      "summary": {
+        "lines": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100
+        },
+        "functions": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100
+        },
+        "regions": {
+          "count": 2,
+          "covered": 2,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": []
+    },
+    {
+      "file": "include/rates/date.hpp",
+      "summary": {
+        "lines": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100
+        },
+        "functions": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100
+        },
+        "regions": {
+          "count": 2,
+          "covered": 2,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": []
+    },
+    {
+      "file": "include/rates/discount_curve.hpp",
+      "summary": {
+        "lines": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100
+        },
+        "functions": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100
+        },
+        "regions": {
+          "count": 2,
+          "covered": 2,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": []
+    },
+    {
+      "file": "include/rates/history.hpp",
+      "summary": {
+        "lines": {
+          "count": 7,
+          "covered": 7,
+          "percent": 100
+        },
+        "functions": {
+          "count": 7,
+          "covered": 7,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 7,
+          "covered": 7,
+          "percent": 100
+        },
+        "regions": {
+          "count": 8,
+          "covered": 8,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": []
+    },
+    {
+      "file": "include/rates/portfolio.hpp",
+      "summary": {
+        "lines": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100
+        },
+        "functions": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100
+        },
+        "regions": {
+          "count": 2,
+          "covered": 2,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": []
+    },
+    {
+      "file": "include/rates/risk_engine.hpp",
+      "summary": {
+        "lines": {
+          "count": 5,
+          "covered": 5,
+          "percent": 100
+        },
+        "functions": {
+          "count": 5,
+          "covered": 5,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 5,
+          "covered": 5,
+          "percent": 100
+        },
+        "regions": {
+          "count": 5,
+          "covered": 5,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": []
+    },
+    {
+      "file": "include/rates/swap_pricer.hpp",
+      "summary": {
+        "lines": {
+          "count": 3,
+          "covered": 3,
+          "percent": 100
+        },
+        "functions": {
+          "count": 3,
+          "covered": 3,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 3,
+          "covered": 3,
+          "percent": 100
+        },
+        "regions": {
+          "count": 3,
+          "covered": 3,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": []
+    },
+    {
+      "file": "include/rates/trading.hpp",
+      "summary": {
+        "lines": {
+          "count": 1,
+          "covered": 1,
+          "percent": 100
+        },
+        "functions": {
+          "count": 1,
+          "covered": 1,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 1,
+          "covered": 1,
+          "percent": 100
+        },
+        "regions": {
+          "count": 1,
+          "covered": 1,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": []
+    },
+    {
+      "file": "src/conventions.cpp",
+      "summary": {
+        "lines": {
+          "count": 53,
+          "covered": 53,
+          "percent": 100
+        },
+        "functions": {
+          "count": 4,
+          "covered": 4,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 4,
+          "covered": 4,
+          "percent": 100
+        },
+        "regions": {
+          "count": 58,
+          "covered": 58,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "branches": {
+          "count": 46,
+          "covered": 41,
+          "notcovered": 5,
+          "percent": 89.13043478260869
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": [
+        {
+          "line": 22,
+          "column": 30,
+          "true_count": 0,
+          "false_count": 3941
+        },
+        {
+          "line": 36,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 3931
+        },
+        {
+          "line": 36,
+          "column": 54,
+          "true_count": 0,
+          "false_count": 3930
+        },
+        {
+          "line": 50,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 10834
+        },
+        {
+          "line": 50,
+          "column": 76,
+          "true_count": 0,
+          "false_count": 10832
+        }
+      ]
+    },
+    {
+      "file": "src/curve_bootstrapper.cpp",
+      "summary": {
+        "lines": {
+          "count": 129,
+          "covered": 128,
+          "percent": 99.2248062015504
+        },
+        "functions": {
+          "count": 9,
+          "covered": 9,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 9,
+          "covered": 9,
+          "percent": 100
+        },
+        "regions": {
+          "count": 107,
+          "covered": 106,
+          "notcovered": 1,
+          "percent": 99.06542056074767
+        },
+        "branches": {
+          "count": 72,
+          "covered": 64,
+          "notcovered": 8,
+          "percent": 88.88888888888889
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": [
+        {
+          "line": 26,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 4166
+        },
+        {
+          "line": 26,
+          "column": 31,
+          "true_count": 0,
+          "false_count": 4166
+        },
+        {
+          "line": 72,
+          "column": 13,
+          "true_count": 0,
+          "false_count": 8092
+        },
+        {
+          "line": 74,
+          "column": 13,
+          "true_count": 0,
+          "false_count": 8091
+        },
+        {
+          "line": 77,
+          "column": 13,
+          "true_count": 0,
+          "false_count": 8091
+        },
+        {
+          "line": 77,
+          "column": 40,
+          "true_count": 0,
+          "false_count": 8091
+        },
+        {
+          "line": 10,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 4241
+        },
+        {
+          "line": 11,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 4240
+        }
+      ]
+    },
+    {
+      "file": "src/date.cpp",
+      "summary": {
+        "lines": {
+          "count": 80,
+          "covered": 80,
+          "percent": 100
+        },
+        "functions": {
+          "count": 15,
+          "covered": 15,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 15,
+          "covered": 15,
+          "percent": 100
+        },
+        "regions": {
+          "count": 82,
+          "covered": 82,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "branches": {
+          "count": 60,
+          "covered": 54,
+          "notcovered": 6,
+          "percent": 90
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": [
+        {
+          "line": 18,
+          "column": 27,
+          "true_count": 0,
+          "false_count": 41754
+        },
+        {
+          "line": 18,
+          "column": 42,
+          "true_count": 0,
+          "false_count": 41754
+        },
+        {
+          "line": 21,
+          "column": 34,
+          "true_count": 0,
+          "false_count": 334032
+        },
+        {
+          "line": 42,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 146803
+        },
+        {
+          "line": 52,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 227543
+        },
+        {
+          "line": 68,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 2
+        }
+      ]
+    },
+    {
+      "file": "src/discount_curve.cpp",
+      "summary": {
+        "lines": {
+          "count": 55,
+          "covered": 55,
+          "percent": 100
+        },
+        "functions": {
+          "count": 7,
+          "covered": 7,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 7,
+          "covered": 7,
+          "percent": 100
+        },
+        "regions": {
+          "count": 39,
+          "covered": 39,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "branches": {
+          "count": 24,
+          "covered": 22,
+          "notcovered": 2,
+          "percent": 91.66666666666666
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": [
+        {
+          "line": 16,
+          "column": 13,
+          "true_count": 0,
+          "false_count": 978754
+        },
+        {
+          "line": 27,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 15441870
+        }
+      ]
+    },
+    {
+      "file": "src/history.cpp",
+      "summary": {
+        "lines": {
+          "count": 166,
+          "covered": 161,
+          "percent": 96.98795180722891
+        },
+        "functions": {
+          "count": 12,
+          "covered": 12,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 12,
+          "covered": 12,
+          "percent": 100
+        },
+        "regions": {
+          "count": 158,
+          "covered": 154,
+          "notcovered": 4,
+          "percent": 97.46835443037975
+        },
+        "branches": {
+          "count": 109,
+          "covered": 92,
+          "notcovered": 17,
+          "percent": 84.40366972477065
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": [
+        {
+          "line": 58,
+          "column": 30,
+          "true_count": 0,
+          "false_count": 13249
+        },
+        {
+          "line": 58,
+          "column": 49,
+          "true_count": 0,
+          "false_count": 13249
+        },
+        {
+          "line": 58,
+          "column": 68,
+          "true_count": 0,
+          "false_count": 13249
+        },
+        {
+          "line": 58,
+          "column": 87,
+          "true_count": 0,
+          "false_count": 13249
+        },
+        {
+          "line": 62,
+          "column": 13,
+          "true_count": 0,
+          "false_count": 79484
+        },
+        {
+          "line": 84,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 545
+        },
+        {
+          "line": 100,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 32
+        },
+        {
+          "line": 110,
+          "column": 12,
+          "true_count": 12794,
+          "false_count": 0
+        },
+        {
+          "line": 130,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 29
+        },
+        {
+          "line": 138,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 71
+        },
+        {
+          "line": 139,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 70
+        },
+        {
+          "line": 158,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 23
+        },
+        {
+          "line": 165,
+          "column": 13,
+          "true_count": 0,
+          "false_count": 145
+        },
+        {
+          "line": 168,
+          "column": 13,
+          "true_count": 0,
+          "false_count": 145
+        },
+        {
+          "line": 168,
+          "column": 44,
+          "true_count": 0,
+          "false_count": 145
+        },
+        {
+          "line": 16,
+          "column": 9,
+          "true_count": 12949,
+          "false_count": 0
+        },
+        {
+          "line": 27,
+          "column": 9,
+          "true_count": 12917,
+          "false_count": 0
+        },
+        {
+          "line": 29,
+          "column": 31,
+          "true_count": 0,
+          "false_count": 12915
+        }
+      ]
+    },
+    {
+      "file": "src/portfolio.cpp",
+      "summary": {
+        "lines": {
+          "count": 90,
+          "covered": 90,
+          "percent": 100
+        },
+        "functions": {
+          "count": 4,
+          "covered": 4,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 4,
+          "covered": 4,
+          "percent": 100
+        },
+        "regions": {
+          "count": 45,
+          "covered": 45,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "branches": {
+          "count": 32,
+          "covered": 31,
+          "notcovered": 1,
+          "percent": 96.875
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": [
+        {
+          "line": 38,
+          "column": 13,
+          "true_count": 0,
+          "false_count": 2232
+        }
+      ]
+    },
+    {
+      "file": "src/risk_engine.cpp",
+      "summary": {
+        "lines": {
+          "count": 149,
+          "covered": 149,
+          "percent": 100
+        },
+        "functions": {
+          "count": 20,
+          "covered": 20,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 20,
+          "covered": 20,
+          "percent": 100
+        },
+        "regions": {
+          "count": 74,
+          "covered": 73,
+          "notcovered": 1,
+          "percent": 98.64864864864865
+        },
+        "branches": {
+          "count": 36,
+          "covered": 34,
+          "notcovered": 2,
+          "percent": 94.44444444444444
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": [
+        {
+          "line": 8,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 75
+        },
+        {
+          "line": 26,
+          "column": 35,
+          "true_count": 3,
+          "false_count": 0
+        }
+      ]
+    },
+    {
+      "file": "src/schedule.cpp",
+      "summary": {
+        "lines": {
+          "count": 43,
+          "covered": 40,
+          "percent": 93.02325581395348
+        },
+        "functions": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 2,
+          "covered": 2,
+          "percent": 100
+        },
+        "regions": {
+          "count": 49,
+          "covered": 47,
+          "notcovered": 2,
+          "percent": 95.91836734693877
+        },
+        "branches": {
+          "count": 32,
+          "covered": 29,
+          "notcovered": 3,
+          "percent": 90.625
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": [
+        {
+          "line": 9,
+          "column": 24,
+          "true_count": 0,
+          "false_count": 17141
+        },
+        {
+          "line": 39,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 10730
+        },
+        {
+          "line": 41,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 10730
+        }
+      ]
+    },
+    {
+      "file": "src/swap_pricer.cpp",
+      "summary": {
+        "lines": {
+          "count": 52,
+          "covered": 52,
+          "percent": 100
+        },
+        "functions": {
+          "count": 5,
+          "covered": 5,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 5,
+          "covered": 5,
+          "percent": 100
+        },
+        "regions": {
+          "count": 25,
+          "covered": 25,
+          "notcovered": 0,
+          "percent": 100
+        },
+        "branches": {
+          "count": 16,
+          "covered": 13,
+          "notcovered": 3,
+          "percent": 81.25
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": [
+        {
+          "line": 53,
+          "column": 38,
+          "true_count": 0,
+          "false_count": 248705
+        },
+        {
+          "line": 53,
+          "column": 73,
+          "true_count": 0,
+          "false_count": 248705
+        },
+        {
+          "line": 54,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 248705
+        }
+      ]
+    },
+    {
+      "file": "src/trading.cpp",
+      "summary": {
+        "lines": {
+          "count": 163,
+          "covered": 161,
+          "percent": 98.77300613496932
+        },
+        "functions": {
+          "count": 6,
+          "covered": 6,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 6,
+          "covered": 6,
+          "percent": 100
+        },
+        "regions": {
+          "count": 189,
+          "covered": 186,
+          "notcovered": 3,
+          "percent": 98.4126984126984
+        },
+        "branches": {
+          "count": 154,
+          "covered": 133,
+          "notcovered": 21,
+          "percent": 86.36363636363636
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        }
+      },
+      "uncovered_branches": [
+        {
+          "line": 33,
+          "column": 35,
+          "true_count": 0,
+          "false_count": 4
+        },
+        {
+          "line": 81,
+          "column": 50,
+          "true_count": 0,
+          "false_count": 24
+        },
+        {
+          "line": 87,
+          "column": 46,
+          "true_count": 0,
+          "false_count": 20
+        },
+        {
+          "line": 105,
+          "column": 41,
+          "true_count": 0,
+          "false_count": 18
+        },
+        {
+          "line": 126,
+          "column": 39,
+          "true_count": 0,
+          "false_count": 76
+        },
+        {
+          "line": 126,
+          "column": 54,
+          "true_count": 0,
+          "false_count": 76
+        },
+        {
+          "line": 132,
+          "column": 13,
+          "true_count": 0,
+          "false_count": 76
+        },
+        {
+          "line": 139,
+          "column": 28,
+          "true_count": 0,
+          "false_count": 4
+        },
+        {
+          "line": 172,
+          "column": 44,
+          "true_count": 0,
+          "false_count": 16
+        },
+        {
+          "line": 173,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 16
+        },
+        {
+          "line": 173,
+          "column": 46,
+          "true_count": 0,
+          "false_count": 16
+        },
+        {
+          "line": 14,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 31
+        },
+        {
+          "line": 15,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 29
+        },
+        {
+          "line": 15,
+          "column": 46,
+          "true_count": 0,
+          "false_count": 29
+        },
+        {
+          "line": 16,
+          "column": 55,
+          "true_count": 0,
+          "false_count": 26
+        },
+        {
+          "line": 16,
+          "column": 77,
+          "true_count": 0,
+          "false_count": 26
+        },
+        {
+          "line": 17,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 26
+        },
+        {
+          "line": 17,
+          "column": 40,
+          "true_count": 0,
+          "false_count": 26
+        },
+        {
+          "line": 18,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 26
+        },
+        {
+          "line": 9,
+          "column": 9,
+          "true_count": 0,
+          "false_count": 40
+        },
+        {
+          "line": 9,
+          "column": 34,
+          "true_count": 0,
+          "false_count": 40
+        }
+      ]
+    }
+  ],
+  "llvm_version": "LLVM (http://llvm.org/):\n  LLVM version 23.1.3\n  Optimized build."
+}
