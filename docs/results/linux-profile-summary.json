@@ -1,0 +1,21 @@
+{
+  "scope": "whole process: common setup, initial cached calculation, warm-up and one measured 100-trade invocation",
+  "caveat": "Callgrind instructions are not CPU cycles; Massif live heap is not total allocated bytes",
+  "modes": {
+    "cached": {
+      "instructions": 268056636,
+      "peak_live_heap_bytes": 163448,
+      "peak_heap_including_overhead_bytes": 164640
+    },
+    "uncached": {
+      "instructions": 271612206,
+      "peak_live_heap_bytes": 159736,
+      "peak_heap_including_overhead_bytes": 160928
+    },
+    "independent": {
+      "instructions": 17000522754,
+      "peak_live_heap_bytes": 182008,
+      "peak_heap_including_overhead_bytes": 184056
+    }
+  }
+}

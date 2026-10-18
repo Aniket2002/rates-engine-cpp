@@ -18,6 +18,12 @@ operational JSON summaries, scaling benchmarks and Linux profiling automation.
 The initial
 execution report and benchmark results below are retained as baseline evidence.
 
+V2 verification: **50 local checks passed**, **98.92% measured library line
+coverage**, and all seven main CI jobs passed. On the recorded Linux synthetic
+100-trade workload, shared full risk including setup was **56.8x faster** than
+independent per-trade reports. The [v2 report](docs/v2.md) includes p50/p95/p99
+through 10,000 trades, Linux profiles and the measurement boundaries.
+
 ## Features
 
 - Gregorian dates, leap years, month/year tenors, month-end schedules and short

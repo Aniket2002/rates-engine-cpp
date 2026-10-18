@@ -1,0 +1,21 @@
+{
+  "performance_revision": "60195cff8aa2dba42be777141045d713ebec348a",
+  "linux_workflow_run": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39026489883",
+  "linux_artifact": "replay-performance-profiles",
+  "performance_samples_per_workload": 101,
+  "windows_compiler": "LLVM-MinGW Clang 23.1.3",
+  "windows_cpu": "Intel Core i9-11900H",
+  "windows_configuration": "Release",
+  "windows_isolation": "No affinity or frequency lock; later samples overlapped local build/test work",
+  "linux_compiler": "GNU 13.3.0",
+  "linux_configuration": "RelWithDebInfo",
+  "linux_cpu": "AMD EPYC 7763, four visible virtual CPUs",
+  "coverage_revision": "f7dd4cfb7ed3ccaf5f71f04419422979f46da072",
+  "validated_revision": "f7dd4cfb7ed3ccaf5f71f04419422979f46da072",
+  "ci_run": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39094645896",
+  "ci_result": "success: all seven jobs, including GCC/Clang/MSVC/macOS, static, coverage and ASan/UBSan",
+  "coverage_toolchain": "LLVM-MinGW Clang 23.1.3, Debug -O0",
+  "local_release_ctest": {"passed": 50, "failed": 0},
+  "local_coverage_ctest": {"passed": 48, "failed": 0},
+  "scope": "Synthetic single-curve library and batch simulation; no end-to-end trading latency claim"
+}

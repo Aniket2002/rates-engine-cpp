@@ -15,10 +15,22 @@ integration ran under coverage; optional bindings are excluded in this build.
 Artifacts: [baseline](results/coverage-baseline.json),
 [post-update](results/coverage-upgrade.json), and [baseline text](results/coverage-baseline.txt).
 Each JSON includes per-file totals and uncovered branch locations/counts.
+
+Version 2, including portfolio aggregation and historical replay, measured
+**821/830 lines (98.92%)** and **372/419 branch outcomes (88.78%)** on the same
+Windows Clang toolchain. All 102 instrumented functions executed. The coverage
+run passed 48 CTest entries (44 GoogleTest cases and four integration/independent
+validation checks); benchmarks and optional bindings are excluded from this build.
+See [v2 summary](results/coverage-v2.json). This measures a larger denominator
+than v1, rather than a directly comparable fixed-code coverage percentage.
+
 No uncovered branch has been excluded just to raise the percentage. Remaining
 gaps include defensive checks for non-finite mutated quantities, some compound
 condition outcomes and redundant date validation already enforced by prepared
 trades. They remain visible for review.
+New replay gaps include low-level file-read/reopen races and defensive index
+consistency failures; portfolio aggregate overflow and partial trade failures
+are exercised. The complete uncovered locations remain in the JSON/HTML report.
 
 ```sh
 cmake -S . -B build/coverage -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++ -DRATES_COVERAGE=ON -DRATES_BUILD_BENCHMARKS=OFF
