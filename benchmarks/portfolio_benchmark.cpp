@@ -38,6 +38,7 @@ void measure(std::ostream &out, const char *name, int n, int samples, std::size_
              std::size_t schedules, F function) {
     sink = function(); // One untimed warm-up; construction boundaries are described in docs/v2.md.
     std::vector<double> times;
+    times.reserve(static_cast<std::size_t>(samples));
     for (int i = 0; i < samples; ++i) {
         const auto start = std::chrono::steady_clock::now();
         const auto result = function();
@@ -81,9 +82,11 @@ int main(int argc, char **argv) {
         const Date valuation{2025, 1, 2};
         const std::vector<int> months{1, 3, 6, 12, 24, 36, 60, 120};
         std::vector<MarketQuote> quotes;
+        quotes.reserve(months.size());
         for (std::size_t i = 0; i < months.size(); ++i)
             quotes.push_back({i < 3 ? Instrument::Deposit : Instrument::Swap, std::to_string(months[i]),
-                              valuation.add_months(months[i]), SimpleRate{.025 + .0015 * i}});
+                              valuation.add_months(months[i]),
+                              SimpleRate{.025 + .0015 * static_cast<double>(i)}});
         const RiskEngine risk;
         const auto scenarios = risk.prepare_scenarios(valuation, quotes);
         if (scenarios.calibration_count() != 19)
@@ -92,6 +95,7 @@ int main(int argc, char **argv) {
             if (n > maximum || (mode == "independent" && n > 100))
                 break;
             std::vector<PortfolioTrade> trades;
+            trades.reserve(static_cast<std::size_t>(n));
             for (int i = 0; i < n; ++i)
                 trades.push_back(
                     {std::to_string(i), Swap{valuation.add_days(4), valuation.add_months(24 + 12 * (i % 5)),
@@ -130,7 +134,8 @@ int main(int argc, char **argv) {
                     return PortfolioRiskEngine{trades}.calculate(fresh).pv;
                 });
             if (n == 100 && (mode == "all" || mode == "independent"))
-                measure(out, "independent", n, samples, 19 * n, n, [&] { return independent().pv; });
+                measure(out, "independent", n, samples, 19 * static_cast<std::size_t>(n), n,
+                        [&] { return independent().pv; });
         }
         return 0;
     } catch (const std::exception &e) {

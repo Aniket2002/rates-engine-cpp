@@ -63,7 +63,8 @@ Timestamp Timestamp::parse(const std::string &text) {
               seconds = std::stoi(text.substr(17, 2));
     if (hours > 23 || minutes > 59 || seconds > 59)
         throw std::invalid_argument("Invalid timestamp clock time");
-    return Timestamp{static_cast<std::int64_t>(day - Date{1970, 1, 1}) * 86400 + hours * 3600 + minutes * 60 +
+    return Timestamp{static_cast<std::int64_t>(day - Date{1970, 1, 1}) * 86400 +
+                     static_cast<std::int64_t>(hours) * 3600 + static_cast<std::int64_t>(minutes) * 60 +
                      seconds};
 }
 Date Timestamp::date() const {

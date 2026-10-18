@@ -130,7 +130,9 @@ Summary run(Timestamp time, std::int64_t max_age, const HistoricalQuoteStore &hi
             summary.scenarios_reused = true;
         summary.calibration = "success";
         summary.category = "portfolio";
-        summary.portfolio = portfolio.calculate(*cache);
+        if (!cache.has_value())
+            throw std::logic_error("Scenario cache is empty after calibration");
+        summary.portfolio = portfolio.calculate(cache.value());
         summary.status = summary.portfolio->trades.empty()
                              ? "failed"
                              : (summary.portfolio->failures.empty() ? "success" : "partial");
@@ -147,7 +149,7 @@ Summary run(Timestamp time, std::int64_t max_age, const HistoricalQuoteStore &hi
     return summary;
 }
 } // namespace
-int main(int argc, char **argv) {
+int main(int argc, char **argv) try {
     const auto start = Clock::now();
     std::map<std::string, std::string> args{{"--history", "examples/quote_history.csv"},
                                             {"--portfolio", "examples/portfolio.csv"},
@@ -235,4 +237,7 @@ int main(int argc, char **argv) {
         std::cout << summary_json(summary) << '\n';
         return 1;
     }
+} catch (const std::exception &error) {
+    std::cerr << "Fatal batch failure: " << error.what() << '\n';
+    return 1;
 }
