@@ -35,6 +35,8 @@ class Calendar {
     explicit Calendar(std::set<Date> holidays = {});
     bool is_business_day(Date date) const;
     Date adjust(Date date, BusinessDay convention) const;
+    // Count business days excluding the starting date; zero applies the adjustment.
+    Date advance(Date date, int business_days, BusinessDay adjustment = BusinessDay::Following) const;
     const std::set<Date> &holidays() const { return holidays_; }
 
   private:

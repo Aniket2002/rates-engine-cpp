@@ -73,6 +73,19 @@ Calendar::Calendar(std::set<Date> holidays) : holidays_(std::move(holidays)) {}
 bool Calendar::is_business_day(Date date) const {
     return !date.is_weekend() && !holidays_.contains(date);
 }
+Date Calendar::advance(Date date, int business_days, BusinessDay adjustment) const {
+    if (business_days < -3660 || business_days > 3660)
+        throw std::out_of_range("Business-day increment outside supported range");
+    if (business_days == 0)
+        return adjust(date, adjustment);
+    const int direction = business_days > 0 ? 1 : -1;
+    for (int remaining = std::abs(business_days); remaining > 0;) {
+        date = date.add_days(direction);
+        if (is_business_day(date))
+            --remaining;
+    }
+    return date;
+}
 Date Calendar::adjust(Date date, BusinessDay convention) const {
     if (convention == BusinessDay::Unadjusted)
         return date;
