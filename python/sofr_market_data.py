@@ -138,6 +138,8 @@ def fetch(url, opener=urlopen, sleeper=time.sleep):
                 return raw
         except (HTTPError, URLError, TimeoutError, OSError) as error:
             transient = not isinstance(error, HTTPError) or error.code in (429, 500, 502, 503, 504)
+            if isinstance(error, HTTPError):
+                error.close()
             if not transient or attempt == 2:
                 raise DataError(f"NY Fed request failed: {error}") from error
             sleeper(2**attempt)
@@ -252,6 +254,8 @@ def validate_quotes(document, calendar, policy, as_of):
         raise DataError("Quote source is required")
     if type(document.get("synthetic")) is not bool:
         raise DataError("Explicit synthetic flag is required")
+    if type(policy.get("allow_synthetic")) is not bool:
+        raise DataError("Import policy requires a boolean allow_synthetic flag")
     if document["synthetic"] and not policy["allow_synthetic"]:
         raise DataError("Synthetic quotes disabled by import policy")
     if document.get("calendar_sha256") != calendar.sha256:

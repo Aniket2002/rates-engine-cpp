@@ -94,6 +94,9 @@ class MarketDataTests(unittest.TestCase):
                 m.import_quotes(m.canonical(document), self.calendar, self.policy, self.now)
 
     def test_strict_json_and_timestamps(self):
+        policy = {**self.policy, "allow_synthetic": "false"}
+        with self.assertRaises(m.DataError):
+            m.import_quotes(m.canonical(self.quotes), self.calendar, policy, self.now)
         for raw in (b'{"a":1,"a":2}', b'{"a":NaN}', b'not-json'):
             with self.assertRaises(m.DataError):
                 m.decode(raw)

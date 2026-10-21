@@ -44,9 +44,11 @@ SofrBootstrapResult SofrCurveBootstrapper::build_impl(Timestamp as_of, std::vect
             auto candidate = nodes;
             candidate.push_back({pillar, DiscountFactor{std::exp(log_df)}});
             const DiscountCurve projection{v, candidate};
-            return *price_sofr(discount ? *discount : projection, projection, trade, fixings, as_of)
-                        .par_rate -
-                   quote.rate.value;
+            const auto value =
+                price_sofr(discount ? *discount : projection, projection, trade, fixings, as_of);
+            if (!value.par_rate)
+                throw std::logic_error("SOFR calibration instrument has no outstanding annuity");
+            return *value.par_rate - quote.rate.value;
         };
         double width = 0.25;
         while (width < 50 && std::signbit(objective(-width)) == std::signbit(objective(width)))
@@ -59,7 +61,10 @@ SofrBootstrapResult SofrCurveBootstrapper::build_impl(Timestamp as_of, std::vect
     for (auto &row : rows) {
         const auto trade =
             spot_sofr_swap(v, row.quote.tenor_months, 1, row.quote.rate, Side::Payer, conventions_);
-        row.model_quote = *price_sofr(discount ? *discount : curve, curve, trade, fixings, as_of).par_rate;
+        const auto value = price_sofr(discount ? *discount : curve, curve, trade, fixings, as_of);
+        if (!value.par_rate)
+            throw std::logic_error("SOFR calibration instrument has no outstanding annuity");
+        row.model_quote = *value.par_rate;
         row.residual = row.model_quote - row.quote.rate.value;
         if (std::abs(row.residual) > settings_.quote_tolerance)
             throw std::runtime_error("Final SOFR curve failed repricing: " + row.quote.label);
