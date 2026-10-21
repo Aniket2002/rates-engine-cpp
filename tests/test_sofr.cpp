@@ -1,4 +1,4 @@
-#include "rates/sofr.hpp"
+#include "rates/sofr_curve.hpp"
 #include <gtest/gtest.h>
 #include <limits>
 
@@ -139,4 +139,41 @@ TEST(SofrLifecycle, RejectsInvalidEconomicsConventionsDatesAndFactors) {
     const auto next = v.add_days(1);
     const FixingStore invalid{{{v, at(next), SimpleRate{-360}, "test"}}};
     EXPECT_THROW(price_sofr(flat(next), flat(next), trade, invalid, at(next)), std::invalid_argument);
+}
+TEST(SofrBootstrap, SpotSettlementAndPaymentPillarsReprice) {
+    const auto asof = at(Date{2025, 1, 2});
+    const SofrCurveBootstrapper builder;
+    const std::vector<SofrQuote> quotes{{"1M", 1, SimpleRate{0.04}},
+                                        {"3M", 3, SimpleRate{0.038}},
+                                        {"1Y", 12, SimpleRate{0.035}},
+                                        {"2Y", 24, SimpleRate{0.03}}};
+    const auto built = builder.build(asof, quotes);
+    EXPECT_EQ(built.diagnostics.front().effective, (Date{2025, 1, 6}));
+    EXPECT_EQ(built.diagnostics.front().pillar, (Date{2025, 2, 10}));
+    for (const auto &row : built.diagnostics)
+        EXPECT_LE(std::abs(row.residual), 1e-12);
+    const auto forward = builder.build_forward(flat(asof.date(), 0.02), asof, quotes);
+    for (const auto &row : forward.diagnostics)
+        EXPECT_LE(std::abs(row.residual), 1e-12);
+    EXPECT_GT(
+        std::abs(forward.curve.nodes().back().discount.value - built.curve.nodes().back().discount.value),
+        1e-6);
+    EXPECT_THROW(builder.build(asof, {}), std::invalid_argument);
+    EXPECT_THROW(builder.build(asof, {quotes.front(), quotes.front()}), std::invalid_argument);
+    const auto trade = spot_sofr_swap(asof.date(), 12, 1e6, SimpleRate{0.03});
+    const auto risk = sofr_quote_risk(builder, quotes, trade, FixingStore{}, asof);
+    EXPECT_LT(risk.parallel_dv01, 0);
+    EXPECT_EQ(risk.quote_buckets.front().maturity, built.diagnostics.front().pillar);
+}
+TEST(SofrRisk, RealizedCouponsHaveNoProjectionRiskAndNegativeRatesCalibrate) {
+    const auto trade = swap(Date{2025, 1, 2}, Date{2025, 1, 6});
+    const auto asof = at(Date{2025, 1, 7});
+    const auto fixing = history(trade.effective, trade.maturity);
+    const auto risk = sofr_curve_risk(flat(asof.date()), flat(asof.date(), 0.05), trade, fixing, asof);
+    EXPECT_DOUBLE_EQ(risk.projection_zero.front().dv01, 0);
+    EXPECT_NE(risk.discount_zero.front().dv01, 0);
+    const auto built = SofrCurveBootstrapper{}.build(asof, {{"1Y", 12, SimpleRate{-0.01}}});
+    EXPECT_GT(built.curve.nodes().back().discount.value, 1);
+    EXPECT_THROW(sofr_curve_risk(flat(asof.date()), flat(asof.date()), trade, fixing, asof, BasisPoints{0}),
+                 std::invalid_argument);
 }

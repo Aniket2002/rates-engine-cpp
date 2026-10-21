@@ -14,7 +14,7 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(rates_engine STATIC src/date.cpp src/conventions.cpp src/schedule.cpp
   src/discount_curve.cpp src/swap_pricer.cpp src/curve_bootstrapper.cpp src/risk_engine.cpp
-  src/portfolio.cpp src/history.cpp src/trading.cpp src/multicurve.cpp src/sofr.cpp)
+  src/portfolio.cpp src/history.cpp src/trading.cpp src/multicurve.cpp src/sofr.cpp src/sofr_curve.cpp)
 add_library(rates::rates_engine ALIAS rates_engine)
 target_compile_features(rates_engine PUBLIC cxx_std_20)
 set_target_properties(rates_engine PROPERTIES CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)
