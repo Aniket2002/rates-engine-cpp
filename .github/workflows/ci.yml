@@ -40,6 +40,10 @@ jobs:
         run: python python/validate_conventions.py --cli build/rates_cli${{ runner.os == 'Windows' && '.exe' || '' }} --output build/conventions --require-quantlib
       - name: Independent OIS and multi-curve validation
         run: python python/validate_multicurve.py --module-dir build --out build/multicurve-validation --require-quantlib
+      - name: Independent SOFR lifecycle validation
+        run: python python/validate_sofr.py --module-dir build --out build/sofr-validation --require-quantlib
+      - name: Public fixing replay and dual-curve risk
+        run: python python/test_sofr_replay.py --module-dir build --out build/sofr-replay --require-quantlib
       - name: Validate PV-change case study
         shell: bash
         run: python python/generate_case_study.py --cli build/rates_cli${{ runner.os == 'Windows' && '.exe' || '' }} --out build/case-study --require-quantlib
@@ -68,6 +72,8 @@ jobs:
             build/historical-replay/
             build/trading-validation.json
             build/multicurve-validation/
+            build/sofr-validation/
+            build/sofr-replay/
             build/case-study/
             build/Testing/Temporary/
   sanitizers:

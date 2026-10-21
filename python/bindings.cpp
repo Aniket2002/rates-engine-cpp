@@ -4,6 +4,7 @@
 
 namespace py = pybind11;
 using namespace rates;
+void bind_sofr(py::module_ &module);
 PYBIND11_MODULE(pyrates, module) {
     module.doc() =
         "C++ rates engine with OIS and multi-curve valuation. Rates are decimals; risk is currency per bp.";
@@ -27,7 +28,10 @@ PYBIND11_MODULE(pyrates, module) {
         .value("ContinuousZero", Instrument::ContinuousZero);
     py::class_<Calendar>(module, "Calendar")
         .def(py::init<std::set<Date>>(), py::arg("holidays") = std::set<Date>{})
-        .def("adjust", &Calendar::adjust);
+        .def("adjust", &Calendar::adjust)
+        .def("is_business_day", &Calendar::is_business_day)
+        .def("advance", &Calendar::advance, py::arg("date"), py::arg("business_days"),
+             py::arg("adjustment") = BusinessDay::Following);
     py::class_<Conventions>(module, "Conventions")
         .def(py::init<>())
         .def_readwrite("fixed_months", &Conventions::fixed_months)
@@ -182,4 +186,5 @@ PYBIND11_MODULE(pyrates, module) {
                 return r.zero_risk(c, t, BasisPoints{bump});
             },
             py::arg("curve"), py::arg("trade"), py::arg("bump_bps") = 1.0);
+    bind_sofr(module);
 }

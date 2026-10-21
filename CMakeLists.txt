@@ -83,6 +83,8 @@ if(BUILD_TESTING)
   include(GoogleTest)
   gtest_discover_tests(rates_tests DISCOVERY_MODE PRE_TEST)
   find_package(Python3 COMPONENTS Interpreter REQUIRED)
+  add_test(NAME sofr_market_data_contract COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/python/test_sofr_market_data.py)
   if(RATES_BUILD_BENCHMARKS)
     add_test(NAME performance_contract COMMAND ${Python3_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/python/check_performance.py --benchmark $<TARGET_FILE:rates_portfolio_benchmark>
@@ -123,7 +125,7 @@ if(RATES_BUILD_PYTHON)
   find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)
   set(PYBIND11_FINDPYTHON ON)
   find_package(pybind11 CONFIG REQUIRED)
-  pybind11_add_module(pyrates python/bindings.cpp)
+  pybind11_add_module(pyrates python/bindings.cpp python/sofr_bindings.cpp)
   target_link_libraries(pyrates PRIVATE rates_engine)
   if(MINGW)
     # Python 3.8+ does not search PATH for extension-module DLL dependencies.
@@ -137,6 +139,12 @@ if(RATES_BUILD_PYTHON)
     add_test(NAME multicurve_validation COMMAND ${Python3_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/python/validate_multicurve.py --module-dir $<TARGET_FILE_DIR:pyrates>
       --out ${CMAKE_CURRENT_BINARY_DIR}/multicurve-validation)
+    add_test(NAME sofr_lifecycle_validation COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/python/validate_sofr.py --module-dir $<TARGET_FILE_DIR:pyrates>
+      --out ${CMAKE_CURRENT_BINARY_DIR}/sofr-validation)
+    add_test(NAME sofr_real_fixing_replay COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/python/test_sofr_replay.py --module-dir $<TARGET_FILE_DIR:pyrates>
+      --out ${CMAKE_CURRENT_BINARY_DIR}/sofr-replay)
   endif()
 endif()
 install(TARGETS rates_engine EXPORT ratesEngineTargets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})

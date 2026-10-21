@@ -1,0 +1,1 @@
+{"conventions":{"end_of_month":false,"lockout_days":0,"lookback_days":2,"observation_shift":true,"payment_lag_days":2,"payment_months":3,"settlement_days":2},"currency":"USD","effective":"2026-10-01","fixed_rate":0.0375,"index":"SOFR","maturity":"2028-10-01","notional":1000000.0,"side":"payer"}
