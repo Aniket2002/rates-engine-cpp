@@ -1,0 +1,85 @@
+{
+  "passed": true,
+  "scenarios": 7,
+  "valuation": "2025-01-02",
+  "base_pv": 4531.352900153695,
+  "parallel_quote_dv01": -451.94430030423973,
+  "bucket_sum": -451.9442786049476,
+  "pv_tolerance": 2e-05,
+  "max_python_pv_error": 4.427041858434677e-06,
+  "max_quantlib_pv_error": 4.4273328967392445e-06,
+  "quantlib_version": "1.44",
+  "shocks_bps": {
+    "parallel_-50bp": {
+      "1M": -50,
+      "3M": -50,
+      "6M": -50,
+      "1Y": -50,
+      "2Y": -50,
+      "3Y": -50,
+      "5Y": -50,
+      "10Y": -50
+    },
+    "parallel_-10bp": {
+      "1M": -10,
+      "3M": -10,
+      "6M": -10,
+      "1Y": -10,
+      "2Y": -10,
+      "3Y": -10,
+      "5Y": -10,
+      "10Y": -10
+    },
+    "parallel_-1bp": {
+      "1M": -1,
+      "3M": -1,
+      "6M": -1,
+      "1Y": -1,
+      "2Y": -1,
+      "3Y": -1,
+      "5Y": -1,
+      "10Y": -1
+    },
+    "parallel_+1bp": {
+      "1M": 1,
+      "3M": 1,
+      "6M": 1,
+      "1Y": 1,
+      "2Y": 1,
+      "3Y": 1,
+      "5Y": 1,
+      "10Y": 1
+    },
+    "parallel_+10bp": {
+      "1M": 10,
+      "3M": 10,
+      "6M": 10,
+      "1Y": 10,
+      "2Y": 10,
+      "3Y": 10,
+      "5Y": 10,
+      "10Y": 10
+    },
+    "parallel_+50bp": {
+      "1M": 50,
+      "3M": 50,
+      "6M": 50,
+      "1Y": 50,
+      "2Y": 50,
+      "3Y": 50,
+      "5Y": 50,
+      "10Y": 50
+    },
+    "steepener": {
+      "1M": -10,
+      "3M": -10,
+      "6M": -10,
+      "1Y": -5,
+      "2Y": 0,
+      "3Y": 5,
+      "5Y": 10,
+      "10Y": 15
+    }
+  },
+  "interpretation": "Same-date hypothetical quote shocks; full rebootstrap; no carry, cash settlement or realized trading P&L"
+}

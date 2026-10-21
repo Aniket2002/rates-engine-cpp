@@ -31,8 +31,7 @@ CurveShock quote_pair(const CurveBootstrapper &b, Date v, const std::vector<Mark
                       BasisPoints bump, std::size_t bucket) {
     const bool parallel = bucket == quotes.size();
     return {parallel ? "parallel" : quotes[bucket].label,
-            parallel ? v
-                     : b.conventions().calendar.adjust(quotes[bucket].maturity, b.conventions().business_day),
+            parallel ? v : quote_pillar(quotes[bucket], b.conventions()),
             shocked_curve(b, v, quotes, -bump.value * 1e-4, bucket),
             shocked_curve(b, v, quotes, bump.value * 1e-4, bucket)};
 }

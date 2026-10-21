@@ -200,8 +200,15 @@ TEST(HistoricalZeroQuotes, ExactDatesCompoundingAndRiskCoordinates) {
     const auto report = RiskEngine{}.report(valuation, quotes,
                                             Swap{valuation, valuation.add_months(24), 1e6, SimpleRate{0.03}},
                                             "historical-zero");
-    for (std::size_t i = 0; i < quotes.size(); ++i)
+    const auto scenarios = RiskEngine{}.prepare_scenarios(valuation, quotes);
+    const auto direct = RiskEngine{}.quote_risk(valuation, quotes, report.trade);
+    for (std::size_t i = 0; i < quotes.size(); ++i) {
+        EXPECT_EQ(report.quote_buckets[i].maturity, quotes[i].maturity);
+        EXPECT_EQ(report.zero_nodes[i].maturity, quotes[i].maturity);
+        EXPECT_EQ(scenarios.quote_shocks()[i].maturity, quotes[i].maturity);
+        EXPECT_EQ(direct[i].maturity, quotes[i].maturity);
         EXPECT_NEAR(report.quote_buckets[i].dv01, report.zero_nodes[i].dv01, 1e-7);
+    }
     auto overflow = quotes;
     overflow.back().rate = SimpleRate{-1000};
     EXPECT_THROW(CurveBootstrapper{}.build(valuation, overflow), std::invalid_argument);

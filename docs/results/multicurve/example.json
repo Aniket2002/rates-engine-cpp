@@ -1,0 +1,10 @@
+{
+  "valuation": "2025-01-02",
+  "input": "examples/multicurve_cases.json",
+  "ois_pv": -17586.52157135849,
+  "multi_curve_pv": 28509.36075548065,
+  "par_rate": 0.04120000000004633,
+  "single_curve_pv": -16545.341585915885,
+  "discount_quote_dv01": 7.530029521571123,
+  "forwarding_quote_dv01": -459.828400271188
+}

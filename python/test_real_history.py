@@ -1,7 +1,7 @@
 """Offline provenance, import rejection, C++ historical replay and independent valuation."""
 import argparse
 import csv
-from datetime import date
+from datetime import date, timedelta
 import io
 import json
 import math
@@ -72,7 +72,6 @@ def main():
         day = date.fromisoformat(report["as_of"][:10])
         values = by_date[str(day)]
         # Construct reference nodes directly from provider observations, not C++ output.
-        from datetime import timedelta
         def curve(shift=0, bucket=None):
             return Curve(day, [(day + timedelta(days=365*n),
                                math.exp(-(float(r) + (shift if bucket is None or bucket == n-1 else 0))*n))
@@ -97,6 +96,7 @@ def main():
                 index = SERIES.index(row["label"])
             else:
                 index = ((date.fromisoformat(row["maturity"]) - day).days // 365)-1
+            assert row["maturity"] == str(day + timedelta(days=365*(index+1)))
             expected = (pv(curve(-1e-4, index))-pv(curve(1e-4, index)))/2
             max_risk_error = max(max_risk_error, abs(expected-float(row["dv01"])))
             assert max_risk_error < 1e-5
@@ -127,6 +127,10 @@ def main():
             comparisons += 1
         with (folder / "cli/calibration.csv").open() as stream:
             assert all(r["instrument"] == "continuous_zero" and abs(float(r["residual"])) < 1e-12 for r in csv.DictReader(stream))
+        with (folder / "cli/risk.csv").open() as stream:
+            for row in csv.DictReader(stream):
+                if row["coordinate"] == "market_quote":
+                    assert row["maturity"] == str(day + timedelta(days=365*(SERIES.index(row["label"])+1)))
         with (folder / "trades.csv").open() as stream:
             actual = list(csv.DictReader(stream))
         if qprice:

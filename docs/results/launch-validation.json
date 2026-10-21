@@ -1,0 +1,676 @@
+{
+  "version": "2.1.0",
+  "verification_date": "2026-10-21",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "compiler": "LLVM-MinGW Clang 23.1.3",
+  "python": "3.14.0",
+  "quantlib": "1.44",
+  "pybind11": "3.1.0",
+  "builds": {
+    "release": {
+      "tests": 73,
+      "failures": 0,
+      "cases": [
+        {
+          "name": "MultiCurve.AnalyticalSeparateDiscountAndProjection",
+          "status": "run"
+        },
+        {
+          "name": "MultiCurve.EqualCurvesRecoverLegacyAndForwardBootstrapReprices",
+          "status": "run"
+        },
+        {
+          "name": "MultiCurve.RejectsMismatchedDatesPastTradesAndInsufficientCoverage",
+          "status": "run"
+        },
+        {
+          "name": "Sofr.CompoundsWeekendsHolidaysAndNegativeRates",
+          "status": "run"
+        },
+        {
+          "name": "Sofr.RejectsMissingDuplicateUnorderedExtraAndInvalidFixings",
+          "status": "run"
+        },
+        {
+          "name": "Ois.CalibrationCompoundedCouponsAndParIdentity",
+          "status": "run"
+        },
+        {
+          "name": "MultiCurveRisk.RecalibratesForwardCurveAfterDiscountShock",
+          "status": "run"
+        },
+        {
+          "name": "TradingData.StrictAvailabilityRevisionsAndEventOrder",
+          "status": "run"
+        },
+        {
+          "name": "TradingData.RejectsInvalidTapeAndRevisionChains",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.HandCalculatedRoundTripAndRisk",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.CostsGapAffordabilityAndFixedOrderSize",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.RevisionsCannotFillAndFutureChangesDoNotChangePast",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.ExpiryLatencyAndLatePublication",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.MissingStaleAndRevisionFreshness",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.DelayedRevisionChangesOnlyLaterDecisions",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.NumericalOverflowFailsWithoutPublishingResults",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.ConfigurationAndNumericalBounds",
+          "status": "run"
+        },
+        {
+          "name": "Timestamps.UtcValidationAndCalendarRollover",
+          "status": "run"
+        },
+        {
+          "name": "History.AsOfNeverSelectsFutureAndFreshnessBoundaryIsInclusive",
+          "status": "run"
+        },
+        {
+          "name": "History.RejectsMissingDuplicateUnorderedAndChangedData",
+          "status": "run"
+        },
+        {
+          "name": "History.FutureQuoteChangesCannotChangeEarlierValuation",
+          "status": "run"
+        },
+        {
+          "name": "History.RejectsMalformedCsvAndAcceptsCrLf",
+          "status": "run"
+        },
+        {
+          "name": "Portfolio.ThousandTradesAggregateAndShareSchedules",
+          "status": "run"
+        },
+        {
+          "name": "Portfolio.SharedScheduleOwnershipAndConventionKeys",
+          "status": "run"
+        },
+        {
+          "name": "Portfolio.FailedTradesAreExplicitAndDoNotPolluteAggregates",
+          "status": "run"
+        },
+        {
+          "name": "Portfolio.AggregateOverflowFailsTheWholeCalculation",
+          "status": "run"
+        },
+        {
+          "name": "HistoricalZeroQuotes.ExactDatesCompoundingAndRiskCoordinates",
+          "status": "run"
+        },
+        {
+          "name": "HistoricalZeroQuotes.FileStorePreservesContinuousZeroType",
+          "status": "run"
+        },
+        {
+          "name": "Dates.StrictIsoAndLeapYear",
+          "status": "run"
+        },
+        {
+          "name": "Dates.MonthEndAndTenors",
+          "status": "run"
+        },
+        {
+          "name": "Dates.BusinessDaysAndExplicitHolidays",
+          "status": "run"
+        },
+        {
+          "name": "Schedules.AnchoredMonthEndAndShortFinalStub",
+          "status": "run"
+        },
+        {
+          "name": "Schedules.NonEndOfMonthDoesNotDrift",
+          "status": "run"
+        },
+        {
+          "name": "Schedules.InvalidAndCollapsedDates",
+          "status": "run"
+        },
+        {
+          "name": "DayCounts.LeapAndEuropeanThirty360",
+          "status": "run"
+        },
+        {
+          "name": "Conventions.RateConversionsAndInvalidInputs",
+          "status": "run"
+        },
+        {
+          "name": "Conventions.InvalidContractsAndZeroThirtyEAccrual",
+          "status": "run"
+        },
+        {
+          "name": "Curves.LogLinearInterpolation",
+          "status": "run"
+        },
+        {
+          "name": "Curves.RejectsInvalidPillarsAndExtrapolation",
+          "status": "run"
+        },
+        {
+          "name": "Curves.NegativeRatesAreAllowed",
+          "status": "run"
+        },
+        {
+          "name": "Solver.BracketingAndFailureDiagnostics",
+          "status": "run"
+        },
+        {
+          "name": "Bootstrap.RepricesSparseIntermediateCouponsAndSorts",
+          "status": "run"
+        },
+        {
+          "name": "Bootstrap.InvalidQuotes",
+          "status": "run"
+        },
+        {
+          "name": "Bootstrap.ZeroAndNegativeQuotes",
+          "status": "run"
+        },
+        {
+          "name": "Pricing.ParPayerReceiverCouponMonotonicityAndScaling",
+          "status": "run"
+        },
+        {
+          "name": "Pricing.IndependentCouponSumsAndTelescoping",
+          "status": "run"
+        },
+        {
+          "name": "Pricing.AnalyticalOnePeriodAndZeroCoupon",
+          "status": "run"
+        },
+        {
+          "name": "Pricing.InvalidTradeAndMissingFixings",
+          "status": "run"
+        },
+        {
+          "name": "Risk.ParallelAndBucketSumWithBumpStability",
+          "status": "run"
+        },
+        {
+          "name": "Risk.SymmetryNotionalAndUnmodifiedInputs",
+          "status": "run"
+        },
+        {
+          "name": "Risk.ZeroNodesDifferFromQuoteCoordinates",
+          "status": "run"
+        },
+        {
+          "name": "Risk.AnalyticalOnePeriodQuoteAndZeroNodeRisk",
+          "status": "run"
+        },
+        {
+          "name": "Risk.RejectsInvalidBumpAndShockedCalibrationFailure",
+          "status": "run"
+        },
+        {
+          "name": "Risk.EmptyQuoteRiskIsAnError",
+          "status": "run"
+        },
+        {
+          "name": "Risk.QuoteBucketSymmetryAndScaling",
+          "status": "run"
+        },
+        {
+          "name": "Risk.NonlinearDifferencesShrinkWithBump",
+          "status": "run"
+        },
+        {
+          "name": "Regression.DeterministicRandomFlatCurves",
+          "status": "run"
+        },
+        {
+          "name": "Regression.PublishedDemoValues",
+          "status": "run"
+        },
+        {
+          "name": "PreparedPricing.OwnsSchedulesAndPreservesValuationChecks",
+          "status": "run"
+        },
+        {
+          "name": "ScenarioReuse.MatchesIndependentPerTradeRiskForHeterogeneousPortfolio",
+          "status": "run"
+        },
+        {
+          "name": "ScenarioReuse.SnapshotIsolationAndFailureSafety",
+          "status": "run"
+        },
+        {
+          "name": "NumericalFailures.InvalidConversionsAndOverflow",
+          "status": "run"
+        },
+        {
+          "name": "NumericalFailures.SolverEndpointsAndUnattainableAccuracy",
+          "status": "run"
+        },
+        {
+          "name": "performance_contract",
+          "status": "run"
+        },
+        {
+          "name": "independent_python",
+          "status": "run"
+        },
+        {
+          "name": "cli_contract",
+          "status": "run"
+        },
+        {
+          "name": "pv_change_case_study",
+          "status": "run"
+        },
+        {
+          "name": "convention_validation",
+          "status": "run"
+        },
+        {
+          "name": "batch_replay_contract",
+          "status": "run"
+        },
+        {
+          "name": "real_historical_data",
+          "status": "run"
+        },
+        {
+          "name": "trading_contract",
+          "status": "run"
+        },
+        {
+          "name": "python_bindings",
+          "status": "run"
+        },
+        {
+          "name": "multicurve_validation",
+          "status": "run"
+        }
+      ]
+    },
+    "debug": {
+      "tests": 71,
+      "failures": 0,
+      "cases": [
+        {
+          "name": "MultiCurve.AnalyticalSeparateDiscountAndProjection",
+          "status": "run"
+        },
+        {
+          "name": "MultiCurve.EqualCurvesRecoverLegacyAndForwardBootstrapReprices",
+          "status": "run"
+        },
+        {
+          "name": "MultiCurve.RejectsMismatchedDatesPastTradesAndInsufficientCoverage",
+          "status": "run"
+        },
+        {
+          "name": "Sofr.CompoundsWeekendsHolidaysAndNegativeRates",
+          "status": "run"
+        },
+        {
+          "name": "Sofr.RejectsMissingDuplicateUnorderedExtraAndInvalidFixings",
+          "status": "run"
+        },
+        {
+          "name": "Ois.CalibrationCompoundedCouponsAndParIdentity",
+          "status": "run"
+        },
+        {
+          "name": "MultiCurveRisk.RecalibratesForwardCurveAfterDiscountShock",
+          "status": "run"
+        },
+        {
+          "name": "TradingData.StrictAvailabilityRevisionsAndEventOrder",
+          "status": "run"
+        },
+        {
+          "name": "TradingData.RejectsInvalidTapeAndRevisionChains",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.HandCalculatedRoundTripAndRisk",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.CostsGapAffordabilityAndFixedOrderSize",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.RevisionsCannotFillAndFutureChangesDoNotChangePast",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.ExpiryLatencyAndLatePublication",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.MissingStaleAndRevisionFreshness",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.DelayedRevisionChangesOnlyLaterDecisions",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.NumericalOverflowFailsWithoutPublishingResults",
+          "status": "run"
+        },
+        {
+          "name": "TradingSimulation.ConfigurationAndNumericalBounds",
+          "status": "run"
+        },
+        {
+          "name": "Timestamps.UtcValidationAndCalendarRollover",
+          "status": "run"
+        },
+        {
+          "name": "History.AsOfNeverSelectsFutureAndFreshnessBoundaryIsInclusive",
+          "status": "run"
+        },
+        {
+          "name": "History.RejectsMissingDuplicateUnorderedAndChangedData",
+          "status": "run"
+        },
+        {
+          "name": "History.FutureQuoteChangesCannotChangeEarlierValuation",
+          "status": "run"
+        },
+        {
+          "name": "History.RejectsMalformedCsvAndAcceptsCrLf",
+          "status": "run"
+        },
+        {
+          "name": "Portfolio.ThousandTradesAggregateAndShareSchedules",
+          "status": "run"
+        },
+        {
+          "name": "Portfolio.SharedScheduleOwnershipAndConventionKeys",
+          "status": "run"
+        },
+        {
+          "name": "Portfolio.FailedTradesAreExplicitAndDoNotPolluteAggregates",
+          "status": "run"
+        },
+        {
+          "name": "Portfolio.AggregateOverflowFailsTheWholeCalculation",
+          "status": "run"
+        },
+        {
+          "name": "HistoricalZeroQuotes.ExactDatesCompoundingAndRiskCoordinates",
+          "status": "run"
+        },
+        {
+          "name": "HistoricalZeroQuotes.FileStorePreservesContinuousZeroType",
+          "status": "run"
+        },
+        {
+          "name": "Dates.StrictIsoAndLeapYear",
+          "status": "run"
+        },
+        {
+          "name": "Dates.MonthEndAndTenors",
+          "status": "run"
+        },
+        {
+          "name": "Dates.BusinessDaysAndExplicitHolidays",
+          "status": "run"
+        },
+        {
+          "name": "Schedules.AnchoredMonthEndAndShortFinalStub",
+          "status": "run"
+        },
+        {
+          "name": "Schedules.NonEndOfMonthDoesNotDrift",
+          "status": "run"
+        },
+        {
+          "name": "Schedules.InvalidAndCollapsedDates",
+          "status": "run"
+        },
+        {
+          "name": "DayCounts.LeapAndEuropeanThirty360",
+          "status": "run"
+        },
+        {
+          "name": "Conventions.RateConversionsAndInvalidInputs",
+          "status": "run"
+        },
+        {
+          "name": "Conventions.InvalidContractsAndZeroThirtyEAccrual",
+          "status": "run"
+        },
+        {
+          "name": "Curves.LogLinearInterpolation",
+          "status": "run"
+        },
+        {
+          "name": "Curves.RejectsInvalidPillarsAndExtrapolation",
+          "status": "run"
+        },
+        {
+          "name": "Curves.NegativeRatesAreAllowed",
+          "status": "run"
+        },
+        {
+          "name": "Solver.BracketingAndFailureDiagnostics",
+          "status": "run"
+        },
+        {
+          "name": "Bootstrap.RepricesSparseIntermediateCouponsAndSorts",
+          "status": "run"
+        },
+        {
+          "name": "Bootstrap.InvalidQuotes",
+          "status": "run"
+        },
+        {
+          "name": "Bootstrap.ZeroAndNegativeQuotes",
+          "status": "run"
+        },
+        {
+          "name": "Pricing.ParPayerReceiverCouponMonotonicityAndScaling",
+          "status": "run"
+        },
+        {
+          "name": "Pricing.IndependentCouponSumsAndTelescoping",
+          "status": "run"
+        },
+        {
+          "name": "Pricing.AnalyticalOnePeriodAndZeroCoupon",
+          "status": "run"
+        },
+        {
+          "name": "Pricing.InvalidTradeAndMissingFixings",
+          "status": "run"
+        },
+        {
+          "name": "Risk.ParallelAndBucketSumWithBumpStability",
+          "status": "run"
+        },
+        {
+          "name": "Risk.SymmetryNotionalAndUnmodifiedInputs",
+          "status": "run"
+        },
+        {
+          "name": "Risk.ZeroNodesDifferFromQuoteCoordinates",
+          "status": "run"
+        },
+        {
+          "name": "Risk.AnalyticalOnePeriodQuoteAndZeroNodeRisk",
+          "status": "run"
+        },
+        {
+          "name": "Risk.RejectsInvalidBumpAndShockedCalibrationFailure",
+          "status": "run"
+        },
+        {
+          "name": "Risk.EmptyQuoteRiskIsAnError",
+          "status": "run"
+        },
+        {
+          "name": "Risk.QuoteBucketSymmetryAndScaling",
+          "status": "run"
+        },
+        {
+          "name": "Risk.NonlinearDifferencesShrinkWithBump",
+          "status": "run"
+        },
+        {
+          "name": "Regression.DeterministicRandomFlatCurves",
+          "status": "run"
+        },
+        {
+          "name": "Regression.PublishedDemoValues",
+          "status": "run"
+        },
+        {
+          "name": "PreparedPricing.OwnsSchedulesAndPreservesValuationChecks",
+          "status": "run"
+        },
+        {
+          "name": "ScenarioReuse.MatchesIndependentPerTradeRiskForHeterogeneousPortfolio",
+          "status": "run"
+        },
+        {
+          "name": "ScenarioReuse.SnapshotIsolationAndFailureSafety",
+          "status": "run"
+        },
+        {
+          "name": "NumericalFailures.InvalidConversionsAndOverflow",
+          "status": "run"
+        },
+        {
+          "name": "NumericalFailures.SolverEndpointsAndUnattainableAccuracy",
+          "status": "run"
+        },
+        {
+          "name": "performance_contract",
+          "status": "run"
+        },
+        {
+          "name": "independent_python",
+          "status": "run"
+        },
+        {
+          "name": "cli_contract",
+          "status": "run"
+        },
+        {
+          "name": "pv_change_case_study",
+          "status": "run"
+        },
+        {
+          "name": "convention_validation",
+          "status": "run"
+        },
+        {
+          "name": "batch_replay_contract",
+          "status": "run"
+        },
+        {
+          "name": "real_historical_data",
+          "status": "run"
+        },
+        {
+          "name": "trading_contract",
+          "status": "run"
+        }
+      ]
+    }
+  },
+  "coverage_tests": 70,
+  "static_analysis": "clang-tidy: passed",
+  "formatting": "clang-format: passed",
+  "installed_consumer": "passed",
+  "numerical_comparisons": 1285,
+  "convention_comparisons": 2193,
+  "multicurve_comparisons": 230,
+  "historical_comparisons": 114,
+  "replay_trade_valuations": 24900,
+  "source_hash_method": "SHA-256 of UTF-8 text with LF newlines",
+  "source_hashes": {
+    ".github/workflows/ci.yml": "4c95426f7c55c4479b12289084af01b4fd8f8fb0714223d4ea3eeeed6170fc91",
+    ".github/workflows/operations.yml": "01bd0adea9506244f72f3c9917b89d934b0634a3130da8178bf26f42123b2bce",
+    "apps/batch_io.hpp": "daaf507ffa74329a46c4d71e5511a4d07ef9194a9d311ff4cb2cb975d68b4f11",
+    "apps/rates_batch.cpp": "76e59d873b5a9a82cd981d7672e2cbd1ea679a102d3398dffcddd38e22a396ee",
+    "apps/rates_cli.cpp": "0d7b4d9d1aba1ada699172e5f81183f091b6e7b49beadbc77fceb0d0064edd0b",
+    "apps/rates_simulate.cpp": "c9f43237a2fd128eee5946a2e92accbbb52ebae0f9d7cbcd7a8eb49577e89708",
+    "CMakeLists.txt": "017b434f8bda58eb5e7ebf064c4781de61a2a15a394be224d6e87aaafd0d34b6",
+    "CMakePresets.json": "a1a3b791681d659b9bcd577e3babed5bc51ca91682a94d832619ee6bd9fc9654",
+    "examples/consumer/CMakeLists.txt": "2f5785114c71ce1d827e649370ded5434eeb4adce7066696142e0836a829e54f",
+    "examples/consumer/main.cpp": "719caee738d9414402874c1719fd5b5f747e6d8677fcbbdcbb961152749e3554",
+    "examples/convention_cases.json": "ef35b72f0d49b586b2fcbe5ea8aab6d7e13a59943be99ae8d7525b3c6623b14a",
+    "examples/multicurve_cases.json": "6910457493e1b1c18a2280240cfa270d4616513345ad79b3af0fc9cc7cbf61fd",
+    "examples/portfolio.csv": "26bcdc7e52ada825f0aa026f955ccad7e67d95700f4270c5ae392db4044b1ad0",
+    "examples/quote_history.csv": "ad536710edd62d04257b220fe696263729473ce351680e31f64b9df285235aff",
+    "examples/sample_swap.csv": "9896b5db644b8052e6410694ea9032e0cbef7ec413ec439bd0331473de79ea42",
+    "examples/synthetic_quotes.csv": "6dc2b4e78b4f721a943948c6eaa66afe38fb34925deeb7aad92be52ee83e1314",
+    "examples/validation_cases.json": "c5204de458e5f2d48dd561b305812b135af49570be615d1fd10adf56a36e67d1",
+    "include/rates/conventions.hpp": "2d29236d7eb4ba21423a6e935c763d4803b45b3ee96ac3198b9bb49127b3fb88",
+    "include/rates/curve_bootstrapper.hpp": "663a1ba91e5dc13bd2973cecbafe89a12d361988ed9d326905237e75e406ec92",
+    "include/rates/date.hpp": "41d436ae24c7414ba2e614eb8cddefb59ba0a136c0fad97f18f2b6e5fd2fad29",
+    "include/rates/discount_curve.hpp": "ce62c0386cc5116267d138cf180c2b270a0fe244b1aa60cd07c1043a72f44f0b",
+    "include/rates/history.hpp": "0e71ba5ed81894e781570da293c07216687b4884795277b36a9e72fdbd8b4596",
+    "include/rates/multicurve.hpp": "bd04df21bb8bb8dc862640463bdaa0ad51d7446bb14e8a0e05b85812e98e188b",
+    "include/rates/portfolio.hpp": "c27b113c4b19fc6182538e3575535ecd5e3bee64109764cd42999cace552787e",
+    "include/rates/risk_engine.hpp": "be3a1d831471f6588751cf3e5dead8b01047cb054899be5b45675f8ead564781",
+    "include/rates/schedule.hpp": "34787b253861c4c30798a3a8717d5fd1787476f08691dd272ec6500ce1f006f9",
+    "include/rates/swap.hpp": "98b6a04610b499a139ab0b441002e25f8021037a0adb4f8889b26705d210c9bc",
+    "include/rates/swap_pricer.hpp": "0c5730464a251a866d3a4ff46a0c27ed5b96559e44552c955346b89834cb3e36",
+    "include/rates/trading.hpp": "bf73d251478e76c5e07b50e3aac5fdef53c2a6bddb84e730b6c20f5d06504012",
+    "python/bindings.cpp": "68cb211ad344cfb1731b1309767f40918d3ea0bebed5daf2d53ec0eec960cd54",
+    "python/check_performance.py": "5e6efc8ae54753216fecac41cf483093aa16b6cf416a01697b06b11b6e3cfc95",
+    "python/generate_case_study.py": "1af0c9ddb0afd2d2797f1ee9154ccede70d372d913bb653093fbdc1eee1d4195",
+    "python/generate_charts.py": "1c8f13e84b1033bfdfbefe5758efb846333663b17be1b8e03fdb8adb7699408a",
+    "python/generate_replay.py": "1ff7d019eadf92837c7c2ef99b7dcde0c800ca0043bdddd86a7162434638df2c",
+    "python/import_etf_history.py": "aa2952a52dbc81c27193e630fd1d01128efd3d9c41e51a291a56ace842e0ff60",
+    "python/import_fed_history.py": "0d74b6cbd63a8189398d72d761a685ee31456dbf05db6dd4332525b0f2866e5f",
+    "python/measure_coverage.py": "07b683a0b99f1f39a3cec1aa664dc03698ae0914c23de556b58bc06841d1688d",
+    "python/quantlib_reference.py": "8c222821ea322b174e2cd2be114e1bfff71c5c9dcd498d53cea92fe993ed5fa4",
+    "python/reference_pricer.py": "fd790b0ef7395656c98ca2b7652d51556b2db6445078de8234aebe385fa06599",
+    "python/replay_fed_history.py": "83b73e989f52aa75e91543196b9247943fdc48cf3266fbe47c1b297e73384d96",
+    "python/summarize_profiles.py": "3657efe5394cf716eb9e674b0778befa23d2ae2ec68affbc96bf3293ac3620e0",
+    "python/test_batch.py": "4d262670e4cd66593980bbe8b98b6c82467b237666194cc028c60224e349156c",
+    "python/test_bindings.py": "db238f30dad61c6a44887d8c0d308114faed1eb145946bfb69c09aebc8bd5212",
+    "python/test_cli.py": "1de77524e32a8a35f674027871aa1335b147cf5758a8e7eef16405dc3cde3503",
+    "python/test_real_history.py": "71252e4ebd800efee393e8bc0fdc14ea5885d8367c677b6ad6237acbe6eb9a0b",
+    "python/test_trading.py": "a8a7f798a6eb56bb48a52452b9e516b34c467eb185b4483c7b8ab548bcdccf3e",
+    "python/validate_conventions.py": "9a88164e1e1518a2b53ab898d4b92ace41d3add89047122afdf9100bee14511a",
+    "python/validate_multicurve.py": "d3ec2be57b590a496bfcd1d83c77c5d54ef1c05c2bc7e91689c7a1628c24b598",
+    "python/validate_results.py": "4ee91dbeff23197d4be9fbd0b3269130599368a5a2d37288a546f45c6853489e",
+    "src/conventions.cpp": "daa57d141ae82c22ef55cccc9a8d2ce95fd2606c937789bbdc540aab62cf3ead",
+    "src/curve_bootstrapper.cpp": "bc349e2ac671d95b1e431e29f35084664f4f6c3adf950cc28ad46f1965e655ba",
+    "src/date.cpp": "b83bda70475f91f081cc80acf2d9a5c9e2f173cb190cbe4678adf5ed355c84d0",
+    "src/discount_curve.cpp": "c0ec1301c0902f8cb59e778289e567cd03c550d03c69b86261f5cf4cac2de714",
+    "src/history.cpp": "1a1b9d60173f8b8bd322cf59c708620f31f815d96c69c961849c79ac9a96032b",
+    "src/multicurve.cpp": "887bff0947877d011c21fe26e4c784afc94283d2ed5658fac231c52b17dbb81a",
+    "src/portfolio.cpp": "b01bf6c7fd939f063cc5e6d118f7c57abcc343dd0b476f91b4e33469f9d45543",
+    "src/risk_engine.cpp": "1453969ca7aa6c765f2315f6adec96d9e1e98c4f648b3ce80ba311498315a4f4",
+    "src/schedule.cpp": "843114724c2049980d447b38118f794649ec1dad0143fc2409fb9913ec7e0009",
+    "src/swap_pricer.cpp": "56d807309157668fec6ed86a17a296009c690033e14fcf639abef58b0c8c2b7d",
+    "src/trading.cpp": "70e03be0236a1a1a325bf79f96c9bcfab506c2a655eeac564994e680e8832e76",
+    "tests/test_engine.cpp": "90dc10762014e00b662ab0bac7daa0101c50cb20acf21d08a94769c42a8d3fa0",
+    "tests/test_multicurve.cpp": "dfb8b6561ec025a130c3ebc61915d5fa9520cf4650aba9d65ea747d920be3767",
+    "tests/test_trading.cpp": "8fb9f93cabab2ef4147c95690a5e0df89c915dbad462427a2c9c2cc755a31040",
+    "tests/test_v2.cpp": "c33bda5a587f3a70f3e391e528d40ad7bf5eea022025e606a9b046f3baf890f6"
+  },
+  "remote_ci": "See GitHub Actions for the release commit; this record describes local verification."
+}

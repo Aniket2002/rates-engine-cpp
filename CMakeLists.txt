@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(rates_engine VERSION 2.0.0 LANGUAGES CXX)
+project(rates_engine VERSION 2.1.0 LANGUAGES CXX)
 include(CTest)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -14,7 +14,7 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(rates_engine STATIC src/date.cpp src/conventions.cpp src/schedule.cpp
   src/discount_curve.cpp src/swap_pricer.cpp src/curve_bootstrapper.cpp src/risk_engine.cpp
-  src/portfolio.cpp src/history.cpp src/trading.cpp)
+  src/portfolio.cpp src/history.cpp src/trading.cpp src/multicurve.cpp)
 add_library(rates::rates_engine ALIAS rates_engine)
 target_compile_features(rates_engine PUBLIC cxx_std_20)
 set_target_properties(rates_engine PROPERTIES CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)
@@ -77,7 +77,7 @@ if(BUILD_TESTING)
       GIT_TAG v1.17.0 GIT_SHALLOW TRUE)
     FetchContent_MakeAvailable(googletest)
   endif()
-  add_executable(rates_tests tests/test_engine.cpp tests/test_v2.cpp tests/test_trading.cpp)
+  add_executable(rates_tests tests/test_engine.cpp tests/test_v2.cpp tests/test_trading.cpp tests/test_multicurve.cpp)
   target_link_libraries(rates_tests PRIVATE rates_engine GTest::gtest_main)
   rates_checks(rates_tests)
   include(GoogleTest)
@@ -93,6 +93,9 @@ if(BUILD_TESTING)
     --output ${CMAKE_CURRENT_BINARY_DIR}/validation)
   add_test(NAME cli_contract COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/python/test_cli.py $<TARGET_FILE:rates_cli>)
+  add_test(NAME pv_change_case_study COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/python/generate_case_study.py --cli $<TARGET_FILE:rates_cli>
+    --out ${CMAKE_CURRENT_BINARY_DIR}/case-study)
   add_test(NAME convention_validation COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/python/validate_conventions.py --cli $<TARGET_FILE:rates_cli>
     --output ${CMAKE_CURRENT_BINARY_DIR}/conventions)
@@ -131,6 +134,9 @@ if(RATES_BUILD_PYTHON)
   if(BUILD_TESTING)
     add_test(NAME python_bindings COMMAND ${Python3_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/python/test_bindings.py $<TARGET_FILE_DIR:pyrates>)
+    add_test(NAME multicurve_validation COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/python/validate_multicurve.py --module-dir $<TARGET_FILE_DIR:pyrates>
+      --out ${CMAKE_CURRENT_BINARY_DIR}/multicurve-validation)
   endif()
 endif()
 install(TARGETS rates_engine EXPORT ratesEngineTargets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})

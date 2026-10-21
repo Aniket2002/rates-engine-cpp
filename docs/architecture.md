@@ -40,6 +40,13 @@ shares immutable schedules for equal dates and conventions. Pricing still create
 cash-flow vectors; the Linux profiles expose remaining allocation costs.
 The [v2 design](v2.md) describes replay, aggregation and benchmark boundaries.
 
+The [v2.1 extension](multicurve.md) adds a two-curve `price` overload; single-curve
+calls delegate with the same curve in both roles. `build_forward` shares the
+solver while discounting on an exogenous curve. `quote_pillar` centralizes exact
+zero versus adjusted contract dates. OIS specializes conventions and uses
+future overnight telescoping under zero-lag assumptions. `multi_curve_risk`
+recalibrates forwarding after discount quote shocks and reports both coordinates.
+
 The `rates_engine` static target requires C++20 for the standard Gregorian
 chrono calendar. Most financial calculations use C++17-compatible constructs,
 but a C++17 build is not supported. Installed clients use

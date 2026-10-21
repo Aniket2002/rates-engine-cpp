@@ -26,8 +26,17 @@ SwapResult price(const DiscountCurve &curve, const Swap &swap) {
     return price(curve, PreparedSwap{swap});
 }
 SwapResult price(const DiscountCurve &curve, const PreparedSwap &prepared) {
+    return price(curve, curve, prepared);
+}
+SwapResult price(const DiscountCurve &discount, const DiscountCurve &projection, const Swap &swap) {
+    return price(discount, projection, PreparedSwap{swap});
+}
+SwapResult price(const DiscountCurve &discount, const DiscountCurve &projection,
+                 const PreparedSwap &prepared) {
     const auto &swap = prepared.trade();
-    if (swap.effective < curve.valuation_date())
+    if (discount.valuation_date() != projection.valuation_date())
+        throw std::invalid_argument("Discount and projection curves must have the same valuation date");
+    if (swap.effective < discount.valuation_date())
         throw std::invalid_argument(
             "Historical fixings/accrued swaps are unsupported: effective date precedes valuation");
     const auto &c = swap.conventions;
@@ -35,15 +44,15 @@ SwapResult price(const DiscountCurve &curve, const PreparedSwap &prepared) {
     result.fixed_flows.reserve(prepared.fixed_periods().size());
     result.floating_flows.reserve(prepared.floating_periods().size());
     for (const auto &period : prepared.fixed_periods()) {
-        const double df = curve.discount(period.payment).value;
+        const double df = discount.discount(period.payment).value;
         const double amount = swap.notional * swap.fixed_rate.value * period.accrual.value;
         result.annuity += period.accrual.value * df;
         result.fixed_pv += amount * df;
         result.fixed_flows.push_back({period, swap.fixed_rate.value, amount, df, amount * df});
     }
     for (const auto &period : prepared.floating_periods()) {
-        const double fwd = curve.forward(period.start, period.end, c.floating_day_count).value;
-        const double df = curve.discount(period.payment).value;
+        const double fwd = projection.forward(period.start, period.end, c.floating_day_count).value;
+        const double df = discount.discount(period.payment).value;
         const double amount = swap.notional * fwd * period.accrual.value;
         result.floating_pv += amount * df;
         result.floating_flows.push_back({period, fwd, amount, df, amount * df});

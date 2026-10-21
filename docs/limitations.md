@@ -1,12 +1,16 @@
 # Model and implementation boundaries
 
-- Single-curve projection and discounting. No collateral or OIS discount curve,
-  tenor basis, multi-currency support or XVA. Real Fed fitted Treasury curves
+- The original CLI/portfolio replay uses single-curve projection and discounting.
+  The [v2.1 extension](multicurve.md) adds OIS discounting and separately calibrated
+  projection curves, but no basis-swap instruments, multi-currency support or XVA.
+  Real Fed fitted Treasury curves
   provide a historical valuation proxy; the swap portfolios are hypothetical.
 - Vanilla deterministic deposits and fixed/floating swaps only. No options,
   caps, floors, convexity adjustment, stochastic models or credit risk.
-- No historical fixings, accrued trade support, floating spread/gearing,
+- No historical fixings in swap valuation, accrued trade support, floating spread/gearing,
   settlement lag, payment lag, ex-coupon treatment or principal exchanges.
+  A separate SOFR utility compounds realized fixings; OIS pricing supports fully
+  future annual ACT/360 coupons only. No lookback, observation shift or lockout.
 - Gregorian dates restricted to 1900..2199; month-based forward schedules with
   short final stubs. No long/front stubs, IMM rolls or named holiday databases.
 - Log-linear discount interpolation only, with discontinuous instantaneous
@@ -52,6 +56,5 @@ TLT example covers an action-free interval and is explicitly retrospective.
 Availability checks protect the signal from future inputs under the supplied
 timestamps; they cannot certify the historical provenance of those timestamps.
 
-Next improvements: add explicit front/long stubs and payment lags, expand convention-specific
-external validation, then introduce distinct forwarding and collateral curves
-with independently validated instruments and data assumptions.
+Next improvements: front/long stubs, payment lags, combined realized/forecast
+overnight coupons, basis-swap calibration and named market calendars.

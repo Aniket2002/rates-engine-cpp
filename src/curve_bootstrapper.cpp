@@ -53,16 +53,26 @@ CurveBootstrapper::CurveBootstrapper(Conventions c, SolverSettings s)
     conventions_.validate();
     validate_settings(settings_);
 }
+Date quote_pillar(const MarketQuote &quote, const Conventions &conventions) {
+    return quote.instrument == Instrument::ContinuousZero
+               ? quote.maturity
+               : conventions.calendar.adjust(quote.maturity, conventions.business_day);
+}
 BootstrapResult CurveBootstrapper::build(Date valuation, std::vector<MarketQuote> quotes) const {
+    return build_impl(valuation, std::move(quotes), nullptr);
+}
+BootstrapResult CurveBootstrapper::build_forward(const DiscountCurve &discount,
+                                                 std::vector<MarketQuote> quotes) const {
+    return build_impl(discount.valuation_date(), std::move(quotes), &discount);
+}
+BootstrapResult CurveBootstrapper::build_impl(Date valuation, std::vector<MarketQuote> quotes,
+                                              const DiscountCurve *discount) const {
     if (quotes.empty())
         throw std::invalid_argument("Cannot calibrate an empty quote set");
     const auto &c = conventions_;
     if (c.calendar.adjust(valuation, c.business_day) != valuation)
         throw std::invalid_argument("Valuation date must satisfy business-day convention");
-    const auto pillar = [&](const MarketQuote &q) {
-        return q.instrument == Instrument::ContinuousZero ? q.maturity
-                                                          : c.calendar.adjust(q.maturity, c.business_day);
-    };
+    const auto pillar = [&](const MarketQuote &q) { return quote_pillar(q, c); };
     std::sort(quotes.begin(), quotes.end(),
               [&](const auto &a, const auto &b) { return pillar(a) < pillar(b); });
     std::vector<CurveNode> nodes;
@@ -93,7 +103,8 @@ BootstrapResult CurveBootstrapper::build(Date valuation, std::vector<MarketQuote
             const auto objective = [&](double log_df) {
                 auto candidate = nodes;
                 candidate.push_back({end, DiscountFactor{std::exp(log_df)}});
-                return price(DiscountCurve{valuation, candidate}, swap).par_rate - q.rate.value;
+                const DiscountCurve projection{valuation, candidate};
+                return price(discount ? *discount : projection, projection, swap).par_rate - q.rate.value;
             };
             double width = 0.25;
             while (width < 50 && same_sign(objective(-width), objective(width)))
@@ -119,9 +130,9 @@ BootstrapResult CurveBootstrapper::build(Date valuation, std::vector<MarketQuote
         else if (row.quote.instrument == Instrument::ContinuousZero)
             row.model_quote = curve.zero(row.pillar).value;
         else
-            row.model_quote =
-                price(curve, Swap{valuation, row.quote.maturity, 1.0, row.quote.rate, Side::Payer, c})
-                    .par_rate;
+            row.model_quote = price(discount ? *discount : curve, curve,
+                                    Swap{valuation, row.quote.maturity, 1.0, row.quote.rate, Side::Payer, c})
+                                  .par_rate;
         row.residual = row.model_quote - row.quote.rate.value;
         row.converged = std::abs(row.residual) <= settings_.quote_tolerance;
         if (!row.converged)

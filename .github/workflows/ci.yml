@@ -38,6 +38,11 @@ jobs:
       - name: Independent conventions and rate helpers
         shell: bash
         run: python python/validate_conventions.py --cli build/rates_cli${{ runner.os == 'Windows' && '.exe' || '' }} --output build/conventions --require-quantlib
+      - name: Independent OIS and multi-curve validation
+        run: python python/validate_multicurve.py --module-dir build --out build/multicurve-validation --require-quantlib
+      - name: Validate PV-change case study
+        shell: bash
+        run: python python/generate_case_study.py --cli build/rates_cli${{ runner.os == 'Windows' && '.exe' || '' }} --out build/case-study --require-quantlib
       - run: cmake --install build --prefix install
       - name: Real Fed history and independent validation
         shell: bash
@@ -62,6 +67,8 @@ jobs:
             build/historical-validation/
             build/historical-replay/
             build/trading-validation.json
+            build/multicurve-validation/
+            build/case-study/
             build/Testing/Temporary/
   sanitizers:
     runs-on: ubuntu-latest

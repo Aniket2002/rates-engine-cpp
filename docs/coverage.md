@@ -5,6 +5,13 @@ Scope: compiled executable lines and branch outcomes in `src/*.cpp` and
 are excluded from the library denominator. These numbers measure execution,
 not numerical correctness or exhaustive input coverage.
 
+Version 2.1 adds OIS and multi-curve valuation and measures **1,131/1,143 lines
+(98.95%)** and **573/649 branch outcomes (88.29%)**, with all 124 emitted functions
+executed and 70 coverage CTest entries passing. See the
+[launch summary](results/coverage-launch.json), [retained diagnostics](results/coverage-launch-diagnostics.txt)
+and [verification record](launch-validation.md). The prior snapshots below
+describe their original code versions and denominators.
+
 On Windows LLVM-MinGW Clang 23.1.3, Debug with `-O0`, the initial suite measured
 430/454 lines (94.71%) and 209/262 branch outcomes (79.77%). After the validation
 and scenario-reuse update, it measured 549/553 lines (99.28%) and 253/282 branch

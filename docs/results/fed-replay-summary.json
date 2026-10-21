@@ -18,7 +18,7 @@
   "max_pv": 455755.22329914547,
   "first_parallel_zero_quote_dv01": -4207.518942305028,
   "last_parallel_zero_quote_dv01": -4560.949122216339,
-  "max_processing_ms": 82.733,
+  "max_processing_ms": 30.236400000000003,
   "risk_units": "currency/bp; input quotes are continuously compounded zero yields",
   "warning": "Retrospective current-vintage Treasury proxy; hypothetical swaps; PV changes are not realized trading P&L"
 }

@@ -1,11 +1,12 @@
-#include "rates/risk_engine.hpp"
+#include "rates/multicurve.hpp"
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 namespace py = pybind11;
 using namespace rates;
 PYBIND11_MODULE(pyrates, module) {
-    module.doc() = "C++ single-curve rates engine. Rates are decimals; risk is currency per bp.";
+    module.doc() =
+        "C++ rates engine with OIS and multi-curve valuation. Rates are decimals; risk is currency per bp.";
     py::class_<Date>(module, "Date")
         .def(py::init([](const std::string &iso) { return Date::parse(iso); }))
         .def("__str__", &Date::str)
@@ -81,7 +82,23 @@ PYBIND11_MODULE(pyrates, module) {
     py::class_<CurveBootstrapper>(module, "CurveBootstrapper")
         .def(py::init([](const Conventions &c) { return CurveBootstrapper{c}; }),
              py::arg("conventions") = Conventions{})
-        .def("build", &CurveBootstrapper::build);
+        .def("build", &CurveBootstrapper::build)
+        .def("build_forward", &CurveBootstrapper::build_forward);
+    module.def("sofr_ois_conventions", &sofr_ois_conventions, py::arg("calendar") = Calendar{});
+    py::class_<OisCurveBootstrapper>(module, "OisCurveBootstrapper")
+        .def(py::init([](const Calendar &calendar) { return OisCurveBootstrapper{calendar}; }),
+             py::arg("calendar") = Calendar{})
+        .def("build", &OisCurveBootstrapper::build);
+    module.def(
+        "compound_sofr",
+        [](Date start, Date end, const std::vector<std::pair<Date, double>> &input,
+           const Calendar &calendar) {
+            std::vector<OvernightFixing> fixings;
+            for (const auto &[day, rate] : input)
+                fixings.push_back({day, SimpleRate{rate}});
+            return compound_sofr(start, end, fixings, calendar).value;
+        },
+        py::arg("start"), py::arg("end"), py::arg("fixings"), py::arg("calendar") = Calendar{});
     py::class_<AccrualPeriod>(module, "AccrualPeriod")
         .def_readonly("start", &AccrualPeriod::start)
         .def_readonly("end", &AccrualPeriod::end)
@@ -104,10 +121,26 @@ PYBIND11_MODULE(pyrates, module) {
     py::class_<PreparedSwap>(module, "PreparedSwap").def(py::init<Swap>());
     module.def("price", py::overload_cast<const DiscountCurve &, const Swap &>(&price));
     module.def("price_prepared", py::overload_cast<const DiscountCurve &, const PreparedSwap &>(&price));
+    module.def("price_multicurve",
+               py::overload_cast<const DiscountCurve &, const DiscountCurve &, const Swap &>(&price));
+    module.def("price_ois", &price_ois);
     py::class_<RiskBucket>(module, "RiskBucket")
         .def_readonly("label", &RiskBucket::label)
         .def_readonly("maturity", &RiskBucket::maturity)
         .def_readonly("dv01", &RiskBucket::dv01);
+    py::class_<MultiCurveRiskReport>(module, "MultiCurveRiskReport")
+        .def_readonly("base", &MultiCurveRiskReport::base)
+        .def_readonly("discount_parallel_dv01", &MultiCurveRiskReport::discount_parallel_dv01)
+        .def_readonly("forwarding_parallel_dv01", &MultiCurveRiskReport::forwarding_parallel_dv01)
+        .def_readonly("discount_quotes", &MultiCurveRiskReport::discount_quotes)
+        .def_readonly("forwarding_quotes", &MultiCurveRiskReport::forwarding_quotes);
+    module.def(
+        "multi_curve_risk",
+        [](const CurveBootstrapper &d, const CurveBootstrapper &f, Date valuation,
+           const std::vector<MarketQuote> &dq, const std::vector<MarketQuote> &fq, const Swap &swap,
+           double bump) { return multi_curve_risk(d, f, valuation, dq, fq, swap, BasisPoints{bump}); },
+        py::arg("discount_builder"), py::arg("forwarding_builder"), py::arg("valuation"),
+        py::arg("discount_quotes"), py::arg("forwarding_quotes"), py::arg("swap"), py::arg("bump_bps") = 1.0);
     py::class_<RiskReport>(module, "RiskReport")
         .def_readonly("base", &RiskReport::base)
         .def_readonly("parallel_quote_dv01", &RiskReport::parallel_quote_dv01)

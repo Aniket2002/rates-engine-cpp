@@ -27,14 +27,20 @@ struct BootstrapResult {
     DiscountCurve curve;
     std::vector<CalibrationRow> diagnostics;
 };
+// Shared by calibration and risk metadata; zero quotes are exact-date observations.
+Date quote_pillar(const MarketQuote &quote, const Conventions &conventions);
 class CurveBootstrapper {
   public:
     explicit CurveBootstrapper(Conventions conventions = {}, SolverSettings settings = {});
     BootstrapResult build(Date valuation, std::vector<MarketQuote> quotes) const;
+    // Calibrate projection factors while discounting swap coupons on an exogenous curve.
+    BootstrapResult build_forward(const DiscountCurve &discount, std::vector<MarketQuote> quotes) const;
     const Conventions &conventions() const { return conventions_; }
     const SolverSettings &settings() const { return settings_; }
 
   private:
+    BootstrapResult build_impl(Date valuation, std::vector<MarketQuote> quotes,
+                               const DiscountCurve *discount) const;
     Conventions conventions_;
     SolverSettings settings_;
 };

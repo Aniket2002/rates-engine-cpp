@@ -1,226 +1,127 @@
 # rates-engine-cpp
 
-A C++20 interest-rate curve, swap pricing and portfolio risk library with independent
-numerical validation. Built to demonstrate financial mathematics, numerical
-engineering and maintainable C++ through a reproducible, auditable project.
+A C++20 interest-rate curve, swap valuation and risk library, checked against an
+independent Python implementation and QuantLib. Start with one question:
+**what is a five-year payer swap worth, and how does its value change when rates move?**
 
-The engine calibrates deposit/swap quotes and continuously compounded zero yields, prices vanilla swaps,
-and calculates signed parallel quote DV01, quote-bucket risk and zero-node
-risk. It includes a command-line application, optional Python bindings,
-GoogleTest tests, a separate Python reference, QuantLib comparisons and measured
-benchmarks. It now includes **249 real historical Federal Reserve Treasury curves
-from 2025**, with ten zero-rate tenors per date, alongside synthetic test fixtures.
-The [historical-data guide](docs/real-historical-data.md) documents source,
-conversion, reuse terms and a completed 24,900-trade-valuation replay.
-This is a single-curve model; sample swap portfolios remain hypothetical.
-The Fed integration baseline passed **53 local checks**, with **98.93% library line coverage
-and 89.04% branch coverage**; independent historical validation includes QuantLib.
+The worked example below takes eight quotes through calibration, cash flows, PV
+and two risk coordinates. The library also provides portfolio replay, SOFR
+compounding, OIS calibration and separate discount and forwarding curves.
+[Model boundaries](docs/limitations.md) are explicit.
 
-The [ETF trading simulator](docs/trading-simulation.md) adds versioned observation/
-availability times, a simple long/cash trend strategy, next-open execution with
-costs, and cash/holdings/P&L and risk reports. A real **18-session TLT demonstration**
-has been run and independently checked. Its public prices are a later download,
-so it is explicitly retrospective; original availability and fillability are
-not established. The simulator enforces supplied timestamps without certifying
-the underlying archive. Full verification now includes **64 local checks**, with
-**98.91% measured library line coverage and 88.34% branch coverage**.
+## Build and price one swap
 
-Run the pinned historical dataset without network access:
-
-```sh
-python python/replay_fed_history.py --batch build/release/rates_batch --data data/fed-gsw --out results/fed-replay
-```
-
-These are fitted Treasury curve estimates from the downloaded vintage. The
-replay is retrospective: original publication times and historical vintages are
-unavailable. The Treasury curve is a valuation proxy for the sample swaps.
-
-The [validation/reuse update](docs/validation-upgrade.md) adds measured
-[coverage](docs/coverage.md), independent QuantLib rate-helper bootstrapping,
-nondefault convention checks and reusable portfolio scenarios. [Version 2](docs/v2.md)
-adds portfolio aggregation, shared schedules, timestamp-indexed historical replay,
-operational JSON summaries, scaling benchmarks and Linux profiling automation.
-The initial
-execution report and benchmark results below are retained as baseline evidence.
-
-Original v2 verification: **50 local checks passed**, **98.92% measured library line
-coverage**, and all seven main CI jobs passed. On the recorded Linux synthetic
-100-trade workload, shared full risk including setup was **56.8x faster** than
-independent per-trade reports. The [v2 report](docs/v2.md) includes p50/p95/p99
-through 10,000 trades, Linux profiles and the measurement boundaries.
-
-## Features
-
-- Gregorian dates, leap years, month/year tenors, month-end schedules and short
-  final stubs; weekend/explicit-holiday calendars and business-day adjustment.
-- Actual/360, Actual/365 Fixed and European 30/360 accruals; configurable legs.
-- Positive discount factors, negative rates, log-linear interpolation, pillar
-  diagnostics and explicit rejection of extrapolation.
-- Analytic deposit calibration and bracketed swap calibration with intermediate
-  coupon interpolation, residual reports and descriptive convergence errors.
-- Payer/receiver PV, par rate, per-period cash flows and both leg PVs.
-- Full rebootstrap for quote shocks; separate continuous-zero node shocks.
-- Reusable `rates_engine` static library and installed `rates::rates_engine`
-  CMake target. Financial code is separate from file handling.
-
-See [architecture](docs/architecture.md), [mathematics](docs/methodology.md),
-[conventions](docs/conventions.md), [risk](docs/risk_methodology.md),
-[validation](docs/mathematical_validation.md) and [execution report](docs/execution_report.md).
-
-## Build and run
-
-Requires a C++20 compiler with standard chrono calendars (GCC 13+, recent Clang
-with matching libstdc++/libc++, or MSVC 2022), CMake 3.24+ (3.25+ for the supplied
-presets), Ninja, Git and Python 3.10+. GoogleTest 1.17.0 is fetched on first
-configure unless an installed GTest package is found. Offline core-only builds
-can disable tests. C++17 compilation is not supported.
-
-From the repository root, with the compiler and Ninja available on PATH:
+Requires CMake 3.25+, Ninja, a C++20 compiler and Python 3.10+. GoogleTest 1.17.0
+is fetched on the first test build. On Windows use an x64 Visual Studio Developer
+shell or the [portable toolchain](docs/reproducibility.md), and append `.exe` to
+executable names.
 
 ```sh
 cmake --preset release
 cmake --build --preset release --parallel 4
 ctest --preset release
 ./build/release/rates_cli --quotes examples/synthetic_quotes.csv --swap examples/sample_swap.csv --out results/demo
-./build/release/rates_benchmark results/benchmark.csv 25
 ```
 
-On Windows run from an x64 Visual Studio Developer shell, or use a portable
-LLVM-MinGW compiler. Append `.exe` to executable names. The benchmark output's
-parent directory must already exist; the preceding CLI command creates `results`.
-Exact Windows commands and optional dependencies are in
-[reproducibility](docs/reproducibility.md).
+At **2 January 2025**, the [inputs](examples/synthetic_quotes.csv) contain
+1M/3M/6M deposits and 1Y/2Y/3Y/5Y/10Y par swaps, in decimal rate units.
+The [trade](examples/sample_swap.csv) pays **3.7% fixed** on **1,000,000 notional**
+until **2 January 2030**, receiving quarterly floating payments. Fixed payments
+are semiannual with 30E/360 accrual; floating/deposit accrual is ACT/360.
+The example uses weekend-only modified-following adjustment and one curve for
+both projection and discounting.
 
-```sh
-cmake --preset debug
-cmake --build --preset debug --parallel 4
-ctest --preset debug
-cmake --install build/release --prefix install
-cmake -S examples/consumer -B build/consumer -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$PWD/install"
-cmake --build build/consumer
-./build/consumer/consumer
-```
-
-To build just the library/CLI without Python or GoogleTest:
-
-```sh
-cmake -S . -B build/core -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DRATES_BUILD_BENCHMARKS=OFF
-cmake --build build/core
-```
-
-## Demonstration
-
-Default valuation is `2025-01-02`. `examples/synthetic_quotes.csv` supplies
-1M/3M/6M deposits and 1Y/2Y/3Y/5Y/10Y swap par quotes. Inputs use decimal rates:
-
-```csv
-type,label,maturity,rate
-deposit,1M,2025-02-02,0.031
-swap,5Y,2030-01-02,0.038
-```
-
-The full file includes all eight quotes. `examples/sample_swap.csv` describes
-a one-million notional 5Y payer swap with coupon 3.7%. Executed Release output:
-
-| Metric | Value |
+| Output | Value |
 | --- | ---: |
 | Fixed-leg PV | 167,660.057351 |
 | Floating-leg PV | 172,191.410251 |
-| Payer PV | 4,531.352900 |
-| Par rate | 0.038000000000 |
-| Parallel quote DV01 | -451.944300 currency/bp |
+| Payer PV | **4,531.352900** |
+| Par fixed rate | **3.800000%** |
+| Signed parallel quote DV01 | **−451.944300 currency/bp** |
 
-CSV outputs: `curve.csv`, `calibration.csv`, `cashflows.csv`, `summary.csv` and
-`risk.csv`. Cash-flow amounts and leg PVs precede application of the payer or
-receiver side sign. The console prints curve nodes, calibration residuals and
-risk. `rates_cli --help` lists every option. The CLI accepts alternate valuation,
-quote/trade paths, payment intervals, day counts, business-day rule, EOM flag,
-holidays, curve identifier and positive bump size. Headers and unquoted CSV
-column order are exact; malformed data exits nonzero with an error.
+The market par rate exceeds the contractual coupon, so the payer has a positive
+PV. The engine reprices every input within a `1e-12` decimal-rate tolerance,
+then interpolates log discount factors. [Recorded outputs](docs/results/demo)
+include the calibrated curve, residuals, cash flows, summary and risk.
 
-## Validation and optional bindings
+![Calibrated continuous zero-yield curve](docs/charts/curve.png)
+
+## Read the risk correctly
+
+Risk uses **`(PV_down − PV_up) / (2 × bump_bps)`**. A negative number for this
+payer means PV rises when rates rise. A +1 bp move predicts about **+451.94**
+of PV change before nonlinear effects.
+
+Quote buckets bump one market quote and rebuild the curve. Zero-node buckets
+bump one continuous node yield directly. They answer different questions:
+
+![Market-quote and zero-node risk buckets](docs/charts/risk-buckets.png)
+
+The CLI writes `curve.csv`, `calibration.csv`, `cashflows.csv`, `summary.csv`
+and `risk.csv`. Risk maturity identifies the **actual calibrated pillar**:
+adjusted for deposit/swap contracts, exact for continuous-zero observations.
+See [risk definitions](docs/risk_methodology.md) and [conventions](docs/conventions.md).
+
+## Move the quotes and explain the PV change
+
+```sh
+python -m pip install QuantLib
+python python/generate_case_study.py --cli build/release/rates_cli --out results/case-study --require-quantlib
+```
+
+A **+10 bp parallel shock** changes PV by **+4,507.58** after recalibration.
+The first-order bucket estimate is **+4,519.44**, leaving a **−11.86** residual.
+At +50 bp the residual grows to **−294.32**. All seven scenarios, including a
+steepener, pass independent Python and QuantLib quote-helper checks. These are
+same-date hypothetical PV changes, not realized trading P&L.
+
+![Full repricing compared with linear risk estimates](docs/charts/pv-change.png)
+
+The [model-validation case study](docs/model-validation-case-study.md) gives
+hypotheses, tolerances and results. [Charts](docs/charts) include PNG and SVG
+exports, input hashes and a [reproduction script](python/generate_charts.py).
+
+## Validate and extend the example
 
 ```sh
 python -m pip install QuantLib pybind11
 python python/validate_results.py --cli build/release/rates_cli --output results/validation --require-quantlib
+python python/validate_conventions.py --cli build/release/rates_cli --output results/conventions --require-quantlib
 cmake --preset release -DRATES_BUILD_PYTHON=ON -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
-cmake --build --preset release
-ctest --preset release
+cmake --build --preset release --parallel 4
+python python/validate_multicurve.py --module-dir build/release --out results/multicurve --require-quantlib
 ```
 
-The validation script has no third-party dependency unless QuantLib comparison
-is requested. It performs independent calendar, coupon, safeguarded-Newton
-calibration, pricing and risk calculations in Python. QuantLib separately
-prices matched swaps on matching node discounts; it does not replace the engine
-or independently bootstrap the quotes in that original script. The additional
-`validate_conventions.py` independently bootstraps six compatible convention
-cases using QuantLib rate helpers and validates nine convention cases overall.
-Without QuantLib the report explicitly
-records its absence. CSV comparisons include absolute error, relative error
-where meaningful, tolerance and status; failures are retained and return a
-nonzero exit status.
+The original numerical suite has **1,285 comparisons**. Convention validation
+includes independent rate-helper calibration. The OIS/multi-curve suite adds
+**230 comparisons** for positive/negative rates, explicit holidays, cash flows
+and discount/forwarding quote risk. See the [v2.1 verification record](docs/launch-validation.md)
+for measured checks, coverage and platform boundaries.
 
-Tests cover analytical one-period swaps, flat positive/zero/negative curves,
-sloping curves, irregular pillars, long swaps, pricing identities, risk signs,
-finite-difference stability, malformed inputs, portfolio failures and replay
-isolation. [Measured coverage](docs/coverage.md) includes line and branch reports.
-See the [v2 report](docs/v2.md) for current results and the
-[initial execution report](docs/execution_report.md) for baseline evidence.
+The [SOFR/OIS and multi-curve guide](docs/multicurve.md) documents:
 
-For Python, add `build/release` to `sys.path`, then:
+- `compound_sofr`: ACT/360 compounding with weekend/holiday accrual.
+- `OisCurveBootstrapper` and `price_ois`: annual compounded overnight swaps.
+- `build_forward` and `price(discount, projection, swap)`: separate curves.
+- `multi_curve_risk`: full recalibration for discount and forwarding quote shocks.
 
-```python
-import pyrates as r
-v = r.Date("2025-01-02")
-end = v.add_months(12)
-curve = r.DiscountCurve(v, [(end, 0.95)])
-trade = r.Swap(v, end, 1_000_000, 0.04)
-print(r.price(curve, trade).pv)
-```
+OIS pricing supports fully future coupons and zero payment/settlement lag.
+Existing CLI/replay tools retain their single-curve interpretation.
 
-`CurveBootstrapper`, `MarketQuote`, `Conventions`, `Calendar`, detailed cash
-flows and `RiskEngine` are also exposed; see `python/test_bindings.py`.
+## Explore the rest of the library
 
-## Static checks, sanitizers and benchmarks
+| Area | Entry point |
+| --- | --- |
+| Historical curves | [249 Fed curves and 24,900 trade valuations](docs/real-historical-data.md) |
+| Portfolio aggregation and shared scenarios | [v2 design and scaling measurements](docs/v2.md) |
+| Mathematics | [Methodology](docs/methodology.md), [validation](docs/mathematical_validation.md) |
+| Performance | [Benchmarks](docs/benchmarks.md), [coverage](docs/coverage.md) |
+| Builds, bindings, static analysis and sanitizers | [Reproducibility](docs/reproducibility.md) |
+| Installed C++ library | [Consumer example](examples/consumer), [architecture](docs/architecture.md) |
+| Batch operations | [Runbook](ops/runbook.md) |
+| Separate ETF simulator | [Retrospective TLT demonstration](docs/trading-simulation.md) |
 
-```sh
-cmake -S . -B build/tidy -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DRATES_CLANG_TIDY=ON -DBUILD_TESTING=OFF
-cmake --build build/tidy
-cmake --preset sanitizers -DCMAKE_CXX_COMPILER=clang++
-cmake --build --preset sanitizers
-ctest --preset sanitizers
-```
-
-Combined ASan/UBSan is supported on Linux/macOS GCC/Clang, and deliberately
-rejected on Windows. CI defines GCC, Clang, MSVC and macOS builds, numerical
-validation, bindings, formatting/static checks and a Linux sanitizer job.
-
-Benchmarks use `steady_clock`, three warmups, repeated samples and a volatile
-result sink. They record mean/median/minimum microseconds, iteration count,
-workload size, compiler, configuration and platform. Workloads include 10,000
-discount queries, full calibration, pricing, parallel DV01, both bucket systems
-and 20-swap portfolio risk. An intentionally simple linear-scan interpolation
-baseline recomputes times/logs. It is not a QuantLib comparison. See
-[benchmark methodology and measurements](docs/benchmarks.md).
-
-## Scope and next steps
-
-The model uses one curve for projection and discounting, forward-only
-coupons, zero settlement/payment lag and no historical fixings. It does not
-represent modern collateralized multi-curve valuation. It has no live market
-feeds, named holiday databases, stochastic options, XVA or production-readiness
-claim. Full boundaries are in [limitations](docs/limitations.md).
-
-Synthetic fixture batch and replay example:
-
-```sh
-./build/release/rates_batch --as-of 2025-01-02T10:02:00Z --max-age-seconds 300 --out results/batch
-./build/release/rates_batch --replay-from 2025-01-02T10:00:00Z --replay-to 2025-01-02T10:15:00Z --step-seconds 120 --out results/replay
-./build/release/rates_portfolio_benchmark results/scaling.csv 101 10000
-```
-
-See the [operational runbook](ops/runbook.md) for failures,
-freshness policy and the scheduled simulation. Future model extensions include
-richer schedules and separately validated collateral and forwarding curves.
-
+Fed data are fitted Treasury estimates from a downloaded vintage, used as a
+proxy for hypothetical swaps. Original publication times are unavailable.
+No live feeds, options, XVA or production-readiness claim.
 MIT licensed; dependencies retain their own licenses.

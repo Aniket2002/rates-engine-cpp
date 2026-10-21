@@ -40,4 +40,6 @@ class PreparedSwap {
 };
 SwapResult price(const DiscountCurve &curve, const Swap &swap);
 SwapResult price(const DiscountCurve &curve, const PreparedSwap &swap);
+SwapResult price(const DiscountCurve &discount, const DiscountCurve &projection, const Swap &swap);
+SwapResult price(const DiscountCurve &discount, const DiscountCurve &projection, const PreparedSwap &swap);
 } // namespace rates

@@ -1,0 +1,18 @@
+{
+  "matplotlib_version": "3.11.2",
+  "inputs": {
+    "demo/curve.csv": "c451f2dc7a84a84b1d5f9ddd9901b5b7604168028782eba36d8d94d6b8ae1f79",
+    "demo/risk.csv": "208f745eb7c21c5ee3541f11371c73d2cfee5a63fd50cd9256a5b0a911d4a00b",
+    "case-study/pv-changes.csv": "b41740a87aeefc5c6bd5c5d29430b5a2c6d6cced138ab3d79831f1c9c7aef641",
+    "validation-report.json": "3a9595973d1c9bc6b85c2193fe6ca589862add884e5d9fa899277774415f42ab",
+    "case-study/report.json": "4436ad69461ec8bbd741160362fb0c9e1140d30a29eacf95b1fc47a8eb9e2611"
+  },
+  "outputs": [
+    "curve.png",
+    "curve.svg",
+    "risk-buckets.png",
+    "risk-buckets.svg",
+    "pv-change.png",
+    "pv-change.svg"
+  ]
+}
