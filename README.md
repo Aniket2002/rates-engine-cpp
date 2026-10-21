@@ -7,6 +7,8 @@ independent Python implementation and QuantLib. Start with one question:
 The worked example below takes eight quotes through calibration, cash flows, PV
 and two risk coordinates. The library also provides portfolio replay, SOFR
 compounding, OIS calibration and separate discount and forwarding curves.
+Version 2.2 adds seasoned SOFR swaps, realized fixings, lookback/observation
+shift/lockout, spot and payment lags, and an auditable New York Fed data adapter.
 [Model boundaries](docs/limitations.md) are explicit.
 
 ## Build and price one swap
@@ -105,8 +107,24 @@ The [SOFR/OIS and multi-curve guide](docs/multicurve.md) documents:
 - `build_forward` and `price(discount, projection, swap)`: separate curves.
 - `multi_curve_risk`: full recalibration for discount and forwarding quote shocks.
 
-OIS pricing supports fully future coupons and zero payment/settlement lag.
-Existing CLI/replay tools retain their single-curve interpretation.
+For seasoned SOFR trades, use the new `SofrSwap`, `FixingStore`,
+`SofrCurveBootstrapper` and `price_sofr` APIs. The
+[SOFR lifecycle and market-data guide](docs/sofr-lifecycle.md) documents the
+cash-flow conventions, imported quote schema and remaining boundaries.
+The original `price_ois` and CLI/replay interfaces retain their earlier scope.
+
+```sh
+python python/run_sofr_valuation.py --module-dir build/release --manifest data/sofr/manifest.json --out results/sofr-demo
+python python/validate_sofr.py --module-dir build/release --out results/sofr-validation --require-quantlib
+python python/test_sofr_replay.py --module-dir build/release --out results/sofr-replay --require-quantlib
+```
+
+This example combines **actual captured NY Fed fixings with explicitly synthetic
+OIS quotes**. It values a seasoned 1m payer at **−4,448.43** dirty PV and
+**−4,593.36** clean PV, with 15 realized and 484 forecast daily observations.
+The lifecycle suite passes **6,892** independent comparisons; real-fixing replay
+adds **28** cash-flow and dual-curve-risk comparisons. See the
+[v2.2 verification record](docs/sofr-validation.md).
 
 ## Explore the rest of the library
 
@@ -123,5 +141,7 @@ Existing CLI/replay tools retain their single-curve interpretation.
 
 Fed data are fitted Treasury estimates from a downloaded vintage, used as a
 proxy for hypothetical swaps. Original publication times are unavailable.
-No live feeds, options, XVA or production-readiness claim.
+Public NY Fed fixing capture is available; executable OIS quotes require an
+external provider and the validated import interface. No options, XVA or
+production-readiness claim.
 MIT licensed; dependencies retain their own licenses.

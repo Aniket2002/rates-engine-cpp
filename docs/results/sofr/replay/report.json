@@ -1,0 +1,183 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "single PV",
+      "expected": -4448.426505729731,
+      "actual": -4448.426505734897,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "single coupon 0",
+      "expected": 10209.625940198513,
+      "actual": 10209.625940087699,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "single coupon 1",
+      "expected": 8832.387959252505,
+      "actual": 8832.387959257981,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "single coupon 2",
+      "expected": 9043.720374360077,
+      "actual": 9043.72037456157,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "single coupon 3",
+      "expected": 9143.554896226424,
+      "actual": 9143.554896430272,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "single coupon 4",
+      "expected": 8927.697855087905,
+      "actual": 8927.697855078444,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "single coupon 5",
+      "expected": 8466.818066820591,
+      "actual": 8466.818066719545,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "single coupon 6",
+      "expected": 8466.818066820591,
+      "actual": 8466.818066719397,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "single coupon 7",
+      "expected": 8466.818066820591,
+      "actual": 8466.818066719483,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "dual PV",
+      "expected": -2605.2332864750497,
+      "actual": -2605.233285740149,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "dual coupon 0",
+      "expected": 10410.683658132386,
+      "actual": 10410.683658035541,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "dual coupon 1",
+      "expected": 9067.477829980764,
+      "actual": 9067.477829976771,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "dual coupon 2",
+      "expected": 9287.012390518434,
+      "actual": 9287.012390579235,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "dual coupon 3",
+      "expected": 9389.545112650221,
+      "actual": 9389.545112711603,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "dual coupon 4",
+      "expected": 9181.2604309575,
+      "actual": 9181.260431119405,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "dual coupon 5",
+      "expected": 8713.206767515081,
+      "actual": 8713.20676771387,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "dual coupon 6",
+      "expected": 8713.206767515303,
+      "actual": 8713.206767713911,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "dual coupon 7",
+      "expected": 8713.206767515303,
+      "actual": 8713.20676771387,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "discount_zero_risk/2026-11-25",
+      "expected": 0.0016321878647431731,
+      "actual": 0.0016321878647431731,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "discount_zero_risk/2027-01-27",
+      "expected": 0.006753985879186075,
+      "actual": 0.006753985886462033,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "discount_zero_risk/2027-10-27",
+      "expected": -0.14420291141868802,
+      "actual": -0.14420291138230823,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "discount_zero_risk/2028-10-25",
+      "expected": -0.3238612975401338,
+      "actual": -0.3238612974528223,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "discount_zero_risk/2031-10-27",
+      "expected": 0.0,
+      "actual": 0.0,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "projection_zero_risk/2026-11-25",
+      "expected": -0.3211550742125837,
+      "actual": -0.3211550744017586,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "projection_zero_risk/2027-01-27",
+      "expected": -0.695375110313762,
+      "actual": -0.6953751102264505,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "projection_zero_risk/2027-10-27",
+      "expected": -9.119297799639753,
+      "actual": -9.119297799617925,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "projection_zero_risk/2028-10-25",
+      "expected": -178.28963449894218,
+      "actual": -178.2896344989931,
+      "tolerance": 2e-05
+    },
+    {
+      "name": "projection_zero_risk/2031-10-27",
+      "expected": 0.0,
+      "actual": 0.0,
+      "tolerance": 2e-05
+    }
+  ],
+  "rejected": [
+    "capture unavailable",
+    "stale quotes",
+    "missing historical fixing",
+    "corrupt fixing snapshot"
+  ],
+  "quantlib_version": "1.44",
+  "fixture_as_of": "2026-10-21T18:17:09Z",
+  "synthetic_quotes": true,
+  "scope": "Public NY Fed realized fixings; synthetic OIS quotes; independent cash flows and dual-curve node risk"
+}

@@ -7,12 +7,17 @@
   provide a historical valuation proxy; the swap portfolios are hypothetical.
 - Vanilla deterministic deposits and fixed/floating swaps only. No options,
   caps, floors, convexity adjustment, stochastic models or credit risk.
-- No historical fixings in swap valuation, accrued trade support, floating spread/gearing,
-  settlement lag, payment lag, ex-coupon treatment or principal exchanges.
-  A separate SOFR utility compounds realized fixings; OIS pricing supports fully
-  future annual ACT/360 coupons only. No lookback, observation shift or lockout.
+- The [v2.2 SOFR APIs](sofr-lifecycle.md) value future, seasoned, matured/unpaid
+  and settled coupons with availability-aware realized fixings, accrued value,
+  lookback, observation shift, lockout and spot/payment lags. Legacy vanilla
+  pricing APIs still require future coupons. Neither API supports floating
+  spread/gearing, amortization, ex-coupon treatment or principal exchanges.
+  Trade amendments, novations, clearing, collateral and settlement reconciliation
+  are outside the pricing lifecycle.
 - Gregorian dates restricted to 1900..2199; month-based forward schedules with
-  short final stubs. No long/front stubs, IMM rolls or named holiday databases.
+  short final stubs. No long/front stubs or IMM rolls. C++ calendars take explicit
+  holidays; the SOFR pipeline exports a versioned QuantLib US Government Bond
+  calendar with finite coverage. Operators must review calendar updates.
 - Log-linear discount interpolation only, with discontinuous instantaneous
   forwards. No extrapolation, smoothing, global fit or quote bid/ask uncertainty.
 - Bootstrap solves within log-discount bounds [-50,50]. Pathological or
@@ -45,6 +50,19 @@
   possibly revised vintage. Original publication times are unavailable. The
   observation-date labels support retrospective analysis, not point-in-time
   strategy backtesting. Source zero yields are not executable swap quotes.
+- The SOFR data adapter retrieves public NY Fed observations over HTTPS with
+  bounded retries, validates completeness and archives raw responses with hashes.
+  Exact historical publication timestamps are unavailable: a downloaded fixing
+  becomes usable only at its first local capture time. Changed values become
+  new immutable local revisions. This cannot reconstruct an uncaptured historic
+  information set. Missing required past fixings fail, including before their
+  publication; they are never replaced with forecasts.
+- OIS quote import checks source, units, timestamps, freshness, calendar and
+  conventions, required tenors, bid/ask bounds and configured rate/spread limits.
+  It does not supply a licensed tradable quote feed, source authentication,
+  market-wide arbitrage certification, operational monitoring or a service SLA.
+  Stored hashes detect corruption, not maliciously regenerated snapshots.
+  The committed real-fixing demonstration uses synthetic OIS quotes.
 
 This is a reproducible quantitative engineering project, not a complete
 institutional derivatives platform or a claim of production readiness.
@@ -56,5 +74,5 @@ TLT example covers an action-free interval and is explicitly retrospective.
 Availability checks protect the signal from future inputs under the supplied
 timestamps; they cannot certify the historical provenance of those timestamps.
 
-Next improvements: front/long stubs, payment lags, combined realized/forecast
-overnight coupons, basis-swap calibration and named market calendars.
+Next improvements: front/long stubs, basis-swap calibration, floating spreads,
+contract-event processing and provider-specific executable quote connectors.

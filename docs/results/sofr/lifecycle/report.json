@@ -1,0 +1,7 @@
+{
+  "comparisons": 6892,
+  "passed": 6892,
+  "quantlib_version": "1.44",
+  "failures": [],
+  "scope": "Independent SOFR lifecycle coupons, observation dates/weights, accrued definition and lag-aware OIS helpers"
+}

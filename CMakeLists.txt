@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(rates_engine VERSION 2.1.0 LANGUAGES CXX)
+project(rates_engine VERSION 2.2.0 LANGUAGES CXX)
 include(CTest)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)

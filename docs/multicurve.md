@@ -22,11 +22,12 @@ OIS. For entirely future coupons with zero payment lag, projected overnight
 compounding telescopes to `P(start)/P(end) - 1`. `price_ois` uses this identity
 and rejects incompatible leg conventions and already-started trades.
 
-The realized compounding utility does **not** add mixed realized/forecast
-coupons to swap valuation. There is no observation shift, lookback, lockout,
-payment/settlement lag, automatic US holiday database, futures convexity
-adjustment or live SOFR feed. The default calendar has weekends only; supply
-holidays explicitly. Examples are synthetic, not executable market quotes.
+These v2.1 APIs remain limited to future coupons. Version 2.2 introduces
+separate [SOFR lifecycle APIs](sofr-lifecycle.md) for mixed realized/forecast
+coupons, observation shift, lookback, lockout and spot/payment lags, plus public
+NY Fed fixing capture and quote import. The default C++ calendar still has
+weekends only; the data pipeline requires a versioned US Government Bond
+holiday file. Examples in this v2.1 guide remain synthetic.
 
 ## Two curves and quote risk
 
