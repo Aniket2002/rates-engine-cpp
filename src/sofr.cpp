@@ -1,5 +1,6 @@
 #include "rates/sofr.hpp"
 #include <algorithm>
+#include <numeric>
 #include <utility>
 
 namespace rates {
@@ -126,13 +127,20 @@ SofrResult price_sofr(const DiscountCurve &discount, const DiscountCurve &projec
                         .value;
             }
         }
-        const double floating_amount = swap.notional * compound(observations, period.end);
+        // Annualize over the observation period, then apply the contractual ACT/360
+        // accrual. Shifted observation and interest periods can have different lengths.
+        const double observation_accrual =
+            std::accumulate(observations.begin(), observations.end(), 0.0,
+                            [](double total, const auto &observation) { return total + observation.weight; });
+        const double normalization =
+            year_fraction(period.start, period.end, DayCount::Actual360).value / observation_accrual;
+        const double floating_amount = swap.notional * normalization * compound(observations, period.end);
         const double fixed_amount = swap.notional * swap.fixed_rate.value * period.accrual.value;
         const double df = discount.discount(period.payment).value;
         const auto accrued_end = std::max(period.start, std::min(valuation, period.end));
         const double fixed_accrued = swap.notional * swap.fixed_rate.value *
                                      year_fraction(period.start, accrued_end, c.fixed_day_count).value;
-        const double floating_accrued = swap.notional * compound(observations, accrued_end);
+        const double floating_accrued = swap.notional * normalization * compound(observations, accrued_end);
         result.fixed_pv += fixed_amount * df;
         result.floating_pv += floating_amount * df;
         result.accrued += sign * (floating_accrued - fixed_accrued);

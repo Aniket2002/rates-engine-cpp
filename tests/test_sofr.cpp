@@ -119,6 +119,18 @@ TEST(SofrLifecycle, MaturedUnpaidPaymentDateAndSettledStates) {
     const Date next{2025, 1, 9};
     EXPECT_TRUE(price_sofr(flat(next), flat(next), trade, FixingStore{}, at(next), true).coupons.empty());
 }
+TEST(SofrLifecycle, ShiftedRateNormalizesDifferentObservationAndInterestLengths) {
+    const Date v{2025, 1, 9};
+    auto trade = swap(Date{2025, 1, 6}, Date{2025, 1, 8});
+    trade.conventions.lookback_days = 1;
+    trade.conventions.observation_shift = true;
+    const FixingStore fixings{{{Date{2025, 1, 3}, at(Date{2025, 1, 6}), SimpleRate{0.02}, "test"},
+                               {Date{2025, 1, 6}, at(Date{2025, 1, 7}), SimpleRate{0.03}, "test"}}};
+    const auto result = price_sofr(flat(v), flat(v), trade, fixings, at(v));
+    const double expected = 1e6 * ((1 + 0.02 * 3 / 360) * (1 + 0.03 / 360) - 1) * 2 / 4;
+    EXPECT_NEAR(result.coupons[0].floating_amount, expected, 1e-8);
+    EXPECT_NEAR(result.coupons[0].floating_accrued, expected, 1e-8);
+}
 TEST(SofrLifecycle, RejectsInvalidEconomicsConventionsDatesAndFactors) {
     const Date v{2025, 1, 2};
     auto trade = swap();
