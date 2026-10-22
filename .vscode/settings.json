@@ -1,6 +1,3 @@
 {
-    "C_Cpp.default.cppStandard": "c++20",
-    "chat.tools.terminal.autoApprove": {
-        "ctest": true
-    }
+    "C_Cpp.default.cppStandard": "c++20"
 }

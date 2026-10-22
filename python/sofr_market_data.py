@@ -258,6 +258,20 @@ def validate_quotes(document, calendar, policy, as_of):
         raise DataError("Import policy requires a boolean allow_synthetic flag")
     if document["synthetic"] and not policy["allow_synthetic"]:
         raise DataError("Synthetic quotes disabled by import policy")
+    firm = policy.get("require_executable", False)
+    if type(firm) is not bool:
+        raise DataError("require_executable must be boolean")
+    if firm:
+        if document["synthetic"] or document.get("quote_type") != "firm":
+            raise DataError("Executable policy requires nonsynthetic firm quotes")
+        for field in ("venue", "source_reference", "usage_rights_reference"):
+            if not isinstance(document.get(field), str) or not document[field].strip():
+                raise DataError(f"Firm quotes require {field}")
+        if timestamp(document.get("valid_until")) < as_of:
+            raise DataError("Firm quotes have expired")
+        required_size = number(policy.get("required_notional"), "required notional")
+        if required_size <= 0:
+            raise DataError("Positive required notional is mandatory for firm quotes")
     if document.get("calendar_sha256") != calendar.sha256:
         raise DataError("Quote/calendar mismatch")
     conventions(document["conventions"])
@@ -287,6 +301,8 @@ def validate_quotes(document, calendar, policy, as_of):
         seen.add(m)
         labels.add(label)
         bid, mid, ask = [number(row[k], k) for k in ("bid", "rate", "ask")]
+        if firm and number(row.get("executable_notional"), "executable notional") < required_size:
+            raise DataError("Quote size is below required executable notional")
         if not low <= bid <= mid <= ask <= high or ask-bid > spread:
             raise DataError("Invalid quote bounds, crossed market or excessive spread")
     if seen != set(required):

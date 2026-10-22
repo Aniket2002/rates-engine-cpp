@@ -46,6 +46,8 @@ jobs:
         run: python python/test_sofr_replay.py --module-dir build --out build/sofr-replay --require-quantlib
       - name: Independent basis-swap calibration and risk
         run: python python/validate_basis.py --module-dir build --out build/basis-validation --require-quantlib
+      - name: Independent SOFR hedge and nonlinear stress validation
+        run: python python/hedge_study.py --module-dir build --out build/hedging --require-quantlib
       - name: Validate PV-change case study
         shell: bash
         run: python python/generate_case_study.py --cli build/rates_cli${{ runner.os == 'Windows' && '.exe' || '' }} --out build/case-study --require-quantlib
@@ -78,6 +80,8 @@ jobs:
             build/sofr-replay/
             build/basis-validation/
             build/contractual-lifecycle/
+            build/hedging/
+            build/durable-lifecycle/
             build/case-study/
             build/Testing/Temporary/
   sanitizers:

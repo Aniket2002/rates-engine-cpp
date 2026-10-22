@@ -49,9 +49,33 @@ ctest --preset debug
 .\build\release\rates_benchmark.exe results/benchmark.csv 25
 ```
 
-The compiler's `bin` directory must remain on PATH when running standalone
-executables, because LLVM-MinGW uses libc++/libunwind DLLs. The optional Python
-module embeds these runtimes and avoids a separate DLL-path requirement.
+`RATES_STATIC_RUNTIME=ON` is the default. MinGW executable link commands embed
+the compiler and threading runtimes; MSVC uses `/MT` (or `/MTd` in Debug), following
+[CMake's runtime selection](https://cmake.org/cmake/help/latest/variable/CMAKE_MSVC_RUNTIME_LIBRARY.html).
+The compiler's `bin` directory is needed to build, but not to run these binaries.
+The optional Python module embeds the MinGW C++/unwind runtimes and still requires
+its matching Python installation. Normal Windows system DLLs remain required.
+`python/test_windows_runtime.py` copies binaries to an empty folder and runs them
+with only the Windows system directory on PATH, including a real CLI valuation.
+
+For the existing local setup, `.\run.ps1 -WithPython -Test` discovers the portable
+compiler and virtual environment, builds, tests and prices the example. It restores
+the caller's PATH afterwards. To build Debug use `-Configuration Debug`. On a fresh
+checkout, install the prerequisites above first; the script does not download a
+compiler or modify system-wide settings. Plain `.\run.ps1` builds the CLI without
+optional bindings. If execution policy blocks scripts, invoke the build commands
+above directly from the terminal.
+
+To create the portable CLI/library ZIP:
+
+```powershell
+cmake --build build/release --target package
+```
+
+Extract it and run `bin/rates_cli.exe` from the extracted root, supplying the
+`examples/` inputs. Python bindings are built from source and are not in this ZIP.
+The bundled static C++ library requires an ABI-compatible compiler; this local
+package is LLVM-MinGW x64. Binaries require Windows x64 with the Universal CRT.
 
 ## Bindings
 
@@ -84,6 +108,10 @@ cmake --build build/consumer
 
 For MSVC omit the compiler override. The consumer configuration must match the
 installed library: MSVC Debug and Release have different runtime/iterator ABIs.
+Use the same `/MT` versus `/MD` runtime choice. The installed package exposes
+`rates_engine_STATIC_RUNTIME`; the consumer example uses it to set
+`CMAKE_MSVC_RUNTIME_LIBRARY` before creating its executable. MinGW runtime link
+options propagate automatically through the exported library target.
 For POSIX use `./build/consumer/consumer`.
 
 ## Formatting/static checks and sanitizers

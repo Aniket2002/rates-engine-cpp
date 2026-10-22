@@ -1,0 +1,409 @@
+{
+  "inputs": {
+    "as_of": "2025-01-02T16:00:00Z",
+    "terms_months": [
+      6,
+      12,
+      24,
+      36,
+      60,
+      84,
+      120
+    ],
+    "rates": [
+      0.039,
+      0.038,
+      0.0365,
+      0.0355,
+      0.034,
+      0.0335,
+      0.033
+    ],
+    "portfolio_months": 60,
+    "portfolio_notional": 1000000.0,
+    "portfolio_coupon": 0.0375,
+    "hedge_months": [
+      24,
+      48,
+      72
+    ],
+    "maximum_abs_notional_per_hedge": 1500000.0,
+    "half_spread_bps": 0.5,
+    "ticket_fee_usd": 25.0,
+    "notional_lot": 1000.0,
+    "synthetic": true,
+    "calendar": "weekends only",
+    "payment_months": 12,
+    "payment_lag_days": 2,
+    "settlement_days": 2,
+    "end_of_month": false
+  },
+  "inputs_sha256": "ded09a8651a36568f69361a82e092615d2f2d7c8edf7c9ac11e3a0e0319e6404",
+  "objective": "Minimize unweighted sum of squared market-quote DV01 residuals; box limits, then round to USD 1,000 lots (not a discrete optimum)",
+  "continuous_signed_payer_notionals": [
+    -9998.767322646874,
+    -1271886.441867842,
+    -249317.5684524723
+  ],
+  "risk_sign": "(PV_down-PV_up)/(2*bump_bps); predicted change = -sum(DV01 * shock_bps)",
+  "initial_pv": -16004.451427279739,
+  "hedge_entry_mid_pv": -7.246853783726692e-12,
+  "hedges": [
+    {
+      "months": 24,
+      "signed_payer_notional": -10000.0,
+      "coupon": 0.036499999999530595,
+      "entry_cost_usd": 25.95897228695583
+    },
+    {
+      "months": 48,
+      "signed_payer_notional": -1272000.0,
+      "coupon": 0.03456139528175352,
+      "entry_cost_usd": 261.5541125960648
+    },
+    {
+      "months": 72,
+      "signed_payer_notional": -249000.0,
+      "coupon": 0.03370829923260171,
+      "entry_cost_usd": 92.21971805068273
+    }
+  ],
+  "entry_cost_usd": 379.73280293370334,
+  "unhedged_bucket_norm": 459.62111701583655,
+  "hedged_bucket_norm": 222.10807900133696,
+  "bucket_norm_reduction": 0.5167583238050307,
+  "quote_key_rates": [
+    {
+      "label": "6M",
+      "maturity": "2025-07-09",
+      "unhedged_dv01": -0.015538997569819912,
+      "hedged_dv01": -0.015434521394359763
+    },
+    {
+      "label": "12M",
+      "maturity": "2026-01-08",
+      "unhedged_dv01": -0.2916200194595149,
+      "hedged_dv01": -0.31069519387026956
+    },
+    {
+      "label": "24M",
+      "maturity": "2027-01-08",
+      "unhedged_dv01": -0.5841314592835261,
+      "hedged_dv01": 0.00011892991283091181
+    },
+    {
+      "label": "36M",
+      "maturity": "2028-01-10",
+      "unhedged_dv01": -1.3812059935444267,
+      "hedged_dv01": 177.73253820496967
+    },
+    {
+      "label": "60M",
+      "maturity": "2030-01-09",
+      "unhedged_dv01": -459.61857771812356,
+      "hedged_dv01": -107.91193777295092
+    },
+    {
+      "label": "84M",
+      "maturity": "2032-01-08",
+      "unhedged_dv01": 0.0,
+      "hedged_dv01": 78.09007963389345
+    },
+    {
+      "label": "120M",
+      "maturity": "2035-01-10",
+      "unhedged_dv01": 0.0,
+      "hedged_dv01": 0.0
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario": "parallel_up_1bp",
+      "unhedged_change": 461.7580147724366,
+      "hedged_change": -147.55780946927405,
+      "linear_hedged_change": -147.5846692805604,
+      "nonlinear_residual": 0.02685981128635717,
+      "hedged_change_after_entry_cost": -527.2906124029773,
+      "shock_bps": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "scenario": "parallel_down_1bp",
+      "unhedged_change": -462.02416911453474,
+      "hedged_change": 147.61153792369885,
+      "linear_hedged_change": 147.5846692805604,
+      "nonlinear_residual": 0.026868643138442394,
+      "hedged_change_after_entry_cost": -232.1212650100045,
+      "shock_bps": [
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0
+      ]
+    },
+    {
+      "scenario": "parallel_up_25bp",
+      "unhedged_change": 11464.572394838906,
+      "hedged_change": -3672.887449199925,
+      "linear_hedged_change": -3689.6167320140107,
+      "nonlinear_residual": 16.729282814085764,
+      "hedged_change_after_entry_cost": -4052.620252133628,
+      "shock_bps": [
+        25.0,
+        25.0,
+        25.0,
+        25.0,
+        25.0,
+        25.0,
+        25.0
+      ]
+    },
+    {
+      "scenario": "parallel_down_25bp",
+      "unhedged_change": -11630.921324733907,
+      "hedged_change": 3706.4672189047506,
+      "linear_hedged_change": 3689.6167320140107,
+      "nonlinear_residual": 16.85048689073983,
+      "hedged_change_after_entry_cost": 3326.7344159710474,
+      "shock_bps": [
+        -25.0,
+        -25.0,
+        -25.0,
+        -25.0,
+        -25.0,
+        -25.0,
+        -25.0
+      ]
+    },
+    {
+      "scenario": "steepener",
+      "unhedged_change": -639.4854837865278,
+      "hedged_change": 1239.079664756341,
+      "linear_hedged_change": 1236.1537112119759,
+      "nonlinear_residual": 2.9259535443650293,
+      "hedged_change_after_entry_cost": 859.3468618226375,
+      "shock_bps": [
+        -25.0,
+        -22.36842105263158,
+        -17.105263157894736,
+        -11.842105263157896,
+        -1.3157894736842088,
+        9.210526315789473,
+        25.0
+      ]
+    },
+    {
+      "scenario": "flattener",
+      "unhedged_change": 636.5638031944109,
+      "hedged_change": -1233.2311782315687,
+      "linear_hedged_change": -1236.1537112119759,
+      "nonlinear_residual": 2.9225329804071407,
+      "hedged_change_after_entry_cost": -1612.9639811652721,
+      "shock_bps": [
+        25.0,
+        22.36842105263158,
+        17.105263157894736,
+        11.842105263157896,
+        1.3157894736842088,
+        -9.210526315789473,
+        -25.0
+      ]
+    },
+    {
+      "scenario": "butterfly",
+      "unhedged_change": 4615.875884725188,
+      "hedged_change": -2585.033908378735,
+      "linear_hedged_change": -2586.7101127215165,
+      "nonlinear_residual": 1.6762043427816025,
+      "hedged_change_after_entry_cost": -2964.766711312438,
+      "shock_bps": [
+        -20.0,
+        -10.0,
+        10.0,
+        25.0,
+        10.0,
+        -10.0,
+        -20.0
+      ]
+    },
+    {
+      "scenario": "isolated_5y_up_25bp",
+      "unhedged_change": 11448.482753149321,
+      "hedged_change": 2659.768181821033,
+      "linear_hedged_change": 2697.798444323773,
+      "nonlinear_residual": -38.03026250273979,
+      "hedged_change_after_entry_cost": 2280.03537888733,
+      "shock_bps": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        25.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scenario": "parallel_up_200bp",
+      "unhedged_change": 87286.91345224364,
+      "hedged_change": -28472.63411789744,
+      "linear_hedged_change": -29516.933856112086,
+      "nonlinear_residual": 1044.299738214646,
+      "hedged_change_after_entry_cost": -28852.366920831144,
+      "shock_bps": [
+        200.0,
+        200.0,
+        200.0,
+        200.0,
+        200.0,
+        200.0,
+        200.0
+      ]
+    },
+    {
+      "scenario": "parallel_down_400bp",
+      "unhedged_change": -208135.9950319128,
+      "hedged_change": 63593.606230077625,
+      "linear_hedged_change": 59033.86771222417,
+      "nonlinear_residual": 4559.738517853453,
+      "hedged_change_after_entry_cost": 63213.873427143924,
+      "shock_bps": [
+        -400.0,
+        -400.0,
+        -400.0,
+        -400.0,
+        -400.0,
+        -400.0,
+        -400.0
+      ]
+    }
+  ],
+  "bump_convergence": [
+    {
+      "bump_bps": 0.1,
+      "unhedged_parallel_dv01": -461.89108406964806,
+      "hedged_parallel_dv01": 147.58466963106503
+    },
+    {
+      "bump_bps": 0.5,
+      "unhedged_parallel_dv01": -461.8910641291877,
+      "hedged_parallel_dv01": 147.58467290202645
+    },
+    {
+      "bump_bps": 1.0,
+      "unhedged_parallel_dv01": -461.89109194348566,
+      "hedged_parallel_dv01": 147.58467369648645
+    },
+    {
+      "bump_bps": 2.0,
+      "unhedged_parallel_dv01": -461.8911830835714,
+      "hedged_parallel_dv01": 147.5846864068351
+    }
+  ],
+  "independent_quantlib": [
+    {
+      "scenario": "base",
+      "maximum_pv_error": 1.3235840015113354e-06,
+      "comparisons": 4
+    },
+    {
+      "scenario": "parallel_up_1bp",
+      "maximum_pv_error": 4.530855221673846e-06,
+      "comparisons": 4
+    },
+    {
+      "scenario": "parallel_down_1bp",
+      "maximum_pv_error": 1.4819088391959667e-06,
+      "comparisons": 4
+    },
+    {
+      "scenario": "parallel_up_25bp",
+      "maximum_pv_error": 2.626155037432909e-06,
+      "comparisons": 4
+    },
+    {
+      "scenario": "parallel_down_25bp",
+      "maximum_pv_error": 1.9679719116538763e-06,
+      "comparisons": 4
+    },
+    {
+      "scenario": "steepener",
+      "maximum_pv_error": 1.4208781067281961e-06,
+      "comparisons": 4
+    },
+    {
+      "scenario": "flattener",
+      "maximum_pv_error": 2.866494469344616e-06,
+      "comparisons": 4
+    },
+    {
+      "scenario": "butterfly",
+      "maximum_pv_error": 3.4458062145859003e-06,
+      "comparisons": 4
+    },
+    {
+      "scenario": "isolated_5y_up_25bp",
+      "maximum_pv_error": 1.6828125808387995e-06,
+      "comparisons": 4
+    },
+    {
+      "scenario": "parallel_up_200bp",
+      "maximum_pv_error": 1.3443932402879e-06,
+      "comparisons": 4
+    },
+    {
+      "scenario": "parallel_down_400bp",
+      "maximum_pv_error": 5.4580450523644686e-06,
+      "comparisons": 4
+    }
+  ],
+  "independent_quote_risk": [
+    {
+      "tenor_months": 6,
+      "maximum_dv01_error": 2.468630555085838e-06,
+      "comparisons": 4
+    },
+    {
+      "tenor_months": 12,
+      "maximum_dv01_error": 1.9840954337269068e-06,
+      "comparisons": 4
+    },
+    {
+      "tenor_months": 24,
+      "maximum_dv01_error": 1.6529520507901907e-06,
+      "comparisons": 4
+    },
+    {
+      "tenor_months": 36,
+      "maximum_dv01_error": 1.285327016375959e-06,
+      "comparisons": 4
+    },
+    {
+      "tenor_months": 60,
+      "maximum_dv01_error": 4.2421743273735046e-07,
+      "comparisons": 4
+    },
+    {
+      "tenor_months": 84,
+      "maximum_dv01_error": 7.910712156444788e-07,
+      "comparisons": 4
+    },
+    {
+      "tenor_months": 120,
+      "maximum_dv01_error": 0.0,
+      "comparisons": 4
+    }
+  ],
+  "quantlib_version": "1.44",
+  "limitations": "Synthetic quotes and cost assumptions; static same-date hedge; no realized P&L, funding, margin, basis risk or liquidity model"
+}

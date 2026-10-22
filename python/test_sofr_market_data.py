@@ -104,6 +104,25 @@ class MarketDataTests(unittest.TestCase):
             with self.assertRaises(m.DataError):
                 m.timestamp(value)
 
+    def test_firm_quote_evidence_and_size(self):
+        policy = {**self.policy, "require_executable": True, "required_notional": 1e6}
+        document = deepcopy(self.quotes)
+        document.update(quote_type="firm", venue="test-only-venue", source_reference="test-record-1",
+                        usage_rights_reference="test-entitlement", valid_until="2025-01-06T16:01:00Z")
+        for row in document["quotes"]:
+            row["executable_notional"] = 2e6
+        m.import_quotes(m.canonical(document), self.calendar, policy, self.now)
+        for change in [lambda x: x.update(quote_type="indicative"), lambda x: x.update(synthetic=True),
+                       lambda x: x.update(valid_until="2025-01-06T15:59:59Z"),
+                       lambda x: x.update(source_reference=""), lambda x: x.update(usage_rights_reference=""),
+                       lambda x: x["quotes"][0].update(executable_notional=999999)]:
+            changed = deepcopy(document)
+            change(changed)
+            with self.assertRaises(m.DataError):
+                m.import_quotes(m.canonical(changed), self.calendar, policy, self.now)
+        with self.assertRaises(m.DataError):
+            m.import_quotes(m.canonical(document), self.calendar, {**policy, "require_executable": "yes"}, self.now)
+
     def test_transport_retries_and_permanent_failures(self):
         attempts, waits = [], []
         class Response(io.BytesIO):

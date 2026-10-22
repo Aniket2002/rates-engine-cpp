@@ -73,6 +73,7 @@ void bind_sofr(py::module_ &module) {
         .def_readonly("settled_coupons", &SofrResult::settled_coupons);
     module.def("price_sofr", &price_sofr, py::arg("discount"), py::arg("projection"), py::arg("swap"),
                py::arg("fixings"), py::arg("as_of"), py::arg("include_valuation_date_payments") = false);
+    module.def("sofr_payment_schedule", &sofr_payment_schedule, py::arg("swap"));
     py::class_<SofrQuote>(module, "SofrQuote")
         .def(py::init([](const std::string &label, int months, double rate) {
                  return SofrQuote{label, months, SimpleRate{rate}};

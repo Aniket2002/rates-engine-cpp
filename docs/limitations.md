@@ -20,6 +20,10 @@
   Neither connects to a CCP or implements novation, initial-margin calculation,
   settlement variation, noncash collateral, default management or external
   settlement reconciliation. Full trade amendment workflows remain unsupported.
+  The v2.3 basis workflow generates final obligations from contractual coupons
+  and checks complete normal-maturity settlement. SQLite journals add local
+  transactional persistence/concurrent writers; source authenticity, distributed
+  coordination and a network service remain outside scope.
 - Gregorian dates restricted to 1900..2199; month-based forward schedules with
   short final stubs. No long/front stubs or IMM rolls. C++ calendars take explicit
   holidays; the SOFR pipeline exports a versioned QuantLib US Government Bond
@@ -73,6 +77,12 @@
   market-wide arbitrage certification, operational monitoring or a service SLA.
   Stored hashes detect corruption, not maliciously regenerated snapshots.
   The committed real-fixing demonstration uses synthetic OIS quotes.
+- Optional firm-quote policy additionally checks declared execution size, expiry,
+  venue and source/usage-rights references. These are caller-supplied assertions,
+  not independently verified tradability or permission to redistribute data.
+- The synthetic hedging study minimizes unweighted quote-DV01 norm with box limits
+  and rounded notionals. It excludes funding, margin, basis and liquidity risks.
+  Reducing the chosen norm does not guarantee lower loss under every scenario.
 
 This is a reproducible quantitative engineering project, not a complete
 institutional derivatives platform or a claim of production readiness.
@@ -86,4 +96,4 @@ timestamps; they cannot certify the historical provenance of those timestamps.
 
 Next improvements: front/long stubs, IBOR/arithmetic-average/cross-currency basis,
 spread/gearing support beyond the basis leg, provider/CCP/payment connectors,
-initial-margin models and durable contract-event storage.
+initial-margin models, validated event snapshots and distributed operations.

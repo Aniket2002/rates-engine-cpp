@@ -44,6 +44,8 @@ struct SofrSwap {
 };
 SofrSwap spot_sofr_swap(Date trade_date, int tenor_months, double notional, SimpleRate coupon,
                         Side side = Side::Payer, const SofrConventions &conventions = {});
+// Complete contractual schedule, including payment lags, independent of valuation date.
+std::vector<AccrualPeriod> sofr_payment_schedule(const SofrSwap &swap);
 struct OvernightObservation {
     Date accrual_start;
     Date accrual_end;

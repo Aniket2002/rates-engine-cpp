@@ -1,0 +1,13 @@
+rates-engine @PROJECT_VERSION@
+Platform: @CMAKE_SYSTEM_NAME@ @CMAKE_SYSTEM_PROCESSOR@
+Compiler: @CMAKE_CXX_COMPILER_ID@ @CMAKE_CXX_COMPILER_VERSION@
+Configuration: @CMAKE_BUILD_TYPE@
+Static Windows runtime requested: @RATES_STATIC_RUNTIME@
+
+CLI usage from extracted package root:
+  bin/rates_cli --quotes examples/synthetic_quotes.csv --swap examples/sample_swap.csv --out results/demo
+On Windows, use bin\rates_cli.exe.
+
+The static C++ library requires an ABI-compatible compiler and matching runtime.
+Python extensions are built separately for the chosen interpreter, not packaged.
+See README.md and the v2.3.0 release notes online for validation and model limits.

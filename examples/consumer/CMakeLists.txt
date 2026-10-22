@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.24)
 project(rates_consumer LANGUAGES CXX)
 find_package(rates_engine CONFIG REQUIRED)
+if(MSVC AND rates_engine_STATIC_RUNTIME)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
 add_executable(consumer main.cpp)
 target_link_libraries(consumer PRIVATE rates::rates_engine)

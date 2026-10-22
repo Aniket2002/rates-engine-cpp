@@ -1,10 +1,56 @@
 # rates-engine-cpp
 
 A C++20 interest-rate curve, swap valuation and risk library, checked against an
-independent Python implementation and QuantLib. Version 2.2 prices **seasoned
+independent Python implementation and QuantLib. Version 2.3 adds a constrained
+SOFR hedging study, contract-derived payment reconciliation, durable SQLite
+journals and portable Windows executables. The engine prices **seasoned
 SOFR swaps with realized fixings**, observation conventions and separate discount
 and projection curves, including fully recalibrated two-curve market-quote risk.
 [Model boundaries](docs/limitations.md) are explicit.
+
+## Run on Windows
+
+From PowerShell in this repository, build, test and run the example:
+
+```powershell
+.\run.ps1 -WithPython -Test
+```
+
+The script uses the existing local portable compiler and virtual environment,
+or an installed C++20 compiler in a Developer shell. For a fresh checkout, see
+[build prerequisites](docs/reproducibility.md). Use `-WithPython` for SOFR/basis
+scripts; the basic CLI build also works without it. Windows compiler runtimes
+are embedded by default, so running the resulting `.exe` files does not require
+the compiler directory on `PATH`. The optional `.pyd` still needs its matching Python.
+
+For the [v2.3.0 Windows ZIP](https://github.com/Aniket2002/rates-engine-cpp/releases/tag/v2.3.0),
+extract it, open PowerShell in the extracted folder and run:
+
+```powershell
+.\bin\rates_cli.exe --quotes examples/synthetic_quotes.csv --swap examples/sample_swap.csv --out results/demo
+```
+
+## Size a hedge and measure what remains
+
+```powershell
+.\.venv\Scripts\python.exe python/hedge_study.py --module-dir build/release --out results/hedging --require-quantlib
+```
+
+The [hedging study](docs/hedging-study.md) sizes 2Y/4Y/6Y hedges for a USD 1 million
+5Y SOFR swap under notional limits and lot rounding. It reduces the quote-DV01
+vector norm by **51.68%**, with **USD 379.73** of assumed entry costs. Full repricing
+shows remaining risk under ten shocks, including negative rates. Some curve-shape
+shocks become worse after hedging; the report shows these alongside improvements.
+All prices and costs use **synthetic assumptions**, not executable market data.
+The [market-data status and firm-quote policy](docs/market-data-status.md) explain
+what evidence is still needed for a tradable-market demonstration.
+
+![SOFR hedge risk and scenario comparison](docs/charts/hedging.png)
+
+The [durable lifecycle guide](docs/durable-lifecycle.md) connects contractual
+cash flows to registered/settled amounts and SQLite transaction/replay checks.
+[Interview notes](docs/implementation-walkthrough.md) explain calibration,
+downstream recalibration, SOFR accrual and collateral accounting using the code.
 
 ## Start with a seasoned SOFR swap (v2.2)
 
@@ -84,7 +130,7 @@ both projection and discounting.
 | Floating-leg PV | 172,191.410251 |
 | Payer PV | **4,531.352900** |
 | Par fixed rate | **3.800000%** |
-| Signed parallel quote DV01 | **âˆ’451.944300 currency/bp** |
+| Signed parallel quote DV01 | **-451.944300 currency/bp** |
 
 The market par rate exceeds the contractual coupon, so the payer has a positive
 PV. The engine reprices every input within a `1e-12` decimal-rate tolerance,
@@ -95,7 +141,7 @@ include the calibrated curve, residuals, cash flows, summary and risk.
 
 ## Read the risk correctly
 
-Risk uses **`(PV_down âˆ’ PV_up) / (2 Ã— bump_bps)`**. A negative number for this
+Risk uses **`(PV_down - PV_up) / (2 * bump_bps)`**. A negative number for this
 payer means PV rises when rates rise. A +1 bp move predicts about **+451.94**
 of PV change before nonlinear effects.
 
@@ -117,8 +163,8 @@ python python/generate_case_study.py --cli build/release/rates_cli --out results
 ```
 
 A **+10 bp parallel shock** changes PV by **+4,507.58** after recalibration.
-The first-order bucket estimate is **+4,519.44**, leaving a **âˆ’11.86** residual.
-At +50 bp the residual grows to **âˆ’294.32**. All seven scenarios, including a
+The first-order bucket estimate is **+4,519.44**, leaving a **-11.86** residual.
+At +50 bp the residual grows to **-294.32**. All seven scenarios, including a
 steepener, pass independent Python and QuantLib quote-helper checks. These are
 same-date hypothetical PV changes, not realized trading P&L.
 
@@ -165,8 +211,8 @@ python python/test_sofr_replay.py --module-dir build/release --out results/sofr-
 ```
 
 This example combines **actual captured NY Fed fixings with explicitly synthetic
-OIS quotes**. It values a seasoned 1m payer at **âˆ’4,448.43** dirty PV and
-**âˆ’4,593.36** clean PV, with 15 realized and 484 forecast daily observations.
+OIS quotes**. It values a seasoned 1m payer at **-4,448.43** dirty PV and
+**-4,593.36** clean PV, with 15 realized and 484 forecast daily observations.
 The expanded lifecycle suite passes **30,524** independent comparisons; real-fixing replay
 adds **40** cash-flow and dual-curve node/quote-risk comparisons. See the
 [v2.2 verification record](docs/sofr-validation.md).

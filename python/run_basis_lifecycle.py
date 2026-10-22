@@ -8,9 +8,11 @@ from datetime import date, timedelta
 import json
 from pathlib import Path
 import sys
+from contract_workflow import BasisContract
+from lifecycle_store import LifecycleStore
 
 
-def run(module_dir):
+def run(module_dir, database=None):
     sys.path.insert(0, str(Path(module_dir).resolve()))
     import pyrates as r
     def timestamp(day):
@@ -26,6 +28,8 @@ def run(module_dir):
     bc, oc = convention(2,2,True), convention(3,1,False)
     db, bb = r.SofrCurveBootstrapper(c), r.BasisCurveBootstrapper(c,c)
     trade = r.BasisSwap(r.Date("2025-01-02"),r.Date("2025-02-03"),1e6,.0004,r.Side.Payer,bc,oc)
+    contract = BasisContract(r, "basis-1", trade.effective, trade.maturity, 1e6, .0004, bc, oc)
+    final_amounts = {}
     terms = [3,12,24]
     base_quotes = [r.SofrQuote(f"{m}M",m,.031-.0005*i) for i,m in enumerate(terms)]
     spreads = [r.BasisQuote(f"{m}M",m,.001+.0002*i) for i,m in enumerate(terms)]
@@ -34,13 +38,26 @@ def run(module_dir):
     agreement.minimum_transfer = 10.
     agreement.rounding = 1.
     account = r.CollateralAccount(r.Date("2025-01-15"),agreement)
+    store = LifecycleStore(database, r) if database else None
+    if store:
+        store.create_stream("clearing", dict(version=1, kind="clearing", contracts={contract.trade_id: contract.expected}))
+        store.create_stream("collateral", dict(version=1, kind="collateral", inception="2025-01-15",
+            agreement=dict(receive_threshold=0., post_threshold=0., minimum_transfer=10., rounding=1.,
+                           settlement_days=1, holidays=[], interest_day_count="ACT360")))
+    def apply_clear(event):
+        ledger.apply(event)
+        if store:
+            store.append([("clearing", event)])
     start = date(2025,1,15)
     def clear(id, day, kind, reference="", amount=0., due=None):
-        ledger.apply(r.ClearingEvent(id,timestamp(day),kind,"basis-1",reference,amount,r.Date(due) if due else None))
+        apply_clear(r.ClearingEvent(id,timestamp(day),kind,"basis-1",reference,amount,r.Date(due) if due else None))
     def collateral(id, day, kind, reference="", value=0.):
-        account.apply(r.CollateralEvent(id,timestamp(day),kind,reference,value))
+        event = r.CollateralEvent(id,timestamp(day),kind,reference,value)
+        account.apply(event)
+        if store:
+            store.append([("collateral", event)])
     clear("submit",start,r.ClearingEventKind.Submit)
-    clear("accept",start,r.ClearingEventKind.Accept,due="2025-02-06")
+    clear("accept",start,r.ClearingEventKind.Accept,due=contract.final_payment)
     rows, first_risk = [], None
     day = start
     while day < date(2025,2,15):
@@ -73,24 +90,18 @@ def run(module_dir):
             discount = db.build(t,quotes).curve
             base = db.build_forward(discount,t,base_quotes,bf).curve
             other = bb.build(discount,base,t,spreads,bf,of).curve
-            due_value = r.price_basis(discount,base,other,trade,bf,of,t,True)
-            for label,leg,sign in [("base",due_value.base_leg,-1),("other",due_value.other_leg,1)]:
-                for cf in leg.coupons:
-                    if str(cf.period.payment) == key:
-                        if not all(obs.realized for obs in cf.observations):
-                            raise AssertionError("Cannot settle a coupon containing forecasts")
-                        payment_id = label+"-"+key
-                        amount = sign*(cf.floating_amount+(cf.fixed_amount if label=="base" else 0.))
-                        clear("register-"+payment_id,day,r.ClearingEventKind.RegisterPayment,payment_id,amount,key)
-                        clear("pay-"+payment_id,day,r.ClearingEventKind.SettlePayment,payment_id)
+            for event in contract.due_events(discount,base,other,bf,of,t):
+                final_amounts[event.reference] = event.amount
+                apply_clear(event)
+                clear("pay-"+event.reference,day,r.ClearingEventKind.SettlePayment,event.reference)
             value = r.price_basis(discount,base,other,trade,bf,of,t)
             exposure = ledger.net_exposure({"basis-1":value.pv})
             if first_risk is None:
                 risk = r.basis_quote_risk(db,db,bb,quotes,base_quotes,spreads,trade,r.FixingStore(),bf,of,t)
                 first_risk = dict(discount_parallel_dv01=risk.discount_parallel_dv01,
                     base_parallel_dv01=risk.base_parallel_dv01,basis_parallel_dv01=risk.basis_parallel_dv01)
-            if key >= "2025-02-06":
-                clear("close",day,r.ClearingEventKind.Close)
+            if key >= contract.final_payment:
+                apply_clear(contract.close_event(ledger,t,final_amounts))
                 exposure = ledger.net_exposure({})
         else:
             exposure = ledger.net_exposure({})
@@ -121,7 +132,11 @@ def run(module_dir):
     assert replay.settled_cash == ledger.settled_cash
     assert collateral_replay.balance == account.balance == 0
     assert collateral_replay.settled_interest == account.settled_interest
+    if store:
+        assert store.snapshot("clearing").settled_cash == ledger.settled_cash
+        assert store.snapshot("collateral").closed
     return dict(synthetic_quotes=True,synthetic_fixings=True,currency="USD",calendar="weekends only",
+        reconciliation=contract.reconcile(ledger,final_amounts), durable_replay=bool(store),
         contract="generic collateralized-to-market cash collateral; no CCP connection",
         daily=rows,initial_quote_risk=first_risk,final_clearing_state=str(ledger.trades["basis-1"].state),
         collateral_closed=account.closed,clearing_cash=ledger.settled_cash,interest_cash=account.settled_interest,
@@ -135,8 +150,9 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--module-dir",required=True,type=Path)
     parser.add_argument("--out",required=True,type=Path)
+    parser.add_argument("--database",type=Path,help="Optional durable SQLite journal (parent directory must exist)")
     args=parser.parse_args()
-    report=run(args.module_dir)
+    report=run(args.module_dir,args.database)
     args.out.mkdir(parents=True,exist_ok=True)
     (args.out/"report.json").write_text(json.dumps(report,indent=2)+"\n")
     print(json.dumps({k:report[k] for k in ["synthetic_quotes","synthetic_fixings","final_clearing_state","collateral_closed","clearing_cash","interest_cash","collateral_principal"]},indent=2))

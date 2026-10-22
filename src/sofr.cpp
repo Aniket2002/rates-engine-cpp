@@ -89,24 +89,30 @@ double compound(const std::vector<OvernightObservation> &observations, Date cuto
     return std::expm1(log_factor);
 }
 } // namespace
+std::vector<AccrualPeriod> sofr_payment_schedule(const SofrSwap &swap) {
+    const auto &c = swap.conventions;
+    c.validate();
+    if (!std::isfinite(swap.notional) || swap.notional <= 0 || !std::isfinite(swap.fixed_rate.value) ||
+        (swap.side != Side::Payer && swap.side != Side::Receiver))
+        throw std::invalid_argument("Invalid SOFR swap economics");
+    auto periods = make_schedule(swap.effective, swap.maturity, c.payment_months, c.fixed_day_count,
+                                 c.calendar, c.adjustment, c.end_of_month);
+    for (auto &period : periods)
+        period.payment = c.payment_calendar.advance(period.end, c.payment_lag_days);
+    return periods;
+}
 SofrResult price_sofr(const DiscountCurve &discount, const DiscountCurve &projection, const SofrSwap &swap,
                       const FixingStore &fixings, Timestamp as_of, bool include_valuation_date_payments) {
     const auto valuation = as_of.date();
     if (discount.valuation_date() != valuation || projection.valuation_date() != valuation)
         throw std::invalid_argument("SOFR curves and as-of date must have the same valuation date");
     const auto &c = swap.conventions;
-    c.validate();
-    if (!std::isfinite(swap.notional) || swap.notional <= 0 || !std::isfinite(swap.fixed_rate.value) ||
-        (swap.side != Side::Payer && swap.side != Side::Receiver))
-        throw std::invalid_argument("Invalid SOFR swap economics");
-    const auto periods = make_schedule(swap.effective, swap.maturity, c.payment_months, c.fixed_day_count,
-                                       c.calendar, c.adjustment, c.end_of_month);
+    const auto periods = sofr_payment_schedule(swap);
     const auto known = fixings.as_of(as_of);
     SofrResult result;
     double annuity = 0;
     const double sign = swap.side == Side::Payer ? 1 : -1;
-    for (auto period : periods) {
-        period.payment = c.payment_calendar.advance(period.end, c.payment_lag_days);
+    for (const auto &period : periods) {
         if (period.payment < valuation || (period.payment == valuation && !include_valuation_date_payments)) {
             ++result.settled_coupons;
             continue;

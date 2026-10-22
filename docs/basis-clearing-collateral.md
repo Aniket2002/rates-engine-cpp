@@ -146,7 +146,10 @@ preserve insertion order. Identical ID/payload replay is a no-op, including retr
 after later events. Conflicting IDs, invalid transitions, nonfinite inputs and
 overflow fail without mutation. State is in memory; JSON journals are replayed
 into fresh C++ objects by the [accounting checks](results/basis/accounting-report.json).
-This is not a durable database, authenticated feed or concurrent service.
+The raw C++ objects remain in memory. Version 2.3 adds an optional
+[SQLite transaction wrapper and contract workflow](durable-lifecycle.md), with
+durable replay, serialized concurrent writers and complete schedule reconciliation.
+It is not an authenticated feed or distributed clearing service.
 
 The accounting reference independently compounds final cash with Python Decimal
 and integrates interest over actual settled balances. Hand-calculated fixtures

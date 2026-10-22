@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(rates_engine VERSION 2.2.0 LANGUAGES CXX)
+project(rates_engine VERSION 2.3.0 LANGUAGES CXX)
 include(CTest)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -8,6 +8,10 @@ option(RATES_BUILD_PYTHON "Build optional pybind11 interface" OFF)
 option(RATES_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF)
 option(RATES_CLANG_TIDY "Run clang-tidy while compiling" OFF)
 option(RATES_COVERAGE "Instrument project code for LLVM line/branch coverage" OFF)
+option(RATES_STATIC_RUNTIME "Embed Windows compiler runtimes for portable binaries" ON)
+if(MSVC AND RATES_STATIC_RUNTIME)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
 if(RATES_COVERAGE AND (NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR MSVC))
   message(FATAL_ERROR "RATES_COVERAGE requires Clang with the GNU-style driver and matching LLVM tools")
 endif()
@@ -17,6 +21,12 @@ add_library(rates_engine STATIC src/date.cpp src/conventions.cpp src/schedule.cp
   src/portfolio.cpp src/history.cpp src/trading.cpp src/multicurve.cpp src/sofr.cpp src/sofr_curve.cpp
   src/basis.cpp src/lifecycle.cpp)
 add_library(rates::rates_engine ALIAS rates_engine)
+if(MINGW AND RATES_STATIC_RUNTIME)
+  # Propagate to installed consumers too. Executables also embed winpthreads;
+  # Python extension modules retain their required Python DLL import.
+  target_link_options(rates_engine INTERFACE -static-libstdc++ -static-libgcc
+    "$<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,EXECUTABLE>:-static>")
+endif()
 target_compile_features(rates_engine PUBLIC cxx_std_20)
 set_target_properties(rates_engine PROPERTIES CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)
 target_include_directories(rates_engine PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -71,7 +81,11 @@ if(BUILD_TESTING)
   find_package(GTest CONFIG QUIET)
   if(NOT GTest_FOUND)
     include(FetchContent)
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    if(MSVC AND RATES_STATIC_RUNTIME)
+      set(gtest_force_shared_crt OFF CACHE BOOL "" FORCE)
+    else()
+      set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    endif()
     set(INSTALL_GTEST OFF CACHE BOOL "Do not install test dependencies with the engine" FORCE)
     set(BUILD_GMOCK OFF CACHE BOOL "Only GoogleTest is used" FORCE)
     FetchContent_Declare(googletest GIT_REPOSITORY https://github.com/google/googletest.git
@@ -84,6 +98,13 @@ if(BUILD_TESTING)
   include(GoogleTest)
   gtest_discover_tests(rates_tests DISCOVERY_MODE PRE_TEST)
   find_package(Python3 COMPONENTS Interpreter REQUIRED)
+  add_test(NAME hedge_solver COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/python/test_hedge_solver.py)
+  if(WIN32 AND RATES_STATIC_RUNTIME)
+    add_test(NAME portable_windows_runtime COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/python/test_windows_runtime.py
+      --bin-dir $<TARGET_FILE_DIR:rates_cli> --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+  endif()
   add_test(NAME sofr_market_data_contract COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/python/test_sofr_market_data.py)
   if(RATES_BUILD_BENCHMARKS)
@@ -135,6 +156,12 @@ if(RATES_BUILD_PYTHON)
   endif()
   rates_checks(pyrates)
   if(BUILD_TESTING)
+    add_test(NAME sofr_hedging_study COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/python/hedge_study.py --module-dir $<TARGET_FILE_DIR:pyrates>
+      --out ${CMAKE_CURRENT_BINARY_DIR}/hedging)
+    add_test(NAME durable_lifecycle COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/python/test_lifecycle_store.py --module-dir $<TARGET_FILE_DIR:pyrates>
+      --out ${CMAKE_CURRENT_BINARY_DIR}/durable-lifecycle)
     add_test(NAME python_bindings COMMAND ${Python3_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/python/test_bindings.py $<TARGET_FILE_DIR:pyrates>)
     add_test(NAME multicurve_validation COMMAND ${Python3_EXECUTABLE}
@@ -155,6 +182,13 @@ if(RATES_BUILD_PYTHON)
   endif()
 endif()
 install(TARGETS rates_engine EXPORT ratesEngineTargets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS rates_cli rates_batch rates_simulate RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(DIRECTORY examples/ DESTINATION examples FILES_MATCHING PATTERN "*.csv" PATTERN "*.json")
+install(FILES LICENSE DESTINATION .)
+install(FILES cmake/package-readme.md DESTINATION . RENAME README.md)
+install(DIRECTORY third_party/licenses/ DESTINATION licenses)
+configure_file(cmake/build-info.txt.in ${CMAKE_CURRENT_BINARY_DIR}/BUILD-INFO.txt @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/BUILD-INFO.txt DESTINATION .)
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(EXPORT ratesEngineTargets NAMESPACE rates:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rates_engine)
 configure_package_config_file(cmake/rates_engineConfig.cmake.in
@@ -163,3 +197,6 @@ write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/rates_engineConfigV
   VERSION ${PROJECT_VERSION} COMPATIBILITY SameMajorVersion)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rates_engineConfig.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/rates_engineConfigVersion.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rates_engine)
+set(CPACK_GENERATOR ZIP)
+set(CPACK_PACKAGE_FILE_NAME "rates-engine-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+include(CPack)

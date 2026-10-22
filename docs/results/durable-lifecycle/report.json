@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "checks": [
+    "deterministic retry and reopened durable replay",
+    "contract inventory and final cash reconciled",
+    "concurrent process completed",
+    "concurrent process completed",
+    "concurrent process completed",
+    "concurrent process completed",
+    "four writers: no lost or duplicated events",
+    "idempotent retry",
+    "conflicting retry rejected",
+    "atomic cross-stream validation rollback",
+    "failed transaction left no event",
+    "immutable stream configuration",
+    "uncommitted process death rolls back",
+    "omitted full schedule blocks closure",
+    "direct durable closure cannot bypass inventory",
+    "unexpected payment rejected by durable inventory",
+    "registered but unpaid coupons block closure",
+    "full schedule settled",
+    "incorrect final cash blocks closure",
+    "reconciled contract can close"
+  ]
+}
