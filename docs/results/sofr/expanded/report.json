@@ -1,0 +1,7 @@
+{
+  "comparisons": 30524,
+  "passed": 30524,
+  "quantlib_version": "1.44",
+  "failures": [],
+  "scope": "Independent SOFR lifecycle, stub/calendar combinations, accrued, OIS helpers and full two-curve quote risk"
+}

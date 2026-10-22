@@ -104,6 +104,23 @@ void bind_sofr(py::module_ &module) {
            double bump) { return sofr_quote_risk(b, q, s, f, t, BasisPoints{bump}); },
         py::arg("builder"), py::arg("quotes"), py::arg("swap"), py::arg("fixings"), py::arg("as_of"),
         py::arg("bump_bps") = 1.0);
+    py::class_<SofrMultiCurveQuoteRisk>(module, "SofrMultiCurveQuoteRisk")
+        .def_readonly("base", &SofrMultiCurveQuoteRisk::base)
+        .def_readonly("discount_parallel_dv01", &SofrMultiCurveQuoteRisk::discount_parallel_dv01)
+        .def_readonly("projection_parallel_dv01", &SofrMultiCurveQuoteRisk::projection_parallel_dv01)
+        .def_readonly("discount_quotes", &SofrMultiCurveQuoteRisk::discount_quotes)
+        .def_readonly("projection_quotes", &SofrMultiCurveQuoteRisk::projection_quotes)
+        .def_readonly("bump_bps", &SofrMultiCurveQuoteRisk::bump_bps);
+    module.def(
+        "sofr_multi_curve_quote_risk",
+        [](const SofrCurveBootstrapper &d, const SofrCurveBootstrapper &p, const std::vector<SofrQuote> &dq,
+           const std::vector<SofrQuote> &pq, const SofrSwap &s, const FixingStore &f, Timestamp t,
+           double bump, bool include_today) {
+            return sofr_multi_curve_quote_risk(d, p, dq, pq, s, f, t, BasisPoints{bump}, include_today);
+        },
+        py::arg("discount_builder"), py::arg("projection_builder"), py::arg("discount_quotes"),
+        py::arg("projection_quotes"), py::arg("swap"), py::arg("fixings"), py::arg("as_of"),
+        py::arg("bump_bps") = 1.0, py::arg("include_valuation_date_payments") = false);
     py::class_<SofrCurveRisk>(module, "SofrCurveRisk")
         .def_readonly("base", &SofrCurveRisk::base)
         .def_readonly("discount_zero", &SofrCurveRisk::discount_zero)

@@ -1,0 +1,10 @@
+{
+  "input_report": "docs/results/sofr/example/2ab76ef96d0acede481658638d35cded1b03d00d61ae368a51ac764bac293c9a.json",
+  "input_sha256": "2ab76ef96d0acede481658638d35cded1b03d00d61ae368a51ac764bac293c9a",
+  "matplotlib_version": "3.11.2",
+  "synthetic_quotes": true,
+  "outputs": [
+    "sofr-cashflows.png",
+    "sofr-cashflows.svg"
+  ]
+}

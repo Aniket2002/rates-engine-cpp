@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-22",
+  "platform": "Windows x64 LLVM-MinGW; Python 3.14; QuantLib 1.44",
+  "lifecycle_comparisons": 30524,
+  "lifecycle_passed": 30524,
+  "quote_risk_comparisons": 360,
+  "replay_comparisons": 40,
+  "replay_rejections": 4,
+  "release_ctest": {
+    "full_run_passed": 86,
+    "total": 87,
+    "corrected_test": "SofrRisk.TwoCurveQuotesFreezeRealizedFixingsAndRespectSettlement",
+    "rerun_passed": 1,
+    "final_all_passed": true
+  },
+  "clang_format": "pass",
+  "historical_checks_not_repeated": [
+    "debug",
+    "coverage",
+    "clang-tidy",
+    "installed consumer"
+  ],
+  "source_sha256": {
+    "include/rates/sofr_curve.hpp": "f9c29903872f55ef96ee964f7ac35bc4fe78d362358f2ce8ad91a67bac270836",
+    "src/sofr_curve.cpp": "cea5d253c4414275577b303fbecbfa1db230ec7e6d02cfbc3cf28a71f9171bf2",
+    "python/sofr_bindings.cpp": "e82b2e117058cd4538836420324837983a549cf98369d9a48947b7a6155468eb",
+    "python/run_sofr_valuation.py": "2f52eabd2a41364c801bf80f67fcec170fd825dba761381d4b1862317cff29ef",
+    "python/validate_sofr.py": "65d2daca544316a8865a4acbbea961808a59d3c361fdf78650d659468bf97f5f",
+    "python/validate_sofr_quote_risk.py": "05a66e91d6d0f4a1bcc617814dfa7bd82eac5484137ac3092815f12845f5ed11",
+    "python/test_sofr_replay.py": "42c1b04ce36beb6fee76b7be60de23a8d1af58a6c43d63e78999c41ea319bd38",
+    "tests/test_sofr.cpp": "aac63d6a6a3d6fc0b8e2fe35ffbfbd9a39d69e515b68d3d012e42dd647bc6787",
+    "python/generate_sofr_chart.py": "89eaa720e1948d36d4813e5cf6ffd9e1b4aa1b46ad4ea358bc291c2e040bc275"
+  },
+  "artifact_sha256": {
+    "case-summary.csv": "a543449c93fb2356853242ef52dcae06a80ff995c7507c6c2b428d2975e7d104",
+    "quote-risk-comparisons.csv": "043f4476cf72049eae5acbd352c4810fe35a2ec1a1e4ac29bc0c94b45f12ecfb",
+    "replay-report.json": "dacc378326ffe4c21b83b099eb91a0f1eb6357e52d9fb1e3d05bfb2f0e9126f0",
+    "report.json": "29fc6ec272e4f2301c5961cd59933aa1a521cd6ee0c57e8be2c3d583eb66abd2"
+  },
+  "hash_policy": "UTF-8 text with normalized LF newlines",
+  "scope": "Local extension evidence; synthetic quotes; no cross-platform CI claim"
+}

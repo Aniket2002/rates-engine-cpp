@@ -31,6 +31,10 @@
   files and is reported with nonzero exit status.
 - Independent Python and QuantLib tests cover selected alternate day counts,
   holidays, business-day rules and irregular schedules, not every combination.
+  Expanded SOFR checks cross five schedule families with lookback/shift/lockout,
+  distinct payment calendars and lifecycle states; two-curve market-quote risk
+  is checked by independent recalibration. This does not extend the supported
+  schedule model to front/long stubs or establish exhaustive convention coverage.
 - QuantLib rate helpers independently calibrate six compatible cases. Irregular
   forward-stub calibration contracts are excluded from helper comparisons where
   QuantLib's schedule conventions differ; irregular trade schedules are checked

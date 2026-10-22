@@ -1,15 +1,44 @@
 # rates-engine-cpp
 
 A C++20 interest-rate curve, swap valuation and risk library, checked against an
-independent Python implementation and QuantLib. Start with one question:
-**what is a five-year payer swap worth, and how does its value change when rates move?**
-
-The worked example below takes eight quotes through calibration, cash flows, PV
-and two risk coordinates. The library also provides portfolio replay, SOFR
-compounding, OIS calibration and separate discount and forwarding curves.
-Version 2.2 adds seasoned SOFR swaps, realized fixings, lookback/observation
-shift/lockout, spot and payment lags, and an auditable New York Fed data adapter.
+independent Python implementation and QuantLib. Version 2.2 prices **seasoned
+SOFR swaps with realized fixings**, observation conventions and separate discount
+and projection curves, including fully recalibrated two-curve market-quote risk.
 [Model boundaries](docs/limitations.md) are explicit.
+
+## Start with a seasoned SOFR swap (v2.2)
+
+At **21 October 2026, 18:17:09 UTC**, the captured example values a **USD 1 million
+payer, 3.75% fixed**, running from 1 October 2026 to 1 October 2028. Quarterly
+coupons use two-day lookback, observation shift and two-day payment lag.
+
+| Output | Value |
+| --- | ---: |
+| Dirty PV | **−4,448.43 USD** |
+| Signed accrued | 144.94 USD |
+| Clean PV | **−4,593.36 USD** |
+| Daily observations | **15 realized / 484 projected** |
+
+**Actual captured NY Fed fixings + synthetic OIS quotes.** These are illustrative
+valuations, not market-calibrated marks. Missing required history is rejected.
+
+After building the [Python bindings](docs/reproducibility.md#bindings):
+
+```sh
+python python/run_sofr_valuation.py --module-dir build/release --manifest data/sofr/manifest.json --out results/sofr-demo
+python python/validate_sofr.py --module-dir build/release --out results/sofr-validation --require-quantlib
+```
+
+![SOFR cash flows and realized versus projected daily observations](docs/charts/sofr-cashflows.png)
+
+The [lifecycle guide](docs/sofr-lifecycle.md) explains the cash flows, quote-risk
+API and auditable inputs. [Expanded validation](docs/sofr-validation.md) covers
+30,524 independent comparisons, including unusual stubs, distinct calendars and
+full two-curve quote recalibration. Basis-swap calibration, clearing and collateral
+lifecycle processing remain outside scope.
+
+The original example below takes eight synthetic quotes through calibration,
+cash flows, PV and two risk coordinates.
 
 ## Build and price one swap
 
@@ -39,7 +68,7 @@ both projection and discounting.
 | Floating-leg PV | 172,191.410251 |
 | Payer PV | **4,531.352900** |
 | Par fixed rate | **3.800000%** |
-| Signed parallel quote DV01 | **−451.944300 currency/bp** |
+| Signed parallel quote DV01 | **âˆ’451.944300 currency/bp** |
 
 The market par rate exceeds the contractual coupon, so the payer has a positive
 PV. The engine reprices every input within a `1e-12` decimal-rate tolerance,
@@ -50,7 +79,7 @@ include the calibrated curve, residuals, cash flows, summary and risk.
 
 ## Read the risk correctly
 
-Risk uses **`(PV_down − PV_up) / (2 × bump_bps)`**. A negative number for this
+Risk uses **`(PV_down âˆ’ PV_up) / (2 Ã— bump_bps)`**. A negative number for this
 payer means PV rises when rates rise. A +1 bp move predicts about **+451.94**
 of PV change before nonlinear effects.
 
@@ -72,8 +101,8 @@ python python/generate_case_study.py --cli build/release/rates_cli --out results
 ```
 
 A **+10 bp parallel shock** changes PV by **+4,507.58** after recalibration.
-The first-order bucket estimate is **+4,519.44**, leaving a **−11.86** residual.
-At +50 bp the residual grows to **−294.32**. All seven scenarios, including a
+The first-order bucket estimate is **+4,519.44**, leaving a **âˆ’11.86** residual.
+At +50 bp the residual grows to **âˆ’294.32**. All seven scenarios, including a
 steepener, pass independent Python and QuantLib quote-helper checks. These are
 same-date hypothetical PV changes, not realized trading P&L.
 
@@ -120,10 +149,10 @@ python python/test_sofr_replay.py --module-dir build/release --out results/sofr-
 ```
 
 This example combines **actual captured NY Fed fixings with explicitly synthetic
-OIS quotes**. It values a seasoned 1m payer at **−4,448.43** dirty PV and
-**−4,593.36** clean PV, with 15 realized and 484 forecast daily observations.
-The lifecycle suite passes **6,892** independent comparisons; real-fixing replay
-adds **28** cash-flow and dual-curve-risk comparisons. See the
+OIS quotes**. It values a seasoned 1m payer at **âˆ’4,448.43** dirty PV and
+**âˆ’4,593.36** clean PV, with 15 realized and 484 forecast daily observations.
+The expanded lifecycle suite passes **30,524** independent comparisons; real-fixing replay
+adds **40** cash-flow and dual-curve node/quote-risk comparisons. See the
 [v2.2 verification record](docs/sofr-validation.md).
 
 ## Explore the rest of the library

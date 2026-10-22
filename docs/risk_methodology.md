@@ -51,3 +51,28 @@ yields. Quote shocks rebuild those discount nodes analytically, and quote bucket
 coincide with zero-node buckets. Historical Fed replay therefore reports fitted
 Treasury zero-yield sensitivities, not swap-par-quote hedge exposures. See the
 [historical-data guide](real-historical-data.md) for source and timing assumptions.
+
+## SOFR lifecycle with two quote sets
+
+`sofr_multi_curve_quote_risk` applies the same central differences to signed dirty
+PV with availability-aware realized fixings held fixed. Write discount calibration
+as `D(q_d)` and projection calibration under that discount curve as `P(q_p; D)`:
+
+```
+V(q_d, q_p) = price_sofr(D(q_d), P(q_p; D(q_d)), trade, fixings, as_of).pv
+```
+
+A discount-quote shock changes both calibrated curves; projection quotes remain
+unchanged. A projection-quote shock holds the base discount curve fixed. Each
+coordinate has its own parallel shock and buckets, labelled by the actual
+calibration payment pillars. The function accepts separate builders/conventions,
+reports the bump size and supports payment-date inclusion explicitly. The replay
+uses end-of-day payment exclusion.
+
+Fully realized unpaid coupons have zero projection risk but can retain discount
+risk until payment; settled trades have zero trade PV and risk. The quote sets
+must still calibrate with sufficient discount coverage for projection instruments.
+`sofr_curve_risk` provides a different diagnostic by shifting zero nodes directly
+and freezing the other curve. The [validation record](sofr-validation.md) checks
+both against independent QuantLib calculations. Two supplied OIS quote sets do
+not constitute a basis-swap or collateral-agreement calibration.

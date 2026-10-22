@@ -121,9 +121,25 @@ def main():
                         return price(changed if field == "discount_zero_risk" else discount,
                                      changed if field == "projection_zero_risk" else projection)[0]
                     check(f"{field}/{row['pillar']}", (scenario(-1)-scenario(1))/2, row["dv01"], 2e-5)
+            # Rebuild independent helper curves for every market-quote shock.
+            for field, document in (("discount_quote_risk", quote["document"]), ("projection_quote_risk", forward_doc)):
+                def quote_scenario(bucket, sign):
+                    changed = deepcopy(document)
+                    for i, row in enumerate(changed["quotes"]):
+                        if bucket is None or bucket == i:
+                            row["rate"] += sign*.0001
+                    dc = build(changed) if field == "discount_quote_risk" else discount
+                    pc = build(forward_doc if field == "discount_quote_risk" else changed, dc)
+                    return price(dc, pc)[0]
+                by_label = {row["label"]: i for i, row in enumerate(document["quotes"])}
+                for row in dual[field]:
+                    i = by_label[row["label"]]
+                    check(f"{field}/{row['label']}", (quote_scenario(i, -1)-quote_scenario(i, 1))/2, row["dv01"], 2e-5)
+                parallel = field.replace("quote_risk", "parallel_quote_dv01")
+                check(parallel, (quote_scenario(None, -1)-quote_scenario(None, 1))/2, dual[parallel], 2e-5)
         report = dict(passed=True, checks=checks, rejected=rejected, quantlib_version=q.__version__ if q else None,
                       fixture_as_of=original["as_of"], synthetic_quotes=True,
-                      scope="Public NY Fed realized fixings; synthetic OIS quotes; independent cash flows and dual-curve node risk")
+                      scope="Public NY Fed realized fixings; synthetic OIS quotes; independent cash flows and dual-curve node/quote risk")
         args.out.mkdir(parents=True, exist_ok=True)
         (args.out / "report.json").write_text(json.dumps(report, indent=2)+"\n")
         print(f"SOFR replay: {len(checks)} independent comparisons, {len(rejected)} rejected invalid inputs")

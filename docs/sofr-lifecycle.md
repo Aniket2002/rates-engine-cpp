@@ -56,8 +56,30 @@ trades return zero PV and no par rate without requiring historical fixings.
 `SofrCurveBootstrapper` calibrates spot-starting OIS quotes with final-payment
 pillars and verifies all residuals. `build_forward` uses exogenous discounting.
 `sofr_quote_risk` rebuilds the single overnight curve for quote shocks;
-`sofr_curve_risk` shocks discount/projection zero nodes separately while freezing
-the other curve and realized fixings. Risk is `(PV_down-PV_up)/(2*bump_bps)`.
+`sofr_multi_curve_quote_risk` accepts separate builders and quote sets. Discount
+quote shocks recalibrate discounting **and then projection at unchanged projection
+quotes**; projection quote shocks hold discounting fixed and recalibrate projection.
+It reports separate parallel sensitivities and buckets labelled by each curve's
+actual payment pillars. Both builders can have distinct conventions and tenor sets;
+discount coverage must extend through all projection calibration payments.
+Realized fixings remain frozen. Future, seasoned, matured/unpaid and settled trades
+use the same pricing path; payment-date inclusion is an explicit optional argument.
+
+`sofr_curve_risk` retains the separate zero-node coordinates, freezing the other
+curve. All risk is signed dirty-PV risk, `(PV_down-PV_up)/(2*bump_bps)`, in currency
+per bp. A parallel shock is computed directly, not by summing buckets.
+
+```python
+risk = r.sofr_multi_curve_quote_risk(
+    discount_builder, projection_builder, discount_quotes, projection_quotes,
+    swap, fixings, as_of, bump_bps=1.0,
+    include_valuation_date_payments=False,
+)
+print(risk.discount_parallel_dv01, risk.projection_parallel_dv01)
+```
+
+These are two independently supplied OIS quote sets under exogenous discounting.
+This API does not calibrate basis-swap instruments or model a collateral agreement.
 
 ## Reproduce the captured example
 
@@ -72,15 +94,32 @@ trade. Outputs contain input hashes, calibration residuals, cash flows, every
 daily observation, accrued/clean/dirty PV and risk. The complete report is
 published atomically under its content hash; CSVs are disposable views of it.
 An optional `projection_quotes` snapshot calibrates a separate projection curve
-and reports independent curve-node risks. Those are not basis-swap calibrations
-or recalibrated multi-curve quote sensitivities.
+and reports both independent curve-node risks and fully recalibrated discount/
+projection quote buckets and parallel sensitivities. These remain synthetic in
+the validation example; no basis-swap calibration is implied.
 
 At the committed as-of time, the 1m notional, 3.75% fixed payer runs from
 1 October 2026 to 1 October 2028, with quarterly coupons, two-day lookback,
 observation shift and two-day payment lag. It has 15 realized observations and
-484 forecasts. Dirty PV is **−4,448.43**, accrued **144.94**, and clean PV
-**−4,593.36**. Fixings are actual NY Fed data; all example curve quotes are
+484 forecasts. Dirty PV is **âˆ’4,448.43**, accrued **144.94**, and clean PV
+**âˆ’4,593.36**. Fixings are actual NY Fed data; all example curve quotes are
 synthetic. These values are not executable market marks or trading returns.
+
+## Reproduce the cash-flow chart
+
+The [chart](charts/sofr-cashflows.png) separates known-fixing compounding from the
+remaining projected contribution, including the compounding interaction term.
+It also plots individual realized/projected observation rates over the first
+coupon's contractual accrual intervals. With lookback, known observations can
+apply after the valuation date. The split is an attribution, not separate coupons.
+
+```sh
+python -m pip install matplotlib
+python python/generate_sofr_chart.py --report docs/results/sofr/example/2ab76ef96d0acede481658638d35cded1b03d00d61ae368a51ac764bac293c9a.json --out docs/charts
+```
+
+PNG and SVG exports retain explicit synthetic-quote labelling; the chart manifest
+records the input report's content hash.
 
 ## Capture current public fixings
 

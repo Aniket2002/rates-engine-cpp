@@ -106,6 +106,13 @@ def run(manifest_path, module_dir):
     if projection_snapshot is None:
         quote_risk = r.sofr_quote_risk(builder, market, swap, fixings, ts)
         report.update(parallel_quote_dv01=quote_risk.parallel_dv01, quote_risk=buckets(quote_risk.quote_buckets))
+    else:
+        quote_risk = r.sofr_multi_curve_quote_risk(builder, forward_builder, market, forward_quotes, swap, fixings, ts)
+        report.update(discount_parallel_quote_dv01=quote_risk.discount_parallel_dv01,
+                      projection_parallel_quote_dv01=quote_risk.projection_parallel_dv01,
+                      discount_quote_risk=buckets(quote_risk.discount_quotes),
+                      projection_quote_risk=buckets(quote_risk.projection_quotes),
+                      quote_risk_method="Discount shocks rebuild both curves at fixed projection quotes; projection shocks hold discounting fixed")
     return report
 
 

@@ -106,6 +106,56 @@ SofrQuoteRisk sofr_quote_risk(const SofrCurveBootstrapper &builder, const std::v
               [](const auto &a, const auto &b) { return a.maturity < b.maturity; });
     return result;
 }
+SofrMultiCurveQuoteRisk sofr_multi_curve_quote_risk(const SofrCurveBootstrapper &discount_builder,
+                                                    const SofrCurveBootstrapper &projection_builder,
+                                                    const std::vector<SofrQuote> &discount_quotes,
+                                                    const std::vector<SofrQuote> &projection_quotes,
+                                                    const SofrSwap &swap, const FixingStore &fixings,
+                                                    Timestamp as_of, BasisPoints bump,
+                                                    bool include_valuation_date_payments) {
+    check_bump(bump);
+    const auto discount = discount_builder.build(as_of, discount_quotes, fixings);
+    const auto projection =
+        projection_builder.build_forward(discount.curve, as_of, projection_quotes, fixings);
+    const auto value = [&](const DiscountCurve &d, const DiscountCurve &p) {
+        return price_sofr(d, p, swap, fixings, as_of, include_valuation_date_payments);
+    };
+    SofrMultiCurveQuoteRisk result{value(discount.curve, projection.curve), 0, 0, {}, {}, bump.value};
+    for (const bool is_discount : {true, false}) {
+        const auto &quotes = is_discount ? discount_quotes : projection_quotes;
+        const auto &diagnostics = is_discount ? discount.diagnostics : projection.diagnostics;
+        auto &buckets = is_discount ? result.discount_quotes : result.projection_quotes;
+        const auto scenario = [&](std::size_t bucket, double shift) {
+            auto changed = quotes;
+            for (std::size_t i = 0; i < changed.size(); ++i)
+                if (bucket == changed.size() || bucket == i) {
+                    if (changed[i].rate.value + shift == changed[i].rate.value)
+                        throw std::invalid_argument("SOFR quote bump is below floating-point resolution");
+                    changed[i].rate = SimpleRate{changed[i].rate.value + shift};
+                }
+            const auto d =
+                is_discount ? discount_builder.build(as_of, changed, fixings).curve : discount.curve;
+            const auto p =
+                projection_builder.build_forward(d, as_of, is_discount ? projection_quotes : changed, fixings)
+                    .curve;
+            return value(d, p).pv;
+        };
+        const auto risk = [&](std::size_t bucket) {
+            return (scenario(bucket, -bump.value * 1e-4) - scenario(bucket, bump.value * 1e-4)) /
+                   (2 * bump.value);
+        };
+        (is_discount ? result.discount_parallel_dv01 : result.projection_parallel_dv01) = risk(quotes.size());
+        for (std::size_t i = 0; i < quotes.size(); ++i) {
+            const auto found = std::find_if(diagnostics.begin(), diagnostics.end(), [&](const auto &row) {
+                return row.quote.label == quotes[i].label;
+            });
+            buckets.push_back({quotes[i].label, found->pillar, risk(i)});
+        }
+        std::sort(buckets.begin(), buckets.end(),
+                  [](const auto &a, const auto &b) { return a.maturity < b.maturity; });
+    }
+    return result;
+}
 SofrCurveRisk sofr_curve_risk(const DiscountCurve &discount, const DiscountCurve &projection,
                               const SofrSwap &swap, const FixingStore &fixings, Timestamp as_of,
                               BasisPoints bump) {

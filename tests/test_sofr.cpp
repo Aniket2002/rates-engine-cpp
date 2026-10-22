@@ -189,3 +189,38 @@ TEST(SofrRisk, RealizedCouponsHaveNoProjectionRiskAndNegativeRatesCalibrate) {
     EXPECT_THROW(sofr_curve_risk(flat(asof.date()), flat(asof.date()), trade, fixing, asof, BasisPoints{0}),
                  std::invalid_argument);
 }
+TEST(SofrRisk, TwoCurveQuotesFreezeRealizedFixingsAndRespectSettlement) {
+    const auto trade = swap(Date{2025, 1, 2}, Date{2025, 1, 6});
+    const auto asof = at(Date{2025, 1, 7});
+    const auto fixing = history(trade.effective, trade.maturity);
+    const SofrCurveBootstrapper builder;
+    const std::vector<SofrQuote> discount{{"3Y", 36, SimpleRate{0.03}}, {"1M", 1, SimpleRate{0.04}}};
+    const std::vector<SofrQuote> projection{{"2Y", 24, SimpleRate{0.035}}, {"3M", 3, SimpleRate{0.045}}};
+    const auto risk =
+        sofr_multi_curve_quote_risk(builder, builder, discount, projection, trade, fixing, asof);
+    ASSERT_EQ(risk.discount_quotes.size(), 2U);
+    ASSERT_EQ(risk.projection_quotes.size(), 2U);
+    EXPECT_EQ(risk.discount_quotes.front().label, "1M");
+    EXPECT_EQ(risk.projection_quotes.front().label, "3M");
+    EXPECT_DOUBLE_EQ(risk.projection_parallel_dv01, 0);
+    for (const auto &bucket : risk.projection_quotes)
+        EXPECT_DOUBLE_EQ(bucket.dv01, 0);
+    EXPECT_NE(risk.discount_parallel_dv01, 0);
+    const auto paid = sofr_multi_curve_quote_risk(builder, builder, discount, projection, trade,
+                                                  FixingStore{}, at(Date{2025, 1, 8}));
+    EXPECT_DOUBLE_EQ(paid.base.pv, 0);
+    EXPECT_DOUBLE_EQ(paid.discount_parallel_dv01, 0);
+    EXPECT_DOUBLE_EQ(paid.projection_parallel_dv01, 0);
+    for (const double bump : {0.0, -1.0, std::numeric_limits<double>::infinity(),
+                              std::numeric_limits<double>::quiet_NaN(), 1e-300})
+        EXPECT_THROW(sofr_multi_curve_quote_risk(builder, builder, discount, projection, trade, fixing, asof,
+                                                 BasisPoints{bump}),
+                     std::invalid_argument);
+    EXPECT_THROW(sofr_multi_curve_quote_risk(builder, builder, {}, projection, trade, fixing, asof),
+                 std::invalid_argument);
+    EXPECT_THROW(sofr_multi_curve_quote_risk(builder, builder, discount, {}, trade, fixing, asof),
+                 std::invalid_argument);
+    EXPECT_THROW(
+        sofr_multi_curve_quote_risk(builder, builder, discount, projection, trade, FixingStore{}, asof),
+        MarketDataError);
+}

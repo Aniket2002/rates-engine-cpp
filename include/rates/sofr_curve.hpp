@@ -49,6 +49,23 @@ struct SofrCurveRisk {
     std::vector<RiskBucket> discount_zero;
     std::vector<RiskBucket> projection_zero;
 };
+struct SofrMultiCurveQuoteRisk {
+    SofrResult base;
+    double discount_parallel_dv01;
+    double projection_parallel_dv01;
+    std::vector<RiskBucket> discount_quotes;
+    std::vector<RiskBucket> projection_quotes;
+    double bump_bps;
+};
+// Discount quote shocks rebuild both curves with projection quotes held fixed.
+// Projection quote shocks hold discounting fixed. All realized fixings remain frozen.
+SofrMultiCurveQuoteRisk sofr_multi_curve_quote_risk(const SofrCurveBootstrapper &discount_builder,
+                                                    const SofrCurveBootstrapper &projection_builder,
+                                                    const std::vector<SofrQuote> &discount_quotes,
+                                                    const std::vector<SofrQuote> &projection_quotes,
+                                                    const SofrSwap &swap, const FixingStore &fixings,
+                                                    Timestamp as_of, BasisPoints bump = BasisPoints{1},
+                                                    bool include_valuation_date_payments = false);
 // Independent zero-node coordinates, holding the other curve and realized fixings fixed.
 SofrCurveRisk sofr_curve_risk(const DiscountCurve &discount, const DiscountCurve &projection,
                               const SofrSwap &swap, const FixingStore &fixings, Timestamp as_of,
