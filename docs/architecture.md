@@ -40,6 +40,14 @@ shares immutable schedules for equal dates and conventions. Pricing still create
 cash-flow vectors; the Linux profiles expose remaining allocation costs.
 The [v2 design](v2.md) describes replay, aggregation and benchmark boundaries.
 
+`basis.hpp` composes seasoned overnight legs with separate histories/conventions.
+Its bootstrap solves the other projection from basis instruments; risk recalibrates
+the discount → base projection → basis projection dependency chain. `lifecycle.hpp`
+contains clearing and cash-collateral ledgers. They validate events on a copied
+state before committing, retain journals and support idempotent replay. They have
+no network or database dependencies. The [contractual lifecycle guide](basis-clearing-collateral.md)
+defines ordering, cash signs and caller-supplied clearing decisions.
+
 The [v2.1 extension](multicurve.md) adds a two-curve `price` overload; single-curve
 calls delegate with the same curve in both roles. `build_forward` shares the
 solver while discounting on an exogenous curve. `quote_pillar` centralizes exact

@@ -81,6 +81,9 @@ print(risk.discount_parallel_dv01, risk.projection_parallel_dv01)
 These are two independently supplied OIS quote sets under exogenous discounting.
 This API does not calibrate basis-swap instruments or model a collateral agreement.
 
+For basis instruments and generic clearing/cash-collateral events, use the separate
+[basis and contractual lifecycle APIs](basis-clearing-collateral.md).
+
 ## Reproduce the captured example
 
 Build the optional bindings as described in the README, then run:

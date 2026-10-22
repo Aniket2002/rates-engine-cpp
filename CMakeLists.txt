@@ -14,7 +14,8 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(rates_engine STATIC src/date.cpp src/conventions.cpp src/schedule.cpp
   src/discount_curve.cpp src/swap_pricer.cpp src/curve_bootstrapper.cpp src/risk_engine.cpp
-  src/portfolio.cpp src/history.cpp src/trading.cpp src/multicurve.cpp src/sofr.cpp src/sofr_curve.cpp)
+  src/portfolio.cpp src/history.cpp src/trading.cpp src/multicurve.cpp src/sofr.cpp src/sofr_curve.cpp
+  src/basis.cpp src/lifecycle.cpp)
 add_library(rates::rates_engine ALIAS rates_engine)
 target_compile_features(rates_engine PUBLIC cxx_std_20)
 set_target_properties(rates_engine PROPERTIES CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)
@@ -77,7 +78,7 @@ if(BUILD_TESTING)
       GIT_TAG v1.17.0 GIT_SHALLOW TRUE)
     FetchContent_MakeAvailable(googletest)
   endif()
-  add_executable(rates_tests tests/test_engine.cpp tests/test_v2.cpp tests/test_trading.cpp tests/test_multicurve.cpp tests/test_sofr.cpp)
+  add_executable(rates_tests tests/test_engine.cpp tests/test_v2.cpp tests/test_trading.cpp tests/test_multicurve.cpp tests/test_sofr.cpp tests/test_lifecycle.cpp)
   target_link_libraries(rates_tests PRIVATE rates_engine GTest::gtest_main)
   rates_checks(rates_tests)
   include(GoogleTest)
@@ -125,7 +126,7 @@ if(RATES_BUILD_PYTHON)
   find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)
   set(PYBIND11_FINDPYTHON ON)
   find_package(pybind11 CONFIG REQUIRED)
-  pybind11_add_module(pyrates python/bindings.cpp python/sofr_bindings.cpp)
+  pybind11_add_module(pyrates python/bindings.cpp python/sofr_bindings.cpp python/lifecycle_bindings.cpp)
   target_link_libraries(pyrates PRIVATE rates_engine)
   if(MINGW)
     # Python 3.8+ does not search PATH for extension-module DLL dependencies.
@@ -145,6 +146,12 @@ if(RATES_BUILD_PYTHON)
     add_test(NAME sofr_real_fixing_replay COMMAND ${Python3_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/python/test_sofr_replay.py --module-dir $<TARGET_FILE_DIR:pyrates>
       --out ${CMAKE_CURRENT_BINARY_DIR}/sofr-replay)
+    add_test(NAME basis_validation COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/python/validate_basis.py --module-dir $<TARGET_FILE_DIR:pyrates>
+      --out ${CMAKE_CURRENT_BINARY_DIR}/basis-validation)
+    add_test(NAME contractual_lifecycle COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/python/test_contractual_lifecycle.py --module-dir $<TARGET_FILE_DIR:pyrates>
+      --out ${CMAKE_CURRENT_BINARY_DIR}/contractual-lifecycle)
   endif()
 endif()
 install(TARGETS rates_engine EXPORT ratesEngineTargets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})

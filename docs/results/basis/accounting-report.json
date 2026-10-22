@@ -1,0 +1,94 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "settled basis cash / independent decimal compounding",
+      "expected": 79.11948725044894,
+      "actual": 79.11948725044931,
+      "tolerance": 1e-08
+    },
+    {
+      "name": "principal cash conservation",
+      "expected": 0.0,
+      "actual": 0.0,
+      "tolerance": 0.0
+    },
+    {
+      "name": "actual settled cash interest integral",
+      "expected": -0.3001388888888889,
+      "actual": -0.3001388888888889,
+      "tolerance": 1e-12
+    },
+    {
+      "name": "no unpaid interest at close",
+      "expected": 0.0,
+      "actual": 0.0,
+      "tolerance": 0.0
+    },
+    {
+      "name": "persisted clearing replay cash",
+      "expected": 79.11948725044931,
+      "actual": 79.11948725044931,
+      "tolerance": 1e-08
+    },
+    {
+      "name": "persisted collateral replay principal",
+      "expected": 0.0,
+      "actual": 0.0,
+      "tolerance": 0.0
+    },
+    {
+      "name": "persisted collateral replay interest",
+      "expected": -0.3001388888888889,
+      "actual": -0.3001388888888889,
+      "tolerance": 0.0
+    },
+    {
+      "name": "persisted collateral closure",
+      "expected": 1,
+      "actual": 1,
+      "tolerance": 0.0
+    },
+    {
+      "name": "rounded receipt above threshold",
+      "expected": 925.0,
+      "actual": 925.0,
+      "tolerance": 0.0
+    },
+    {
+      "name": "pending receipt avoids duplicate call",
+      "expected": 925.0,
+      "actual": 925.0,
+      "tolerance": 0.0
+    },
+    {
+      "name": "sign reversal offsets pending receipts",
+      "expected": -250.0,
+      "actual": -250.0,
+      "tolerance": 0.0
+    },
+    {
+      "name": "cancelled call is replaced on next mark",
+      "expected": -250.0,
+      "actual": -250.0,
+      "tolerance": 0.0
+    },
+    {
+      "name": "net settled posting",
+      "expected": -250.0,
+      "actual": -250.0,
+      "tolerance": 0.0
+    },
+    {
+      "name": "negative interest on posted collateral",
+      "expected": -0.025,
+      "actual": -0.025,
+      "tolerance": 1e-14
+    }
+  ],
+  "clearing_replayed_events": 7,
+  "collateral_replayed_events": 58,
+  "synthetic_quotes": true,
+  "synthetic_fixings": true,
+  "scope": "Independent Decimal coupon cash and settled-principal interest; persisted idempotent replay; hand-calculated margin-call fixtures"
+}

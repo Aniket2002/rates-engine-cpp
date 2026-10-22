@@ -76,3 +76,11 @@ must still calibrate with sufficient discount coverage for projection instrument
 and freezing the other curve. The [validation record](sofr-validation.md) checks
 both against independent QuantLib calculations. Two supplied OIS quote sets do
 not constitute a basis-swap or collateral-agreement calibration.
+
+`basis_quote_risk` adds a separate basis-instrument coordinate. Its dependency
+chain is `D(discount quotes) → B(base OIS quotes; D) → O(basis quotes; D, B)`.
+Discount shocks rebuild all three curves, base shocks rebuild `B` and `O`, and
+basis shocks rebuild only `O`. Independent discount/base/other fixing stores
+remain unchanged. The [basis guide](basis-clearing-collateral.md) documents the
+spread sign, instruments and QuantLib helper validation. Cash-collateral balances
+are accounting state and do not change these pricing curves automatically.

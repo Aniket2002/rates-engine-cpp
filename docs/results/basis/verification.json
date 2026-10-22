@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-22",
+  "platform": "Windows x64 LLVM-MinGW Clang 23.1.3; Python 3.14; QuantLib 1.44",
+  "previous_commit_pushed": "7b9b549",
+  "release_ctest": {
+    "passed": 96,
+    "total": 96
+  },
+  "debug_ctest": {
+    "passed": 90,
+    "total": 90,
+    "after_enum_and_optional_guard_cleanup_focused_passed": 7
+  },
+  "quantlib_basis_comparisons": 768,
+  "independent_accounting_checks": 14,
+  "clearing_json_replayed_events": 7,
+  "collateral_json_replayed_events": 58,
+  "clang_format": "pass",
+  "clang_tidy": "pass",
+  "installed_consumer": "built and ran with basis/collateral APIs",
+  "coverage": "not remeasured",
+  "cross_platform_ci": "workflow updated; no local claim of remote run success",
+  "source_sha256": {
+    "include/rates/basis.hpp": "224753ffb723029d386e760c2e8b807169fc6dacf5b2ab53ff1c8429ab7e1800",
+    "include/rates/lifecycle.hpp": "d873da518a4918cde052154cb0ad011f86e9c4702e3c4f22e676d9b095b7772c",
+    "src/basis.cpp": "3a6b4e6fb23d74250176acb379cdfeab4e98885f62969de7b6e0f5b0bc31c0b8",
+    "src/lifecycle.cpp": "d5f6bc1a9e7154ad322fa80e359eb383375100c642d93bd5235859376f302bfa",
+    "python/bindings.cpp": "74e0f861cbe940fcdf30252fd11dcdbbba1f92e51c599dd249f5693b70133e89",
+    "python/lifecycle_bindings.cpp": "3006f7b5adec2eabc66ad6adef3dd49672fdcc5e123e4fedec5515b864109c1a",
+    "python/validate_basis.py": "a24198df95c1517beffcf91166236387929435fedf43f407369ed01f10621800",
+    "python/run_basis_lifecycle.py": "a4a245c6028ce5c743aed5a6d1cfc44a3f226746fc63085a0c2932638ac954fb",
+    "python/test_contractual_lifecycle.py": "c4e41b4a999463b4a7f094f4cac957b3774ce10e815a1906f50d009840872613",
+    "tests/test_lifecycle.cpp": "d00723dd70825b4fd1e2e6a0f6b01e39c49b12dbd58f00a943f946cf96fd9d64",
+    "CMakeLists.txt": "b400f2c199f155fc58077924c77f57a8dde55133d3251bd00f9c3f6b205ae6ed",
+    ".github/workflows/ci.yml": "83ee4438b3bdeaeee07d4dfbb30de88736729adfd433571a471e6c866f51fafa",
+    "examples/consumer/main.cpp": "49f153ac5e3da744e658017dbf28aaadecf0cff0693c67e35af6bfc73d5b79b5"
+  },
+  "artifact_sha256": {
+    "accounting-report.json": "44208ae64bfb626652d91fed89f759f696527f7e8aec95bf751180b26085beee",
+    "comparisons.csv": "10ac7ceb8e89c12c094dc4886b6a51491b77bccae206574cb4cce1eb7011dbf3",
+    "debug-ctest.txt": "e7e09420d721bb5f5afd1ef613fac8f3c3c130d371ca4a2614e8be369365977e",
+    "debug-focused.txt": "b49c661e42ffaa0a46de73205eb6ed980f044dbd8bb08bd742d0cb439fc303ac",
+    "lifecycle-example.json": "4c68f2bc1fdde35e1d01d4b60dc4715997489b3da148b0aa8c6cc0c9c8d47ab3",
+    "release-ctest.txt": "f46fb2ed92c40b496d58de4fbb250177289cb7dea8737b9969aed2bf515d7e5b",
+    "validation-report.json": "f93ec30289928fcb6a94d56b7e01f3b2d64fe5b518d03198b332ee6bf92f02f3"
+  },
+  "hash_policy": "SHA-256 of UTF-8 text with normalized LF newlines",
+  "scope": "Same-currency compounded overnight basis; generic clearing and CTM cash collateral; all example market inputs synthetic"
+}

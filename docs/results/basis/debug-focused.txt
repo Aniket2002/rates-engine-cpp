@@ -1,0 +1,19 @@
+Test project C:/Users/Aniket Bhardwaj/Desktop/Github/rates-engine-cpp/build/debug
+    Start 1: Basis.AnalyticalLegsParSpreadReceiverAndCalibration
+1/7 Test #1: Basis.AnalyticalLegsParSpreadReceiverAndCalibration ........   Passed    0.16 sec
+    Start 2: Basis.DistinctFixingsSeasonedUnpaidAndSettled
+2/7 Test #2: Basis.DistinctFixingsSeasonedUnpaidAndSettled ..............   Passed    0.01 sec
+    Start 3: Clearing.AcceptSettleNetAndIdempotentReplay
+3/7 Test #3: Clearing.AcceptSettleNetAndIdempotentReplay ................   Passed    0.01 sec
+    Start 4: Clearing.RejectionAndTerminationReplaceUnpaidObligations
+4/7 Test #4: Clearing.RejectionAndTerminationReplaceUnpaidObligations ...   Passed    0.01 sec
+    Start 5: Collateral.CallsSettlementInterestReturnAndReplay
+5/7 Test #5: Collateral.CallsSettlementInterestReturnAndReplay ..........   Passed    0.01 sec
+    Start 6: Collateral.DirectionMtaValidationAndFailureAtomicity
+6/7 Test #6: Collateral.DirectionMtaValidationAndFailureAtomicity .......   Passed    0.01 sec
+    Start 7: Collateral.RoundedTargetIsStableWithZeroMinimumTransfer
+7/7 Test #7: Collateral.RoundedTargetIsStableWithZeroMinimumTransfer ....   Passed    0.01 sec
+
+100% tests passed, 0 tests failed out of 7
+
+Total Test time (real) =   0.39 sec

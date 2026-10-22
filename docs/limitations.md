@@ -2,18 +2,24 @@
 
 - The original CLI/portfolio replay uses single-curve projection and discounting.
   The [v2.1 extension](multicurve.md) adds OIS discounting and separately calibrated
-  projection curves, but no basis-swap instruments, multi-currency support or XVA.
+  projection curves. The [basis extension](basis-clearing-collateral.md) calibrates
+  same-currency compounded overnight/overnight basis swaps, with no multi-currency
+  support or XVA.
   Real Fed fitted Treasury curves
   provide a historical valuation proxy; the swap portfolios are hypothetical.
-- Vanilla deterministic deposits and fixed/floating swaps only. No options,
+- Deterministic deposits, fixed/floating and compounded overnight basis swaps. No options,
   caps, floors, convexity adjustment, stochastic models or credit risk.
 - The [v2.2 SOFR APIs](sofr-lifecycle.md) value future, seasoned, matured/unpaid
   and settled coupons with availability-aware realized fixings, accrued value,
   lookback, observation shift, lockout and spot/payment lags. Legacy vanilla
   pricing APIs still require future coupons. Neither API supports floating
   spread/gearing, amortization, ex-coupon treatment or principal exchanges.
-  Trade amendments, novations, clearing, collateral and settlement reconciliation
-  are outside the pricing lifecycle.
+  The basis API adds a simple spread on its base leg. A generic clearing ledger
+  models acceptance/rejection, explicit payment settlement and termination
+  closeout; a cash-collateral account models calls, transfers, interest and return.
+  Neither connects to a CCP or implements novation, initial-margin calculation,
+  settlement variation, noncash collateral, default management or external
+  settlement reconciliation. Full trade amendment workflows remain unsupported.
 - Gregorian dates restricted to 1900..2199; month-based forward schedules with
   short final stubs. No long/front stubs or IMM rolls. C++ calendars take explicit
   holidays; the SOFR pipeline exports a versioned QuantLib US Government Bond
@@ -78,5 +84,6 @@ TLT example covers an action-free interval and is explicitly retrospective.
 Availability checks protect the signal from future inputs under the supplied
 timestamps; they cannot certify the historical provenance of those timestamps.
 
-Next improvements: front/long stubs, basis-swap calibration, floating spreads,
-contract-event processing and provider-specific executable quote connectors.
+Next improvements: front/long stubs, IBOR/arithmetic-average/cross-currency basis,
+spread/gearing support beyond the basis leg, provider/CCP/payment connectors,
+initial-margin models and durable contract-event storage.

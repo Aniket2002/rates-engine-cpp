@@ -5,6 +5,7 @@
 namespace py = pybind11;
 using namespace rates;
 void bind_sofr(py::module_ &module);
+void bind_lifecycle(py::module_ &module);
 PYBIND11_MODULE(pyrates, module) {
     module.doc() =
         "C++ rates engine with OIS and multi-curve valuation. Rates are decimals; risk is currency per bp.";
@@ -187,4 +188,5 @@ PYBIND11_MODULE(pyrates, module) {
             },
             py::arg("curve"), py::arg("trade"), py::arg("bump_bps") = 1.0);
     bind_sofr(module);
+    bind_lifecycle(module);
 }

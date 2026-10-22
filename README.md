@@ -34,8 +34,24 @@ python python/validate_sofr.py --module-dir build/release --out results/sofr-val
 The [lifecycle guide](docs/sofr-lifecycle.md) explains the cash flows, quote-risk
 API and auditable inputs. [Expanded validation](docs/sofr-validation.md) covers
 30,524 independent comparisons, including unusual stubs, distinct calendars and
-full two-curve quote recalibration. Basis-swap calibration, clearing and collateral
-lifecycle processing remain outside scope.
+full two-curve quote recalibration.
+
+## Extend to basis swaps and contractual lifecycle
+
+The [basis and lifecycle extension](docs/basis-clearing-collateral.md) adds
+same-currency compounded overnight basis-swap calibration, three-curve quote risk,
+clearing acceptance/payment events and a generic cash-collateral agreement.
+Margin calls, actual transfers, interest and final returns have separate audit trails.
+
+```sh
+python python/run_basis_lifecycle.py --module-dir build/release --out results/basis-lifecycle
+python python/validate_basis.py --module-dir build/release --out results/basis-validation --require-quantlib
+```
+
+This separate example uses **synthetic quotes and synthetic fixings**. It follows
+a seasoned basis swap through both leg payments and zero collateral at closure.
+The implementation models generic contractual rules; live CCP connectivity,
+initial-margin models and settlement variation are outside its scope.
 
 The original example below takes eight synthetic quotes through calibration,
 cash flows, PV and two risk coordinates.
@@ -159,6 +175,7 @@ adds **40** cash-flow and dual-curve node/quote-risk comparisons. See the
 
 | Area | Entry point |
 | --- | --- |
+| Basis swaps, clearing and cash collateral | [Contractual model and validation](docs/basis-clearing-collateral.md) |
 | Historical curves | [249 Fed curves and 24,900 trade valuations](docs/real-historical-data.md) |
 | Portfolio aggregation and shared scenarios | [v2 design and scaling measurements](docs/v2.md) |
 | Mathematics | [Methodology](docs/methodology.md), [validation](docs/mathematical_validation.md) |

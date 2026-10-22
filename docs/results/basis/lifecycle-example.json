@@ -1,0 +1,720 @@
+{
+  "synthetic_quotes": true,
+  "synthetic_fixings": true,
+  "currency": "USD",
+  "calendar": "weekends only",
+  "contract": "generic collateralized-to-market cash collateral; no CCP connection",
+  "daily": [
+    {
+      "date": "2025-01-15",
+      "dirty_pv": 66.99473587211689,
+      "clearing_cash": 0.0,
+      "collateral_principal": 0.0,
+      "pending_transfer": 67.0,
+      "settled_interest": 0.0,
+      "unsecured_exposure": 66.99473587211689,
+      "realized_observations": 21,
+      "forecast_observations": 23
+    },
+    {
+      "date": "2025-01-16",
+      "dirty_pv": 67.95156659538816,
+      "clearing_cash": 0.0,
+      "collateral_principal": 67.0,
+      "pending_transfer": 0.0,
+      "settled_interest": 0.0,
+      "unsecured_exposure": 0.951566595388158,
+      "realized_observations": 23,
+      "forecast_observations": 21
+    },
+    {
+      "date": "2025-01-17",
+      "dirty_pv": 67.94538391984486,
+      "clearing_cash": 0.0,
+      "collateral_principal": 67.0,
+      "pending_transfer": 0.0,
+      "settled_interest": -0.004652777777777778,
+      "unsecured_exposure": 0.9453839198448577,
+      "realized_observations": 25,
+      "forecast_observations": 19
+    },
+    {
+      "date": "2025-01-20",
+      "dirty_pv": 71.16840609613456,
+      "clearing_cash": 0.0,
+      "collateral_principal": 67.0,
+      "pending_transfer": 0.0,
+      "settled_interest": -0.018611111111111113,
+      "unsecured_exposure": 4.168406096134561,
+      "realized_observations": 27,
+      "forecast_observations": 17
+    },
+    {
+      "date": "2025-01-21",
+      "dirty_pv": 72.17459764618437,
+      "clearing_cash": 0.0,
+      "collateral_principal": 67.0,
+      "pending_transfer": 0.0,
+      "settled_interest": -0.02326388888888889,
+      "unsecured_exposure": 5.174597646184367,
+      "realized_observations": 29,
+      "forecast_observations": 15
+    },
+    {
+      "date": "2025-01-22",
+      "dirty_pv": 73.16246130260058,
+      "clearing_cash": 0.0,
+      "collateral_principal": 67.0,
+      "pending_transfer": 0.0,
+      "settled_interest": -0.027916666666666666,
+      "unsecured_exposure": 6.162461302600576,
+      "realized_observations": 31,
+      "forecast_observations": 13
+    },
+    {
+      "date": "2025-01-23",
+      "dirty_pv": 74.1202957027046,
+      "clearing_cash": 0.0,
+      "collateral_principal": 67.0,
+      "pending_transfer": 0.0,
+      "settled_interest": -0.03256944444444444,
+      "unsecured_exposure": 7.120295702704595,
+      "realized_observations": 33,
+      "forecast_observations": 11
+    },
+    {
+      "date": "2025-01-24",
+      "dirty_pv": 74.11465505149776,
+      "clearing_cash": 0.0,
+      "collateral_principal": 67.0,
+      "pending_transfer": 0.0,
+      "settled_interest": -0.03722222222222222,
+      "unsecured_exposure": 7.114655051497763,
+      "realized_observations": 35,
+      "forecast_observations": 9
+    },
+    {
+      "date": "2025-01-27",
+      "dirty_pv": 77.3410078981553,
+      "clearing_cash": 0.0,
+      "collateral_principal": 67.0,
+      "pending_transfer": 11.0,
+      "settled_interest": -0.05118055555555555,
+      "unsecured_exposure": 10.341007898155297,
+      "realized_observations": 37,
+      "forecast_observations": 7
+    },
+    {
+      "date": "2025-01-28",
+      "dirty_pv": 78.34826795164312,
+      "clearing_cash": 0.0,
+      "collateral_principal": 78.0,
+      "pending_transfer": 0.0,
+      "settled_interest": -0.055833333333333325,
+      "unsecured_exposure": 0.3482679516431233,
+      "realized_observations": 39,
+      "forecast_observations": 5
+    },
+    {
+      "date": "2025-01-29",
+      "dirty_pv": 79.34892770373196,
+      "clearing_cash": 0.0,
+      "collateral_principal": 78.0,
+      "pending_transfer": 0.0,
+      "settled_interest": -0.06124999999999999,
+      "unsecured_exposure": 1.3489277037319596,
+      "realized_observations": 41,
+      "forecast_observations": 3
+    },
+    {
+      "date": "2025-01-30",
+      "dirty_pv": 80.29603881198594,
+      "clearing_cash": 0.0,
+      "collateral_principal": 78.0,
+      "pending_transfer": 0.0,
+      "settled_interest": -0.06666666666666667,
+      "unsecured_exposure": 2.2960388119859374,
+      "realized_observations": 43,
+      "forecast_observations": 1
+    },
+    {
+      "date": "2025-01-31",
+      "dirty_pv": 78.86042611573308,
+      "clearing_cash": 0.0,
+      "collateral_principal": 78.0,
+      "pending_transfer": 0.0,
+      "settled_interest": -0.07208333333333333,
+      "unsecured_exposure": 0.8604261157330768,
+      "realized_observations": 44,
+      "forecast_observations": 0
+    },
+    {
+      "date": "2025-02-03",
+      "dirty_pv": 78.87926638636264,
+      "clearing_cash": 0.0,
+      "collateral_principal": 78.0,
+      "pending_transfer": 0.0,
+      "settled_interest": -0.08833333333333333,
+      "unsecured_exposure": 0.8792663863626444,
+      "realized_observations": 44,
+      "forecast_observations": 0
+    },
+    {
+      "date": "2025-02-04",
+      "dirty_pv": 78.8855596553642,
+      "clearing_cash": 0.0,
+      "collateral_principal": 78.0,
+      "pending_transfer": 0.0,
+      "settled_interest": -0.09375,
+      "unsecured_exposure": 0.8855596553642044,
+      "realized_observations": 44,
+      "forecast_observations": 0
+    },
+    {
+      "date": "2025-02-05",
+      "dirty_pv": 2815.4335424016854,
+      "clearing_cash": -2736.5416846236276,
+      "collateral_principal": 78.0,
+      "pending_transfer": 2738.0,
+      "settled_interest": -0.09916666666666667,
+      "unsecured_exposure": 2737.4335424016854,
+      "realized_observations": 22,
+      "forecast_observations": 0
+    },
+    {
+      "date": "2025-02-06",
+      "dirty_pv": 0.0,
+      "clearing_cash": 79.11948725044931,
+      "collateral_principal": 2816.0,
+      "pending_transfer": -2816.0,
+      "settled_interest": -0.10458333333333333,
+      "unsecured_exposure": -2816.0,
+      "realized_observations": 0,
+      "forecast_observations": 0
+    },
+    {
+      "date": "2025-02-07",
+      "dirty_pv": 0.0,
+      "clearing_cash": 79.11948725044931,
+      "collateral_principal": 0.0,
+      "pending_transfer": 0.0,
+      "settled_interest": -0.3001388888888889,
+      "unsecured_exposure": 0.0,
+      "realized_observations": 0,
+      "forecast_observations": 0
+    }
+  ],
+  "initial_quote_risk": {
+    "discount_parallel_dv01": 0.0011663686471408141,
+    "base_parallel_dv01": -0.5511411787704219,
+    "basis_parallel_dv01": -4.965224691268986
+  },
+  "final_clearing_state": "ClearingState.Closed",
+  "collateral_closed": true,
+  "clearing_cash": 79.11948725044931,
+  "interest_cash": -0.3001388888888889,
+  "collateral_principal": 0.0,
+  "margin_calls": [
+    {
+      "id": "mark-2025-01-15",
+      "due": "2025-01-16",
+      "amount": 67.0,
+      "settled": true,
+      "cancelled": false
+    },
+    {
+      "id": "mark-2025-01-27",
+      "due": "2025-01-28",
+      "amount": 11.0,
+      "settled": true,
+      "cancelled": false
+    },
+    {
+      "id": "mark-2025-02-05",
+      "due": "2025-02-06",
+      "amount": 2738.0,
+      "settled": true,
+      "cancelled": false
+    },
+    {
+      "id": "mark-2025-02-06",
+      "due": "2025-02-07",
+      "amount": -2816.0,
+      "settled": true,
+      "cancelled": false
+    }
+  ],
+  "clearing_events": [
+    {
+      "id": "submit",
+      "at": "2025-01-15T16:00:00Z",
+      "kind": "ClearingEventKind.Submit",
+      "trade": "basis-1",
+      "reference": "",
+      "amount": 0.0,
+      "due": null
+    },
+    {
+      "id": "accept",
+      "at": "2025-01-15T16:00:00Z",
+      "kind": "ClearingEventKind.Accept",
+      "trade": "basis-1",
+      "reference": "",
+      "amount": 0.0,
+      "due": "2025-02-06"
+    },
+    {
+      "id": "register-base-2025-02-05",
+      "at": "2025-02-05T16:00:00Z",
+      "kind": "ClearingEventKind.RegisterPayment",
+      "trade": "basis-1",
+      "reference": "base-2025-02-05",
+      "amount": -2736.5416846236276,
+      "due": "2025-02-05"
+    },
+    {
+      "id": "pay-base-2025-02-05",
+      "at": "2025-02-05T16:00:00Z",
+      "kind": "ClearingEventKind.SettlePayment",
+      "trade": "basis-1",
+      "reference": "base-2025-02-05",
+      "amount": 0.0,
+      "due": null
+    },
+    {
+      "id": "register-other-2025-02-06",
+      "at": "2025-02-06T16:00:00Z",
+      "kind": "ClearingEventKind.RegisterPayment",
+      "trade": "basis-1",
+      "reference": "other-2025-02-06",
+      "amount": 2815.661171874077,
+      "due": "2025-02-06"
+    },
+    {
+      "id": "pay-other-2025-02-06",
+      "at": "2025-02-06T16:00:00Z",
+      "kind": "ClearingEventKind.SettlePayment",
+      "trade": "basis-1",
+      "reference": "other-2025-02-06",
+      "amount": 0.0,
+      "due": null
+    },
+    {
+      "id": "close",
+      "at": "2025-02-06T16:00:00Z",
+      "kind": "ClearingEventKind.Close",
+      "trade": "basis-1",
+      "reference": "",
+      "amount": 0.0,
+      "due": null
+    }
+  ],
+  "collateral_events": [
+    {
+      "id": "pay-interest-2025-01-15",
+      "at": "2025-01-15T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-01-15",
+      "at": "2025-01-15T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 66.99473587211689
+    },
+    {
+      "id": "interest-2025-01-16",
+      "at": "2025-01-16T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "settle-mark-2025-01-15",
+      "at": "2025-01-16T16:00:00Z",
+      "kind": "CollateralEventKind.SettleTransfer",
+      "reference": "mark-2025-01-15",
+      "value": 0.0
+    },
+    {
+      "id": "pay-interest-2025-01-16",
+      "at": "2025-01-16T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-01-16",
+      "at": "2025-01-16T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 67.95156659538816
+    },
+    {
+      "id": "interest-2025-01-17",
+      "at": "2025-01-17T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "pay-interest-2025-01-17",
+      "at": "2025-01-17T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-01-17",
+      "at": "2025-01-17T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 67.94538391984486
+    },
+    {
+      "id": "interest-2025-01-20",
+      "at": "2025-01-20T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "pay-interest-2025-01-20",
+      "at": "2025-01-20T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-01-20",
+      "at": "2025-01-20T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 71.16840609613456
+    },
+    {
+      "id": "interest-2025-01-21",
+      "at": "2025-01-21T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "pay-interest-2025-01-21",
+      "at": "2025-01-21T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-01-21",
+      "at": "2025-01-21T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 72.17459764618437
+    },
+    {
+      "id": "interest-2025-01-22",
+      "at": "2025-01-22T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "pay-interest-2025-01-22",
+      "at": "2025-01-22T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-01-22",
+      "at": "2025-01-22T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 73.16246130260058
+    },
+    {
+      "id": "interest-2025-01-23",
+      "at": "2025-01-23T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "pay-interest-2025-01-23",
+      "at": "2025-01-23T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-01-23",
+      "at": "2025-01-23T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 74.1202957027046
+    },
+    {
+      "id": "interest-2025-01-24",
+      "at": "2025-01-24T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "pay-interest-2025-01-24",
+      "at": "2025-01-24T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-01-24",
+      "at": "2025-01-24T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 74.11465505149776
+    },
+    {
+      "id": "interest-2025-01-27",
+      "at": "2025-01-27T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "pay-interest-2025-01-27",
+      "at": "2025-01-27T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-01-27",
+      "at": "2025-01-27T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 77.3410078981553
+    },
+    {
+      "id": "interest-2025-01-28",
+      "at": "2025-01-28T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "settle-mark-2025-01-27",
+      "at": "2025-01-28T16:00:00Z",
+      "kind": "CollateralEventKind.SettleTransfer",
+      "reference": "mark-2025-01-27",
+      "value": 0.0
+    },
+    {
+      "id": "pay-interest-2025-01-28",
+      "at": "2025-01-28T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-01-28",
+      "at": "2025-01-28T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 78.34826795164312
+    },
+    {
+      "id": "interest-2025-01-29",
+      "at": "2025-01-29T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "pay-interest-2025-01-29",
+      "at": "2025-01-29T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-01-29",
+      "at": "2025-01-29T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 79.34892770373196
+    },
+    {
+      "id": "interest-2025-01-30",
+      "at": "2025-01-30T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "pay-interest-2025-01-30",
+      "at": "2025-01-30T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-01-30",
+      "at": "2025-01-30T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 80.29603881198594
+    },
+    {
+      "id": "interest-2025-01-31",
+      "at": "2025-01-31T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "pay-interest-2025-01-31",
+      "at": "2025-01-31T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-01-31",
+      "at": "2025-01-31T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 78.86042611573308
+    },
+    {
+      "id": "interest-2025-02-03",
+      "at": "2025-02-03T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "pay-interest-2025-02-03",
+      "at": "2025-02-03T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-02-03",
+      "at": "2025-02-03T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 78.87926638636264
+    },
+    {
+      "id": "interest-2025-02-04",
+      "at": "2025-02-04T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "pay-interest-2025-02-04",
+      "at": "2025-02-04T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-02-04",
+      "at": "2025-02-04T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 78.8855596553642
+    },
+    {
+      "id": "interest-2025-02-05",
+      "at": "2025-02-05T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "pay-interest-2025-02-05",
+      "at": "2025-02-05T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-02-05",
+      "at": "2025-02-05T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 2815.4335424016854
+    },
+    {
+      "id": "interest-2025-02-06",
+      "at": "2025-02-06T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "settle-mark-2025-02-05",
+      "at": "2025-02-06T16:00:00Z",
+      "kind": "CollateralEventKind.SettleTransfer",
+      "reference": "mark-2025-02-05",
+      "value": 0.0
+    },
+    {
+      "id": "pay-interest-2025-02-06",
+      "at": "2025-02-06T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-02-06",
+      "at": "2025-02-06T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "interest-2025-02-07",
+      "at": "2025-02-07T16:00:00Z",
+      "kind": "CollateralEventKind.AccrueInterest",
+      "reference": "",
+      "value": 0.025
+    },
+    {
+      "id": "settle-mark-2025-02-06",
+      "at": "2025-02-07T16:00:00Z",
+      "kind": "CollateralEventKind.SettleTransfer",
+      "reference": "mark-2025-02-06",
+      "value": 0.0
+    },
+    {
+      "id": "pay-interest-2025-02-07",
+      "at": "2025-02-07T16:00:00Z",
+      "kind": "CollateralEventKind.PayInterest",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "mark-2025-02-07",
+      "at": "2025-02-07T16:00:00Z",
+      "kind": "CollateralEventKind.Mark",
+      "reference": "",
+      "value": 0.0
+    },
+    {
+      "id": "close",
+      "at": "2025-02-07T16:00:00Z",
+      "kind": "CollateralEventKind.Close",
+      "reference": "",
+      "value": 0.0
+    }
+  ]
+}
