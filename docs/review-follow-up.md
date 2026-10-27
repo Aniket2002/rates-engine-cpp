@@ -17,3 +17,29 @@
 No licensed quote feed or live clearing connection is available in this project.
 Those facts cannot be changed by generating sample numbers or adding a database.
 The implementation and documentation keep that distinction visible.
+
+## LinkedIn readiness follow-up (27 October 2026)
+
+- Published [v2.3.0](https://github.com/Aniket2002/rates-engine-cpp/releases/tag/v2.3.0).
+  Downloaded the ZIP and checksum file without GitHub authentication, matched the
+  recorded SHA-256, and ran extracted pricing and relocated CLI tools with only
+  Windows system directories on `PATH`. See the
+  [public-release verification](results/runtime/release-verification.json).
+- Reorganized the README around current capabilities and one release-results
+  table, with build/release badges and zero-curve/DV01 plots near the top.
+  Moved the detailed walkthroughs and historical suite counts to
+  [worked examples](worked-examples.md). The existing
+  [SOFR hedge chart](charts/hedging.png) is the visual for sharing the hedge study.
+- Removed the headline speedup and described shared scenarios as a design-choice
+  experiment. The [benchmark evidence](v2.md#linux-replay-and-profiling-evidence)
+  identifies the repeated setup in the baseline and has no QuantLib timing claim.
+- Promoted existing OIS discounting and separate projection APIs; reran their
+  independent QuantLib validator on 27 October 2026: all 230 comparisons passed.
+  Kept Treasury proxy data distinct from swap-market calibration and moved the
+  peripheral ETF simulator link into the worked-examples guide.
+- Linked the actual [development history](development-history.md) and existing
+  release tags, preserving published commits.
+- Corrected Windows runtime instructions in the architecture and benchmark guides.
+- Retained [v2.3.0 CI evidence](results/ci-v2.3.0.json), labeled the older snapshot,
+  and separated [current and historical coverage](coverage.md), including LLVM's
+  retained diagnostic warning.

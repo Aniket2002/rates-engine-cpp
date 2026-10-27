@@ -1,239 +1,129 @@
 # rates-engine-cpp
 
-A C++20 interest-rate curve, swap valuation and risk library, checked against an
-independent Python implementation and QuantLib. Version 2.3 adds a constrained
-SOFR hedging study, contract-derived payment reconciliation, durable SQLite
-journals and portable Windows executables. The engine prices **seasoned
-SOFR swaps with realized fixings**, observation conventions and separate discount
-and projection curves, including fully recalibrated two-curve market-quote risk.
-[Model boundaries](docs/limitations.md) are explicit.
+[![Build and validation](https://github.com/Aniket2002/rates-engine-cpp/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Aniket2002/rates-engine-cpp/actions/workflows/ci.yml)
+[![Release v2.3.0](https://img.shields.io/badge/release-v2.3.0-blue)](https://github.com/Aniket2002/rates-engine-cpp/releases/tag/v2.3.0)
 
-## Run on Windows
+A C++20 interest-rate pricing and risk engine with **OIS discounting, separately
+calibrated projection curves and full-rebootstrap quote DV01**. Independent
+Python and QuantLib implementations check calibration, cash flows and sensitivities.
 
-From PowerShell in this repository, build, test and run the example:
+- **Pricing:** fixed/floating swaps, seasoned SOFR swaps with realized fixings,
+  observation conventions, and compounded overnight basis swaps.
+- **Risk and hedging:** discount/projection quote sensitivities, shared portfolio
+  scenarios, bounded hedge sizing and full-repricing stress analysis.
+- **Lifecycle:** contractual payment reconciliation, cash-collateral ledgers and
+  optional Python/SQLite journals with transaction and replay checks.
+
+| Calibrated zero curve | DV01 ladder |
+| --- | --- |
+| ![Continuous zero yields from synthetic deposit and swap quotes](docs/charts/curve.png) | ![Market-quote and zero-node DV01 by maturity](docs/charts/risk-buckets.png) |
+
+These plots show the introductory **single-curve, synthetic** example. Quote DV01
+bumps market inputs and rebuilds the curve; zero-node DV01 shifts node yields.
+[Inputs, outputs and reproduction](docs/worked-examples.md#build-and-price-one-swap)
+and [chart provenance](docs/charts/manifest.json) are retained.
+
+## Current release results
+
+Recorded for **v2.3.0**, implementation commit `00519f48d767`, on 22 October 2026.
+Each row names its configuration or suite; the counts are not interchangeable.
+
+| Check | Recorded result | Evidence |
+| --- | --- | --- |
+| Windows Release CTest, Python bindings enabled | **100/100 passed** | [Runtime record](docs/results/runtime/verification.json) |
+| Independent OIS / separate-projection validation | **230/230 comparisons passed**, QuantLib 1.44 | [Methods and tolerances](docs/multicurve.md), [report](docs/results/multicurve/report.json) |
+| Release-commit CI | **7/7 jobs passed**: Linux, Windows, macOS, sanitizers, static analysis and coverage | [CI record](docs/results/ci-v2.3.0.json) |
+| C++ library coverage, Linux Clang/LLVM 18 Debug | **92.50% lines / 80.13% branch outcomes** | [Scope and diagnostics](docs/coverage.md#current-release-v230) |
+
+Coverage excludes CLI, bindings, Python code and dependencies. LLVM reported
+31 functions with mismatched data; the linked report retains that warning.
+[Historical measurements](docs/coverage.md#historical-measurements) use different
+code and configurations. The badge above shows the current workflow status.
+
+## OIS discounting and separate projection
+
+The C++ and Python APIs bootstrap an OIS discount curve, then calibrate a
+projection curve against forward-market quotes using that discount curve.
+Discount-quote shocks rebuild discounting **and recalibrate projection to the
+unchanged forwarding quotes**; projection-quote shocks hold discounting fixed.
+QuantLib independently bootstraps from the same quotes and repeats the shocks.
+
+Use `OisCurveBootstrapper`, `CurveBootstrapper::build_forward`,
+`price(discount, projection, swap)` and `multi_curve_risk` for this workflow.
+The [multi-curve guide](docs/multicurve.md) includes a C++ example and validation
+details. [Seasoned SOFR](docs/sofr-lifecycle.md) and
+[basis swaps](docs/basis-clearing-collateral.md) have dedicated APIs for their
+observation conventions and curve dependencies. The CSV CLI remains a
+single-curve introductory tool.
+
+The examples use synthetic OIS/forward quotes. The SOFR fixing demonstration
+combines captured NY Fed fixings with synthetic OIS quotes. Treasury curves are
+used only in the separate [historical proxy study](docs/real-historical-data.md);
+they are not an executable swap-market calibration. See the
+[market-data policy](docs/market-data-status.md) and [model boundaries](docs/limitations.md).
+
+## Build and validate
+
+Requires CMake 3.25+, Ninja, a C++20 compiler and Python 3.10+. Install the
+[build prerequisites](docs/reproducibility.md) first. GoogleTest is fetched on
+the first test build. For the configured Windows environment:
 
 ```powershell
 .\run.ps1 -WithPython -Test
+.\.venv\Scripts\python.exe python/validate_multicurve.py --module-dir build/release --out results/multicurve --require-quantlib
 ```
 
-The script uses the existing local portable compiler and virtual environment,
-or an installed C++20 compiler in a Developer shell. For a fresh checkout, see
-[build prerequisites](docs/reproducibility.md). Use `-WithPython` for SOFR/basis
-scripts; the basic CLI build also works without it. Windows compiler runtimes
-are embedded by default, so running the resulting `.exe` files does not require
-the compiler directory on `PATH`. The optional `.pyd` still needs its matching Python.
+On Linux/macOS, with the chosen Python environment active:
 
-For the [v2.3.0 Windows ZIP](https://github.com/Aniket2002/rates-engine-cpp/releases/tag/v2.3.0),
-extract it, open PowerShell in the extracted folder and run:
+```sh
+python -m pip install pybind11 QuantLib
+cmake --preset release -DRATES_BUILD_PYTHON=ON -Dpybind11_DIR="$(python -m pybind11 --cmakedir)" -DPython3_EXECUTABLE="$(python -c 'import sys; print(sys.executable)')"
+cmake --build --preset release --parallel 4
+ctest --preset release
+python python/validate_multicurve.py --module-dir build/release --out results/multicurve --require-quantlib
+```
+
+For a prebuilt CLI demonstration, extract the
+[v2.3.0 Windows x64 ZIP](https://github.com/Aniket2002/rates-engine-cpp/releases/tag/v2.3.0),
+open PowerShell in its root and run:
 
 ```powershell
 .\bin\rates_cli.exe --quotes examples/synthetic_quotes.csv --swap examples/sample_swap.csv --out results/demo
 ```
 
-## Size a hedge and measure what remains
+Default Windows executables embed compiler runtimes. The ZIP includes native
+tools and a static library; Python workflows require bindings built for the
+chosen interpreter. [Public-download and extracted-ZIP verification](docs/results/runtime/release-verification.json)
+records the checksum and system-only `PATH` checks.
 
-```powershell
-.\.venv\Scripts\python.exe python/hedge_study.py --module-dir build/release --out results/hedging --require-quantlib
-```
+## Follow pricing through to a hedge
 
-The [hedging study](docs/hedging-study.md) sizes 2Y/4Y/6Y hedges for a USD 1 million
-5Y SOFR swap under notional limits and lot rounding. It reduces the quote-DV01
-vector norm by **51.68%**, with **USD 379.73** of assumed entry costs. Full repricing
-shows remaining risk under ten shocks, including negative rates. Some curve-shape
-shocks become worse after hedging; the report shows these alongside improvements.
-All prices and costs use **synthetic assumptions**, not executable market data.
-The [market-data status and firm-quote policy](docs/market-data-status.md) explain
-what evidence is still needed for a tradable-market demonstration.
-
-![SOFR hedge risk and scenario comparison](docs/charts/hedging.png)
-
-The [durable lifecycle guide](docs/durable-lifecycle.md) connects contractual
-cash flows to registered/settled amounts and SQLite transaction/replay checks.
-[Interview notes](docs/implementation-walkthrough.md) explain calibration,
-downstream recalibration, SOFR accrual and collateral accounting using the code.
-
-## Start with a seasoned SOFR swap (v2.2)
-
-At **21 October 2026, 18:17:09 UTC**, the captured example values a **USD 1 million
-payer, 3.75% fixed**, running from 1 October 2026 to 1 October 2028. Quarterly
-coupons use two-day lookback, observation shift and two-day payment lag.
-
-| Output | Value |
-| --- | ---: |
-| Dirty PV | **−4,448.43 USD** |
-| Signed accrued | 144.94 USD |
-| Clean PV | **−4,593.36 USD** |
-| Daily observations | **15 realized / 484 projected** |
-
-**Actual captured NY Fed fixings + synthetic OIS quotes.** These are illustrative
-valuations, not market-calibrated marks. Missing required history is rejected.
-
-After building the [Python bindings](docs/reproducibility.md#bindings):
+The [SOFR hedging study](docs/hedging-study.md) sizes a bounded, lot-rounded hedge
+and measures residual quote DV01 and full-repricing shocks. Its
+[risk and scenario chart](docs/charts/hedging.png) shows both improvements and
+shocks that worsen. It uses synthetic prices and assumed entry costs;
+reducing the chosen sensitivity norm does not establish trading returns or
+general market-risk reduction.
 
 ```sh
-python python/run_sofr_valuation.py --module-dir build/release --manifest data/sofr/manifest.json --out results/sofr-demo
-python python/validate_sofr.py --module-dir build/release --out results/sofr-validation --require-quantlib
+python python/hedge_study.py --module-dir build/release --out results/hedging --require-quantlib
 ```
 
-![SOFR cash flows and realized versus projected daily observations](docs/charts/sofr-cashflows.png)
+Portfolio benchmarks demonstrate the **design choice of sharing calibrated
+scenarios across trades** versus rebuilding them independently. They do not
+benchmark against QuantLib. Workload definitions, absolute timings and machine
+details are in the [scenario-reuse study](docs/v2.md#linux-replay-and-profiling-evidence).
 
-The [lifecycle guide](docs/sofr-lifecycle.md) explains the cash flows, quote-risk
-API and auditable inputs. [Expanded validation](docs/sofr-validation.md) covers
-30,524 independent comparisons, including unusual stubs, distinct calendars and
-full two-curve quote recalibration.
+## Documentation
 
-## Extend to basis swaps and contractual lifecycle
-
-The [basis and lifecycle extension](docs/basis-clearing-collateral.md) adds
-same-currency compounded overnight basis-swap calibration, three-curve quote risk,
-clearing acceptance/payment events and a generic cash-collateral agreement.
-Margin calls, actual transfers, interest and final returns have separate audit trails.
-
-```sh
-python python/run_basis_lifecycle.py --module-dir build/release --out results/basis-lifecycle
-python python/validate_basis.py --module-dir build/release --out results/basis-validation --require-quantlib
-```
-
-This separate example uses **synthetic quotes and synthetic fixings**. It follows
-a seasoned basis swap through both leg payments and zero collateral at closure.
-The implementation models generic contractual rules; live CCP connectivity,
-initial-margin models and settlement variation are outside its scope.
-
-The original example below takes eight synthetic quotes through calibration,
-cash flows, PV and two risk coordinates.
-
-## Build and price one swap
-
-Requires CMake 3.25+, Ninja, a C++20 compiler and Python 3.10+. GoogleTest 1.17.0
-is fetched on the first test build. On Windows use an x64 Visual Studio Developer
-shell or the [portable toolchain](docs/reproducibility.md), and append `.exe` to
-executable names.
-
-```sh
-cmake --preset release
-cmake --build --preset release --parallel 4
-ctest --preset release
-./build/release/rates_cli --quotes examples/synthetic_quotes.csv --swap examples/sample_swap.csv --out results/demo
-```
-
-At **2 January 2025**, the [inputs](examples/synthetic_quotes.csv) contain
-1M/3M/6M deposits and 1Y/2Y/3Y/5Y/10Y par swaps, in decimal rate units.
-The [trade](examples/sample_swap.csv) pays **3.7% fixed** on **1,000,000 notional**
-until **2 January 2030**, receiving quarterly floating payments. Fixed payments
-are semiannual with 30E/360 accrual; floating/deposit accrual is ACT/360.
-The example uses weekend-only modified-following adjustment and one curve for
-both projection and discounting.
-
-| Output | Value |
-| --- | ---: |
-| Fixed-leg PV | 167,660.057351 |
-| Floating-leg PV | 172,191.410251 |
-| Payer PV | **4,531.352900** |
-| Par fixed rate | **3.800000%** |
-| Signed parallel quote DV01 | **-451.944300 currency/bp** |
-
-The market par rate exceeds the contractual coupon, so the payer has a positive
-PV. The engine reprices every input within a `1e-12` decimal-rate tolerance,
-then interpolates log discount factors. [Recorded outputs](docs/results/demo)
-include the calibrated curve, residuals, cash flows, summary and risk.
-
-![Calibrated continuous zero-yield curve](docs/charts/curve.png)
-
-## Read the risk correctly
-
-Risk uses **`(PV_down - PV_up) / (2 * bump_bps)`**. A negative number for this
-payer means PV rises when rates rise. A +1 bp move predicts about **+451.94**
-of PV change before nonlinear effects.
-
-Quote buckets bump one market quote and rebuild the curve. Zero-node buckets
-bump one continuous node yield directly. They answer different questions:
-
-![Market-quote and zero-node risk buckets](docs/charts/risk-buckets.png)
-
-The CLI writes `curve.csv`, `calibration.csv`, `cashflows.csv`, `summary.csv`
-and `risk.csv`. Risk maturity identifies the **actual calibrated pillar**:
-adjusted for deposit/swap contracts, exact for continuous-zero observations.
-See [risk definitions](docs/risk_methodology.md) and [conventions](docs/conventions.md).
-
-## Move the quotes and explain the PV change
-
-```sh
-python -m pip install QuantLib
-python python/generate_case_study.py --cli build/release/rates_cli --out results/case-study --require-quantlib
-```
-
-A **+10 bp parallel shock** changes PV by **+4,507.58** after recalibration.
-The first-order bucket estimate is **+4,519.44**, leaving a **-11.86** residual.
-At +50 bp the residual grows to **-294.32**. All seven scenarios, including a
-steepener, pass independent Python and QuantLib quote-helper checks. These are
-same-date hypothetical PV changes, not realized trading P&L.
-
-![Full repricing compared with linear risk estimates](docs/charts/pv-change.png)
-
-The [model-validation case study](docs/model-validation-case-study.md) gives
-hypotheses, tolerances and results. [Charts](docs/charts) include PNG and SVG
-exports, input hashes and a [reproduction script](python/generate_charts.py).
-
-## Validate and extend the example
-
-```sh
-python -m pip install QuantLib pybind11
-python python/validate_results.py --cli build/release/rates_cli --output results/validation --require-quantlib
-python python/validate_conventions.py --cli build/release/rates_cli --output results/conventions --require-quantlib
-cmake --preset release -DRATES_BUILD_PYTHON=ON -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
-cmake --build --preset release --parallel 4
-python python/validate_multicurve.py --module-dir build/release --out results/multicurve --require-quantlib
-```
-
-The original numerical suite has **1,285 comparisons**. Convention validation
-includes independent rate-helper calibration. The OIS/multi-curve suite adds
-**230 comparisons** for positive/negative rates, explicit holidays, cash flows
-and discount/forwarding quote risk. See the [v2.1 verification record](docs/launch-validation.md)
-for measured checks, coverage and platform boundaries.
-
-The [SOFR/OIS and multi-curve guide](docs/multicurve.md) documents:
-
-- `compound_sofr`: ACT/360 compounding with weekend/holiday accrual.
-- `OisCurveBootstrapper` and `price_ois`: annual compounded overnight swaps.
-- `build_forward` and `price(discount, projection, swap)`: separate curves.
-- `multi_curve_risk`: full recalibration for discount and forwarding quote shocks.
-
-For seasoned SOFR trades, use the new `SofrSwap`, `FixingStore`,
-`SofrCurveBootstrapper` and `price_sofr` APIs. The
-[SOFR lifecycle and market-data guide](docs/sofr-lifecycle.md) documents the
-cash-flow conventions, imported quote schema and remaining boundaries.
-The original `price_ois` and CLI/replay interfaces retain their earlier scope.
-
-```sh
-python python/run_sofr_valuation.py --module-dir build/release --manifest data/sofr/manifest.json --out results/sofr-demo
-python python/validate_sofr.py --module-dir build/release --out results/sofr-validation --require-quantlib
-python python/test_sofr_replay.py --module-dir build/release --out results/sofr-replay --require-quantlib
-```
-
-This example combines **actual captured NY Fed fixings with explicitly synthetic
-OIS quotes**. It values a seasoned 1m payer at **-4,448.43** dirty PV and
-**-4,593.36** clean PV, with 15 realized and 484 forecast daily observations.
-The expanded lifecycle suite passes **30,524** independent comparisons; real-fixing replay
-adds **40** cash-flow and dual-curve node/quote-risk comparisons. See the
-[v2.2 verification record](docs/sofr-validation.md).
-
-## Explore the rest of the library
-
-| Area | Entry point |
+| Topic | Guide |
 | --- | --- |
-| Basis swaps, clearing and cash collateral | [Contractual model and validation](docs/basis-clearing-collateral.md) |
-| Historical curves | [249 Fed curves and 24,900 trade valuations](docs/real-historical-data.md) |
-| Portfolio aggregation and shared scenarios | [v2 design and scaling measurements](docs/v2.md) |
-| Mathematics | [Methodology](docs/methodology.md), [validation](docs/mathematical_validation.md) |
-| Performance | [Benchmarks](docs/benchmarks.md), [coverage](docs/coverage.md) |
-| Builds, bindings, static analysis and sanitizers | [Reproducibility](docs/reproducibility.md) |
-| Installed C++ library | [Consumer example](examples/consumer), [architecture](docs/architecture.md) |
-| Batch operations | [Runbook](ops/runbook.md) |
-| Separate ETF simulator | [Retrospective TLT demonstration](docs/trading-simulation.md) |
+| Valuations, cash flows and stress examples | [Worked examples](docs/worked-examples.md) |
+| Risk signs, coordinates and conventions | [Risk methodology](docs/risk_methodology.md), [conventions](docs/conventions.md) |
+| Contractual payments and durable journals | [Lifecycle guide](docs/durable-lifecycle.md) |
+| Design, C++ consumers and implementation | [Architecture](docs/architecture.md), [consumer example](examples/consumer), [walkthrough](docs/implementation-walkthrough.md) |
+| Performance experiments and historical results | [Benchmark methodology](docs/benchmarks.md), [portfolio study](docs/v2.md) |
+| Release history and scope | [Release notes](docs/release-notes-v2.3.0.md), [development history](docs/development-history.md), [limitations](docs/limitations.md) |
 
-Fed data are fitted Treasury estimates from a downloaded vintage, used as a
-proxy for hypothetical swaps. Original publication times are unavailable.
-Public NY Fed fixing capture is available; executable OIS quotes require an
-external provider and the validated import interface. No options, XVA or
-production-readiness claim.
-MIT licensed; dependencies retain their own licenses.
+MIT licensed; dependencies retain their own licenses. This is a deterministic
+swaps project with explicit model boundaries and reproducible validation.
