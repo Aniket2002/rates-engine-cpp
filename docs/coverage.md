@@ -5,7 +5,35 @@ Scope: compiled executable lines and branch outcomes in `src/*.cpp` and
 are excluded from the library denominator. These numbers measure execution,
 not numerical correctness or exhaustive input coverage.
 
-Version 2.1 adds OIS and multi-curve valuation and measures **1,131/1,143 lines
+## Current release: v2.3.0
+
+The [22 October 2026 CI run](https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39770829563)
+for commit `00519f48d7674220cdd328d7325fc2bd6e2fadae` measured
+**1,851/2,001 lines (92.50%)**, **992/1,238 branch outcomes (80.13%)** and
+**188/198 emitted functions (94.95%)**. All **90 coverage CTest entries passed**.
+This run used Linux Clang/LLVM 18, Debug, with benchmarks and optional Python
+bindings disabled. It measures the compiled C++ library; the Python hedge solver
+and SQLite journal wrapper are outside this coverage denominator.
+
+The retained [summary](results/coverage-v2.3.0.json),
+[text report](results/coverage-v2.3.0-report.txt),
+[CTest log](results/coverage-v2.3.0-ctest.log) and
+[diagnostics](results/coverage-v2.3.0-diagnostics.txt) were downloaded from that
+run's `llvm-coverage` artifact on 27 October 2026. The
+[CI record](results/ci-v2.3.0.json) identifies the run and artifact. These are
+measurements of the release commit, not an assertion about later revisions.
+
+LLVM reported `warning: 31 functions have mismatched data`. The percentages above
+are the report's observed totals with that diagnostic; they are not a warning-free
+coverage certification. The retained diagnostics make this limitation visible.
+
+## Historical measurements
+
+The figures below describe earlier code versions and are not v2.3.0 coverage.
+Both the code denominator and the toolchain differ from the current release;
+the percentages are not a controlled before/after comparison.
+
+Version 2.1 added OIS and multi-curve valuation and measured **1,131/1,143 lines
 (98.95%)** and **573/649 branch outcomes (88.29%)**, with all 124 emitted functions
 executed and 70 coverage CTest entries passing. See the
 [launch summary](results/coverage-launch.json), [retained diagnostics](results/coverage-launch-diagnostics.txt)

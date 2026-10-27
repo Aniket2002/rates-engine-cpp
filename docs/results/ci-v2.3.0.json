@@ -1,0 +1,59 @@
+{
+  "evidence_scope": "CI snapshot for the v2.3.0 release commit; not a live status for subsequent revisions.",
+  "retrieved_on": "2026-10-27",
+  "run_url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39770829563",
+  "commit": "00519f48d7674220cdd328d7325fc2bd6e2fadae",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "static",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39770829563/job/119797628093"
+    },
+    {
+      "name": "sanitizers",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39770829563/job/119797628232"
+    },
+    {
+      "name": "coverage",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39770829563/job/119797628248"
+    },
+    {
+      "name": "builds (windows-latest, cl, Release)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39770829563/job/119797628278"
+    },
+    {
+      "name": "builds (ubuntu-latest, clang++, Debug)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39770829563/job/119797628388"
+    },
+    {
+      "name": "builds (ubuntu-latest, g++, Release)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39770829563/job/119797628439"
+    },
+    {
+      "name": "builds (macos-latest, clang++, Release)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39770829563/job/119797628543"
+    }
+  ],
+  "coverage_artifact": {
+    "id": 12420949991,
+    "name": "llvm-coverage",
+    "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39770829563/artifacts/12420949991",
+    "sha256": "763f984ca6229f202fb10edd20bc4e0f1dec85c715bb7ea01da0bc318f85140a",
+    "summary": "coverage-v2.3.0.json"
+  }
+}

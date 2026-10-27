@@ -63,7 +63,12 @@ The export follows the [CMake package guide](https://cmake.org/cmake/help/latest
 
 GoogleTest is found as an installed package or fetched at tag `v1.17.0`.
 Library-only builds need no test, Python or QuantLib dependencies. Python
-bindings are opt-in. On MinGW their C++ runtime is linked statically to avoid
-Python's restricted extension DLL search path; ordinary executables use the
-toolchain runtime DLLs on PATH. Sanitizers are explicitly restricted to supported
+bindings are opt-in. Since v2.3, `RATES_STATIC_RUNTIME=ON` (the default) embeds
+Windows compiler runtimes in ordinary executables: MinGW links its C++/unwind
+and threading runtimes statically, and MSVC uses the static runtime. These
+executables do not need the compiler directory on `PATH`. Disabling this option
+can require toolchain runtime DLLs at execution time. The optional MinGW Python
+extension also embeds its C++ runtime, but still requires its matching Python
+interpreter/DLL. See the [portable runtime verification](results/runtime/verification.json).
+Sanitizers are explicitly restricted to supported
 Unix GCC/Clang builds. CI covers GCC, Clang, MSVC, macOS and a sanitizer job.

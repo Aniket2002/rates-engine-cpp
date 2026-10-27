@@ -51,5 +51,7 @@ cmake --build --preset release
 ./build/release/rates_benchmark results/benchmark.csv 25
 ```
 
-Append `.exe` on Windows and ensure the compiler's runtime DLLs are on PATH.
+Append `.exe` on Windows. Since v2.3, default builds embed compiler runtimes;
+the compiler directory is only needed on `PATH` for building. Builds configured
+with `RATES_STATIC_RUNTIME=OFF` can still require runtime DLLs when executing.
 The optional second benchmark argument is the repetition count (3..10000).

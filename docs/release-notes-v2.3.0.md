@@ -61,12 +61,14 @@ Local Windows x64, LLVM-MinGW Clang 23.1.3, Python 3.14.0, QuantLib 1.44:
 | Extracted ZIP, relocated CLI tools and actual pricing | Passed |
 | C++ formatting and clang-tidy build | Passed |
 
-See [runtime evidence](results/runtime/verification.json),
-[hedge results](results/hedging/report.json), and
-[durable lifecycle results](results/durable-lifecycle/report.json).
+See [runtime evidence](https://github.com/Aniket2002/rates-engine-cpp/blob/00519f48d7674220cdd328d7325fc2bd6e2fadae/docs/results/runtime/verification.json),
+[hedge results](https://github.com/Aniket2002/rates-engine-cpp/blob/00519f48d7674220cdd328d7325fc2bd6e2fadae/docs/results/hedging/report.json), and
+[durable lifecycle results](https://github.com/Aniket2002/rates-engine-cpp/blob/00519f48d7674220cdd328d7325fc2bd6e2fadae/docs/results/durable-lifecycle/report.json).
 The cross-platform workflow runs the new tests and requires independent
-QuantLib hedge validation. Consult the release commit's actual Actions run for
-remote results; local results alone do not establish cross-platform success.
+QuantLib hedge validation. The release commit's
+[22 October CI run](https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39770829563)
+passed all seven jobs: Linux GCC Release, Linux Clang Debug, Windows MSVC Release,
+macOS Release, sanitizers, static analysis and LLVM coverage.
 
 This remains a deterministic swaps project. Options, stochastic models, XVA,
 licensed executable feeds and a production clearing service are not claimed.

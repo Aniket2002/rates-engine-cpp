@@ -1,4 +1,6 @@
 {
+    "evidence_scope": "Historical CI snapshot for implementation commit 3148d00; not current-release CI evidence.",
+    "current_release_evidence": "ci-v2.3.0.json",
     "run_url":  "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39007088486",
     "commit":  "3148d00ddad33995380efa09caf5f002040e9b1a",
     "status":  "completed",

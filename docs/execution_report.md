@@ -81,7 +81,8 @@ completed successfully for implementation commit `3148d00`. All six jobs passed:
 | Linux Clang ASan + UBSan | Build and 31 CTest checks passed |
 | Static | Formatting and clang-tidy compilation passed |
 
-The CI summary is retained in [ci-report.json](results/ci-report.json). The
+This historical CI summary is retained in [ci-report.json](results/ci-report.json).
+For v2.3.0, see the separate [release CI record](results/ci-v2.3.0.json). The
 subsequent documentation-only commit records these results and skips a redundant
 CI rerun; it does not change the tested implementation or workflow.
 

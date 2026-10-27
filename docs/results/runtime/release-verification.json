@@ -1,0 +1,19 @@
+{
+  "verified_on": "2026-10-27",
+  "release_url": "https://github.com/Aniket2002/rates-engine-cpp/releases/tag/v2.3.0",
+  "published_at": "2026-10-27T16:57:54Z",
+  "commit": "00519f48d7674220cdd328d7325fc2bd6e2fadae",
+  "is_draft": false,
+  "unauthenticated_release_page": true,
+  "unauthenticated_asset_downloads": true,
+  "package": "rates-engine-2.3.0-Windows-AMD64.zip",
+  "package_sha256": "6ae9ced51397a9891545a55900973024873cba6d213e5fd8fce0ac99d66c8616",
+  "checksum_file_matches": true,
+  "recorded_runtime_checksum_matches": true,
+  "extracted_zip_pricing": true,
+  "relocated_cli_batch_simulator": true,
+  "system_only_path": true,
+  "demo_summary_matches_recorded": true,
+  "validation_script": "python/test_windows_runtime.py",
+  "platform": "win32"
+}
