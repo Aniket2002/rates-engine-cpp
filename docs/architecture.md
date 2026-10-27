@@ -31,8 +31,11 @@ state. The library can be called concurrently on independent result objects;
 the optional QuantLib validator sets QuantLib's process-wide evaluation date
 and is deliberately sequential.
 
-We use bisection in C++ because its bracket and convergence behavior are easy
-to audit. Python uses safeguarded Newton and telescoping PV as independent
+Vanilla and OIS/multi-curve calibration use safeguarded secant steps with a
+bisection fallback and mandatory quote-residual convergence. The bootstrapper
+updates only the last discount/log of a private trial curve; public curve APIs
+remain immutable. Seasoned SOFR and basis calibrators retain bisection.
+Python uses safeguarded Newton and telescoping PV as independent
 paths. Small vectors are favored over abstraction-heavy instrument hierarchies.
 Bootstrapping prepares schedules once per instrument, outside its root solve.
 `RiskScenarios` owns immutable base/shocked curves, and `PortfolioRiskEngine`

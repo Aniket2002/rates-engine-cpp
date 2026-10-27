@@ -23,6 +23,12 @@ DiscountCurve::DiscountCurve(Date valuation, const std::vector<CurveNode> &pilla
 DiscountFactor DiscountCurve::discount(Date d) const {
     return discount(year_fraction(valuation_, d, DayCount::Actual365Fixed));
 }
+void DiscountCurve::replace_last_discount(DiscountFactor discount) {
+    if (!std::isfinite(discount.value) || discount.value <= 0)
+        throw std::invalid_argument("Curve discount factors must be finite and strictly positive");
+    nodes_.back().discount = discount;
+    log_discounts_.back() = std::log(discount.value);
+}
 DiscountFactor DiscountCurve::discount(YearFraction t) const {
     if (!std::isfinite(t.value) || t.value < 0 || t.value > times_.back())
         throw std::out_of_range("Discount lookup outside calibrated curve; extrapolation disabled");

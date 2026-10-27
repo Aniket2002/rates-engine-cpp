@@ -15,6 +15,9 @@ struct RootResult {
 };
 RootResult bisect(const std::function<double(double)> &function, double lower, double upper,
                   const SolverSettings &settings);
+// Bracket-preserving secant steps with bisection fallback; residual tolerance is mandatory.
+RootResult safeguarded_secant(const std::function<double(double)> &function, double lower, double upper,
+                              const SolverSettings &settings);
 struct CalibrationRow {
     MarketQuote quote;
     Date pillar;

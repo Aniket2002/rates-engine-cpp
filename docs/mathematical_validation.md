@@ -2,8 +2,9 @@
 
 ## Independent pathways
 
-The C++ engine uses chrono dates, explicit floating forward coupons and
-bisection for log-discount pillars. The Python standard-library reference uses
+The C++ vanilla/OIS engine uses chrono dates, explicit floating forward coupons
+and safeguarded secant steps with bisection fallback for log-discount pillars.
+The Python standard-library reference uses
 `datetime`, independently generated schedules, a safeguarded Newton solver,
 and telescoping floating PV. Neither reference function imports `pyrates`.
 

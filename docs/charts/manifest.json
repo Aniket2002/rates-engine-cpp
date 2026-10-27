@@ -10,6 +10,8 @@
   "outputs": [
     "curve.png",
     "curve.svg",
+    "forwards.png",
+    "forwards.svg",
     "risk-buckets.png",
     "risk-buckets.svg",
     "pv-change.png",

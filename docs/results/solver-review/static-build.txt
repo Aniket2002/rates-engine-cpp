@@ -1,0 +1,20 @@
+[1/20] Building CXX object CMakeFiles/rates_engine.dir/src/discount_curve.cpp.obj
+[2/20] Building CXX object CMakeFiles/rates_engine.dir/src/swap_pricer.cpp.obj
+[3/20] Building CXX object CMakeFiles/rates_engine.dir/src/risk_engine.cpp.obj
+[4/20] Building CXX object CMakeFiles/rates_engine.dir/src/curve_bootstrapper.cpp.obj
+[5/20] Building CXX object CMakeFiles/rates_engine.dir/src/multicurve.cpp.obj
+[6/20] Building CXX object CMakeFiles/rates_engine.dir/src/portfolio.cpp.obj
+[7/20] Building CXX object CMakeFiles/rates_engine.dir/src/sofr.cpp.obj
+[8/20] Building CXX object CMakeFiles/rates_engine.dir/src/sofr_curve.cpp.obj
+[9/20] Building CXX object CMakeFiles/rates_engine.dir/src/basis.cpp.obj
+[10/20] Linking CXX static library librates_engine.a
+[11/20] Building CXX object CMakeFiles/rates_cli.dir/apps/rates_cli.cpp.obj
+[12/20] Building CXX object CMakeFiles/rates_batch.dir/apps/rates_batch.cpp.obj
+[13/20] Linking CXX executable rates_cli.exe
+[14/20] Linking CXX executable rates_batch.exe
+[15/20] Building CXX object CMakeFiles/rates_simulate.dir/apps/rates_simulate.cpp.obj
+[16/20] Linking CXX executable rates_simulate.exe
+[17/20] Building CXX object CMakeFiles/rates_portfolio_benchmark.dir/benchmarks/portfolio_benchmark.cpp.obj
+[18/20] Linking CXX executable rates_portfolio_benchmark.exe
+[19/20] Building CXX object CMakeFiles/rates_benchmark.dir/benchmarks/benchmark_main.cpp.obj
+[20/20] Linking CXX executable rates_benchmark.exe

@@ -35,6 +35,11 @@ CurveShock quote_pair(const CurveBootstrapper &b, Date v, const std::vector<Mark
             shocked_curve(b, v, quotes, -bump.value * 1e-4, bucket),
             shocked_curve(b, v, quotes, bump.value * 1e-4, bucket)};
 }
+CurveShock zero_pair(const DiscountCurve &curve, std::size_t index, BasisPoints bump) {
+    const auto date = curve.nodes()[index + 1].date;
+    return {date.str(), date, curve.shift_zero_node(index, BasisPoints{-bump.value}),
+            curve.shift_zero_node(index, bump)};
+}
 double sensitivity(const CurveShock &shock, const PreparedSwap &trade, double bump_bps) {
     return (price(shock.down, trade).pv - price(shock.up, trade).pv) / (2 * bump_bps);
 }
@@ -108,10 +113,8 @@ std::vector<RiskBucket> RiskEngine::zero_risk(const DiscountCurve &curve, const 
     const PreparedSwap prepared{trade};
     std::vector<RiskBucket> result;
     for (std::size_t i = 0; i + 1 < curve.nodes().size(); ++i) {
-        const auto date = curve.nodes()[i + 1].date;
-        const CurveShock shock{date.str(), date, curve.shift_zero_node(i, BasisPoints{-bump.value}),
-                               curve.shift_zero_node(i, bump)};
-        result.push_back({date.str(), date, sensitivity(shock, prepared, bump.value)});
+        const auto shock = zero_pair(curve, i, bump);
+        result.push_back({shock.label, shock.maturity, sensitivity(shock, prepared, bump.value)});
     }
     return result;
 }
@@ -131,12 +134,9 @@ RiskScenarios RiskEngine::prepare_scenarios(Date v, const std::vector<MarketQuot
     std::sort(quote_shocks.begin(), quote_shocks.end(),
               [](const auto &a, const auto &b) { return a.maturity < b.maturity; });
     std::vector<CurveShock> zero_shocks;
-    for (std::size_t i = 0; i + 1 < calibrated.curve.nodes().size(); ++i) {
-        const auto date = calibrated.curve.nodes()[i + 1].date;
-        zero_shocks.push_back({date.str(), date,
-                               calibrated.curve.shift_zero_node(i, BasisPoints{-bump.value}),
-                               calibrated.curve.shift_zero_node(i, bump)});
-    }
+    zero_shocks.reserve(calibrated.curve.nodes().size() - 1);
+    for (std::size_t i = 0; i + 1 < calibrated.curve.nodes().size(); ++i)
+        zero_shocks.push_back(zero_pair(calibrated.curve, i, bump));
     return RiskScenarios{std::move(calibrated.curve),
                          std::move(parallel),
                          std::move(quote_shocks),

@@ -38,6 +38,14 @@ impose monotonic discount factors. There is no extrapolation policy in v1:
 lookups before valuation or beyond the last pillar throw. Diagnostics show
 pillar discount, continuous zero rate and segment forward rate.
 
+![Piecewise constant instantaneous forward rates with jumps at curve pillars](charts/forwards.png)
+
+The plot uses the [recorded synthetic curve](results/demo/curve.csv); each
+horizontal segment is the slope of `-log P` between adjacent pillars. Vertical
+connectors mark jumps, not intermediate forward values. The
+[chart script](../python/generate_charts.py) and [input hashes](charts/manifest.json)
+make it reproducible.
+
 ## Cash flows and swap value
 
 For a forward-looking floating coupon over `[S_i,T_i]`, paid at `T_i`,
@@ -81,13 +89,35 @@ analytic pillar discounts. At each swap pillar solve for `x=log P(0,T)`:
 g(x) = K_par(curve(existing pillars + [T,exp(x)])) - market_quote = 0.
 ```
 
-Every objective evaluation constructs the same log-linear curve type used by
-the final pricer. Coupon dates between existing and candidate pillars therefore
-depend on the candidate discount; no pre-existing-coupon-pillar assumption is
+Every objective evaluation uses the same log-linear curve type and pricer as
+the final valuation. A private trial curve is constructed once per swap pillar;
+only its final discount factor and cached log change during the solve. Existing
+nodes, times and logs are reused. Coupon dates between existing and candidate
+pillars therefore depend on the candidate discount; no pre-existing-coupon-pillar assumption is
 made. A symmetric log-discount bracket starts at `[-0.25,0.25]` and expands up
-to `[-50,50]`. Bisection checks finite objectives, a sign-changing bracket,
-iteration limits and the quote residual. The deliberately bounded search domain
-can reject extreme mathematical solutions outside it.
+to `[-50,50]`. Safeguarded secant steps retain the sign-changing bracket, falling
+back to bisection after two steps that each fail to halve it, or when interpolation
+rounds to an endpoint. Endpoint evaluations from bracket expansion are reused.
+The solver checks finite objectives, iteration limits and the quote residual.
+Even inside a bracket narrower than the interval tolerance, it evaluates a
+representable interior candidate before declaring exhaustion; an exact root
+there must not be rejected by the interval check.
+Bracket expansion and solving both retain the instrument label on failure.
+The deliberately bounded search domain can reject extreme mathematical solutions
+outside it.
+
+For these valuation-date, no-payment-lag single-curve swaps, write
+`P_i = c_i * exp(w_i*x)` with `0 <= w_i <= 1` and `P_T = exp(x)`.
+Then `A = sum(alpha_i*P_i) > 0`, `0 <= A' <= A`, and
+`dK_par/dx = -[P_T*(A-A') + A']/A^2 < 0`: the par rate is strictly decreasing,
+including at negative rates, so a bracketed root is unique. With an exogenous
+discount curve, the fixed annuity is constant and each projected floating factor
+has exponent `(w_start-w_end)*x <= 0`, with at least one strictly negative term;
+the same uniqueness argument applies. These arguments rely on the stated vanilla
+cash-flow assumptions, not arbitrary lagged or basis contracts. The generic root
+solver needs continuity and a sign change, not global monotonicity; it does not
+certify uniqueness for other objectives. The separate seasoned SOFR and basis
+calibrators retain their bisection solver.
 
 Defaults: decimal quote residual `1e-12`, log-discount interval tolerance
 `1e-14`, maximum 200 iterations. A small interval alone is insufficient: if

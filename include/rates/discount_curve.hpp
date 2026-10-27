@@ -29,6 +29,9 @@ class DiscountCurve {
     DiscountCurve shift_zero_node(std::size_t pillar_index, BasisPoints shift) const;
 
   private:
+    // Only calibration may update its unshared trial curve. Public curves stay immutable.
+    friend class CurveBootstrapper;
+    void replace_last_discount(DiscountFactor discount);
     Date valuation_;
     std::vector<CurveNode> nodes_;
     std::vector<double> times_;

@@ -1,4 +1,4 @@
-"""Render three publication charts solely from validated, recorded CSV outputs."""
+"""Render publication charts solely from validated, recorded CSV outputs."""
 import argparse
 from bisect import bisect_left
 import csv
@@ -61,6 +61,22 @@ def main():
     ax.grid(axis="y", alpha=0.2)
     save(fig, "curve", "Synthetic deposit/swap inputs | 2 Jan 2025 | Log-linear discount interpolation")
 
+    # Instantaneous forwards are constant on each open pillar interval. Draw
+    # horizontal segments and mark jumps, rather than smoothing between nodes.
+    forwards = [-(logs[i + 1] - logs[i]) / (times[i + 1] - times[i]) * 100
+                for i in range(len(nodes))]
+    fig, ax = plt.subplots(figsize=(10, 5.6))
+    ax.stairs(forwards, times, baseline=None, color="#126c81", linewidth=2.4,
+              label="Piecewise constant instantaneous forward")
+    for i in range(1, len(forwards)):
+        ax.scatter([times[i], times[i]], [forwards[i - 1], forwards[i]],
+                   color="#d58c36", s=24, zorder=3)
+    ax.set(xlabel="Maturity (ACT/365F years)", ylabel="Instantaneous forward (%)",
+           title="Log-linear discounts imply forward jumps at pillars")
+    ax.grid(axis="y", alpha=0.2)
+    ax.legend(frameon=False, loc="upper left")
+    save(fig, "forwards", "Synthetic inputs | Segment slopes of -log(discount) | No smoothing or extrapolation")
+
     risk = read(args.results / "demo/risk.csv")
     quotes = [r for r in risk if r["coordinate"] == "market_quote"]
     zeros = [r for r in risk if r["coordinate"] == "zero_node"]
@@ -91,7 +107,7 @@ def main():
         axis.axhline(0, color="#526273", linewidth=0.6)
     save(fig, "pv-change", "Same-date synthetic scenario; no realized trading P&L | Independent Python and QuantLib checks")
     (args.out / "manifest.json").write_text(json.dumps(dict(matplotlib_version=matplotlib.__version__,
-        inputs=manifest, outputs=[f"{name}.{ext}" for name in ["curve", "risk-buckets", "pv-change"]
+        inputs=manifest, outputs=[f"{name}.{ext}" for name in ["curve", "forwards", "risk-buckets", "pv-change"]
                                   for ext in ["png", "svg"]]), indent=2)+"\n")
 
 

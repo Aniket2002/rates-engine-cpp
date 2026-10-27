@@ -151,6 +151,111 @@ TEST(Bootstrap, RepricesSparseIntermediateCouponsAndSorts) {
     EXPECT_GT(result.diagnostics.back().iterations, 0);
     EXPECT_NEAR(result.curve.discount(Date{2025, 2, 3}).value, 1 / (1 + 0.031 * 32 / 360), 1e-15);
 }
+TEST(Solver, SafeguardedSecantPreservesResidualAndCutsEvaluations) {
+    int secant_calls = 0;
+    const auto fast = safeguarded_secant(
+        [&](double x) {
+            ++secant_calls;
+            return std::exp(x) - 1.1;
+        },
+        -0.25, 0.25, {});
+    int bisection_calls = 0;
+    const auto reference = bisect(
+        [&](double x) {
+            ++bisection_calls;
+            return std::exp(x) - 1.1;
+        },
+        -0.25, 0.25, {});
+    EXPECT_NEAR(fast.root, std::log(1.1), 1e-12);
+    EXPECT_NEAR(fast.root, reference.root, 2e-12);
+    EXPECT_LE(std::abs(fast.residual), 1e-12);
+    EXPECT_LT(secant_calls, bisection_calls / 2);
+    EXPECT_DOUBLE_EQ(safeguarded_secant([](double x) { return x; }, 0, 1, {}).root, 0);
+    EXPECT_DOUBLE_EQ(safeguarded_secant([](double x) { return x - 1; }, 0, 1, {}).root, 1);
+}
+TEST(Solver, SafeguardedSecantEscapesFalsePositionStagnation) {
+    for (const double sign : {-1.0, 1.0}) {
+        const auto result =
+            safeguarded_secant([=](double x) { return sign * (std::pow(x, 10) - 0.01); }, 0, 1, {});
+        EXPECT_NEAR(result.root, std::pow(0.01, 0.1), 1e-10);
+        EXPECT_LE(std::abs(result.residual), 1e-12);
+    }
+    const double largest = std::numeric_limits<double>::max();
+    EXPECT_DOUBLE_EQ(safeguarded_secant([](double x) { return x; }, -largest, largest, {}).root, 0);
+}
+TEST(Solver, SafeguardedSecantRejectsInvalidAndUnconvergedObjectives) {
+    EXPECT_THROW(safeguarded_secant([](double x) { return x * x + 1; }, -1, 1, {}), std::runtime_error);
+    EXPECT_THROW(safeguarded_secant([](double x) { return x * x - 2; }, 0, 2, {1e-12, 1e-14, 1}),
+                 std::runtime_error);
+    EXPECT_THROW(
+        safeguarded_secant([](double x) { return x < 0.1 ? -1.0 : 1.0; }, -1, 1, {1e-12, 1e-14, 200}),
+        std::runtime_error);
+    EXPECT_THROW(safeguarded_secant([](double) { return std::numeric_limits<double>::infinity(); }, 0, 2, {}),
+                 std::runtime_error);
+    EXPECT_THROW(safeguarded_secant([](double x) { return x; }, 1, 0, {}), std::invalid_argument);
+    EXPECT_THROW(safeguarded_secant([](double x) { return x; }, 0, 1, {0, 1e-14, 200}),
+                 std::invalid_argument);
+    EXPECT_THROW(
+        safeguarded_secant([](double x) { return x; }, 0, std::numeric_limits<double>::infinity(), {}),
+        std::invalid_argument);
+    // Finite endpoints must not hide an invalid interior evaluation.
+    EXPECT_THROW(safeguarded_secant(
+                     [](double x) {
+                         return x == 0 ? -1.0 : (x == 1 ? 1.0 : std::numeric_limits<double>::quiet_NaN());
+                     },
+                     0, 1, {}),
+                 std::runtime_error);
+}
+TEST(Solver, SafeguardedSecantChecksResidualInsideNarrowBrackets) {
+    // Interval tolerance must not preempt an exactly representable interior root.
+    EXPECT_DOUBLE_EQ(safeguarded_secant([](double x) { return 1e16 * x; }, -1e-15, 1e-15, {}).root, 0);
+    const double tiny = std::numeric_limits<double>::denorm_min();
+    EXPECT_DOUBLE_EQ(
+        safeguarded_secant([=](double x) { return x / tiny; }, -tiny, tiny, {1e-12, tiny, 200}).root, 0);
+}
+TEST(Solver, SafeguardedSecantCrossChecksDeterministicKnownRoots) {
+    std::mt19937 generator{20261028};
+    std::uniform_real_distribution<double> roots{-0.8, 0.8};
+    for (int i = 0; i < 200; ++i) {
+        const double root = roots(generator);
+        const double scale = i % 3 == 0 ? 0.01 : (i % 3 == 1 ? 1.0 : 10.0);
+        const double sign = i % 2 == 0 ? 1.0 : -1.0;
+        const auto objective = [&](double x) {
+            EXPECT_GE(x, -1.0);
+            EXPECT_LE(x, 1.0);
+            return sign * std::expm1(scale * (x - root));
+        };
+        const auto solved = safeguarded_secant(objective, -1, 1, {});
+        const auto reference = bisect(objective, -1, 1, {});
+        EXPECT_LE(std::abs(solved.residual), 1e-12);
+        EXPECT_NEAR(solved.root, root, 1.1e-12 / scale);
+        EXPECT_NEAR(solved.root, reference.root, 2.1e-12 / scale);
+    }
+}
+TEST(Bootstrap, BracketPricingFailureIncludesInstrumentLabel) {
+    const DiscountCurve short_discount{valuation, {{valuation.add_months(12), DiscountFactor{0.97}}}};
+    try {
+        CurveBootstrapper{}.build_forward(
+            short_discount, {{Instrument::Swap, "5Y", valuation.add_months(60), SimpleRate{0.04}}});
+        FAIL() << "A discount curve that cannot cover the swap must fail";
+    } catch (const std::runtime_error &error) {
+        const std::string message = error.what();
+        EXPECT_NE(message.find("Calibration failed for 5Y:"), std::string::npos);
+        EXPECT_NE(message.find("extrapolation disabled"), std::string::npos);
+    }
+}
+TEST(Bootstrap, SecantCalibratesPositiveAndNegativeQuotesEfficiently) {
+    for (const double sign : {-1.0, 1.0}) {
+        auto market = quotes();
+        for (auto &q : market)
+            q.rate = SimpleRate{sign * q.rate.value};
+        const auto calibrated = CurveBootstrapper{}.build(valuation, market);
+        for (const auto &row : calibrated.diagnostics) {
+            EXPECT_LE(std::abs(row.residual), 1e-12);
+            EXPECT_LT(row.iterations, 20) << row.quote.label;
+        }
+    }
+}
 TEST(Bootstrap, InvalidQuotes) {
     auto q = quotes();
     q.push_back(q.front());
@@ -174,7 +279,11 @@ TEST(Bootstrap, ZeroAndNegativeQuotes) {
         auto calibrated = CurveBootstrapper{}.build(valuation, q);
         for (const auto &row : calibrated.diagnostics)
             EXPECT_NEAR(row.model_quote, rate, 1e-12);
-        EXPECT_GE(calibrated.curve.nodes().back().discount.value, 1);
+        if (rate < 0)
+            EXPECT_GT(calibrated.curve.nodes().back().discount.value, 1);
+        else
+            // A residual-converged zero-rate solve need not return an exact unit discount.
+            EXPECT_NEAR(calibrated.curve.nodes().back().discount.value, 1, 1e-11);
     }
 }
 TEST(Pricing, ParPayerReceiverCouponMonotonicityAndScaling) {

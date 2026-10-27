@@ -1,0 +1,76 @@
+{
+  "verified_on": "2026-10-27",
+  "scope": "Initial 2026-10-27 measurements before the narrow-bracket fix. Source hashes identify that tested revision. See cross-check.json for the final source and rerun results. Published-release CI and coverage are separate evidence.",
+  "source_base_commit": "e5bd0e209acd7332e184fa301186d7bea3fec879",
+  "source_hash_normalization": "UTF-8 text with LF newlines",
+  "changed_source_sha256": {
+    "include/rates/curve_bootstrapper.hpp": "18c06c2032c6f3d462b95ea3ee9841e3217812d26dbbe8f334815bd7cce99cc7",
+    "include/rates/discount_curve.hpp": "f790755609e7b779fa2deb8ea9f0418a0b7e82130f685c3bb9610bb29f8bd1be",
+    "python/generate_charts.py": "7bdc98c77b0a711c726fe0586f341529a2ba942e7c3c9ded759e0444b3522a18",
+    "src/curve_bootstrapper.cpp": "c44e7a343aafad63c61f51e8c9e904a7645e871170390bf8d314dc8269506d12",
+    "src/discount_curve.cpp": "0c3323e93f307cdc0a7d339cad13842db44bdae17a328a597c3dc5b0a231c0d8",
+    "src/risk_engine.cpp": "fe0e60b43590f8ab519c0fdfbe24b4bc77ad5bb44c49637f13ac7fafd7231b31",
+    "tests/test_engine.cpp": "698328b93d45beb3d1bf9c4a67793e4ebf1570318461255710ce5013c386a191",
+    "tests/test_multicurve.cpp": "49b1946748b1ae40d86571eda106d77eea5accf1efee72705f1abf78b8bb89b4"
+  },
+  "compiler": "LLVM-MinGW Clang 23.1.3",
+  "platform": "Windows x64",
+  "cpu": "Intel Core i9-11900H, 8 cores / 16 logical processors",
+  "release_flags": "-O3 -DNDEBUG",
+  "python": "3.14.0",
+  "benchmark": {
+    "warmups": 3,
+    "samples_per_workload": 101,
+    "timing": "steady_clock microseconds per entire workload",
+    "execution": "Sequential single-process/single-thread runs; no overlapping agent builds/tests during timings; no affinity, frequency lock or background-load isolation",
+    "baseline_binary_sha256": "2c033febba28a15ac81410f1c0225e1c2154b6e74ca3a7f4d94f8ab28ad1c50a",
+    "updated_binary_sha256": "dcbfd95b70fc7546b85f28ec509bbb5d6131c0fcca581111b8b971373274459f"
+  },
+  "ctest": {
+    "release": {
+      "passed": 105,
+      "failed": 0,
+      "elapsed_seconds": 43.32,
+      "bindings": true,
+      "log": "release-ctest.txt"
+    },
+    "debug": {
+      "passed": 105,
+      "failed": 0,
+      "elapsed_seconds": 269.14,
+      "bindings": true,
+      "log": "debug-ctest.txt"
+    }
+  },
+  "clang_format": "passed for all changed C++ files",
+  "clang_tidy_build": "passed (static-build.txt)",
+  "independent_reports": {
+    "multicurve-report.json": {
+      "comparisons": 230,
+      "passed": 230,
+      "quantlib_version": "1.44"
+    },
+    "sofr-report.json": {
+      "comparisons": 30524,
+      "passed": 30524,
+      "quantlib_version": "1.44"
+    }
+  },
+  "retained_artifact_sha256": {
+    "after-calibration.csv": "96e9cdc022bbd405461f1b7e7a3306b881d983e4f76e24d87d61fef67605fd6f",
+    "after.csv": "099bc14d565ec45707c9009ba88f0ad81aca6904cd27c797104fb2bdae4f34e0",
+    "before-calibration.csv": "74e9c91fb4d8d4df78d4e52230efb6f40e46e038e120f34b53e3b8b31fe9b217",
+    "before.csv": "8e48ca485c2b86252c26db9b55b0bea5c6ca7202cf311a33c87a41308aa7131f",
+    "debug-ctest.txt": "e0794c08ea8b617164438c6e41388e29f7f1db67b81488abbe2b091847aca151",
+    "multicurve-report.json": "0dfb91e576af15435926cd2f756dbe2d113a98055b5a61b2b6a88d3da374fb96",
+    "release-ctest.txt": "4cde51acf0e4533ce2797d6b0306c59f96662edc1e490837e26d0932dbde8c8c",
+    "sofr-report.json": "29fc6ec272e4f2301c5961cd59933aa1a521cd6ee0c57e8be2c3d583eb66abd2",
+    "static-build.txt": "306151f45a5553e967cd798dcf29c0d491b20d055d310bf1ce74730c893a3232"
+  },
+  "chart": {
+    "generator": "python/generate_charts.py",
+    "manifest": "../../charts/manifest.json",
+    "segment_forward_consistency": "all 8 segments agree with recorded curve diagnostics within 1e-14"
+  },
+  "retained_artifact_hash_normalization": "SHA-256 of UTF-8/LF artifact bytes, matching .gitattributes; normalized during the 2026-10-28 audit without changing numerical values."
+}

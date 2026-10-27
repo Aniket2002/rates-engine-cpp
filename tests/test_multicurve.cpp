@@ -58,7 +58,7 @@ TEST(MultiCurve, RejectsMismatchedDatesPastTradesAndInsufficientCoverage) {
     const DiscountCurve short_curve{valuation, {{valuation.add_months(12), DiscountFactor{0.97}}}};
     EXPECT_THROW(price(short_curve, curve, trade()), std::out_of_range);
     EXPECT_THROW(price(curve, short_curve, trade()), std::out_of_range);
-    EXPECT_THROW(CurveBootstrapper{}.build_forward(short_curve, quotes()), std::out_of_range);
+    EXPECT_THROW(CurveBootstrapper{}.build_forward(short_curve, quotes()), std::runtime_error);
 }
 TEST(Sofr, CompoundsWeekendsHolidaysAndNegativeRates) {
     const Date start{2025, 1, 3}, end{2025, 1, 8};

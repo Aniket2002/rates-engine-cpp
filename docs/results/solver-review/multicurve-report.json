@@ -1,0 +1,8 @@
+{
+  "comparisons": 230,
+  "passed": 230,
+  "quantlib_version": "1.44",
+  "failures": [],
+  "scope": "Independent OISRateHelper and SwapRateHelper quote-only bootstraps, pricing and both quote-risk curves",
+  "skipped": []
+}

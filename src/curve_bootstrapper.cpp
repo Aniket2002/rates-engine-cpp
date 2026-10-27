@@ -20,7 +20,56 @@ double checked_evaluate(const std::function<double(double)> &f, double x) {
 bool same_sign(double a, double b) {
     return std::signbit(a) == std::signbit(b);
 }
+RootResult solve_secant_bracket(const std::function<double(double)> &f, double lo, double hi, double flo,
+                                double fhi, const SolverSettings &s) {
+    if (std::abs(flo) <= s.quote_tolerance)
+        return {lo, 0, flo};
+    if (std::abs(fhi) <= s.quote_tolerance)
+        return {hi, 0, fhi};
+    if (same_sign(flo, fhi))
+        throw std::runtime_error("Root is not bracketed");
+    int slow_steps = 0;
+    for (int i = 1; i <= s.max_iterations; ++i) {
+        // Half-width avoids overflow even for brackets spanning the finite double range.
+        const double half_width = hi * 0.5 - lo * 0.5;
+        const double scale = std::max(std::abs(flo), std::abs(fhi));
+        const double left = std::abs(flo) / scale;
+        const double right = std::abs(fhi) / scale;
+        double candidate = std::lerp(lo, hi, left / (left + right));
+        // Prevent false-position stagnation: two slow contractions force a midpoint.
+        if (slow_steps >= 2 || !(candidate > lo && candidate < hi)) {
+            candidate = std::midpoint(lo, hi);
+            slow_steps = 0;
+        }
+        if (!(candidate > lo && candidate < hi))
+            throw std::runtime_error("Root interval exhausted before quote residual tolerance was met");
+        const double value = checked_evaluate(f, candidate);
+        if (std::abs(value) <= s.quote_tolerance)
+            return {candidate, i, value};
+        // Try the representable interior point before declaring a narrow bracket exhausted.
+        if (half_width <= s.log_discount_tolerance * 0.5)
+            throw std::runtime_error("Root interval exhausted before quote residual tolerance was met");
+        if (same_sign(flo, value)) {
+            lo = candidate;
+            flo = value;
+        } else {
+            hi = candidate;
+            fhi = value;
+        }
+        slow_steps = hi * 0.5 - lo * 0.5 > half_width * 0.5 ? slow_steps + 1 : 0;
+    }
+    throw std::runtime_error("Root solver exceeded iteration limit");
+}
 } // namespace
+RootResult safeguarded_secant(const std::function<double(double)> &f, double lo, double hi,
+                              const SolverSettings &s) {
+    validate_settings(s);
+    if (!std::isfinite(lo) || !std::isfinite(hi) || lo >= hi)
+        throw std::invalid_argument("Invalid root bracket");
+    const double flo = checked_evaluate(f, lo);
+    const double fhi = checked_evaluate(f, hi);
+    return solve_secant_bracket(f, lo, hi, flo, fhi, s);
+}
 RootResult bisect(const std::function<double(double)> &f, double lo, double hi, const SolverSettings &s) {
     validate_settings(s);
     if (!std::isfinite(lo) || !std::isfinite(hi) || lo >= hi)
@@ -99,18 +148,25 @@ BootstrapResult CurveBootstrapper::build_impl(Date valuation, std::vector<Market
         } else if (q.instrument == Instrument::Swap) {
             // All coupons, including those between the last known and new pillar,
             // use precisely the same log-linear curve as subsequent pricing.
-            const PreparedSwap swap{Swap{valuation, q.maturity, 1.0, q.rate, Side::Payer, c}};
-            const auto objective = [&](double log_df) {
-                auto candidate = nodes;
-                candidate.push_back({end, DiscountFactor{std::exp(log_df)}});
-                const DiscountCurve projection{valuation, candidate};
-                return price(discount ? *discount : projection, projection, swap).par_rate - q.rate.value;
-            };
-            double width = 0.25;
-            while (width < 50 && same_sign(objective(-width), objective(width)))
-                width = std::min(50.0, width * 2);
             try {
-                const auto root = bisect(objective, -width, width, settings_);
+                const PreparedSwap swap{Swap{valuation, q.maturity, 1.0, q.rate, Side::Payer, c}};
+                auto candidate = nodes;
+                candidate.push_back({end, DiscountFactor{1.0}});
+                DiscountCurve projection{valuation, candidate};
+                const auto objective = [&](double log_df) {
+                    projection.replace_last_discount(DiscountFactor{std::exp(log_df)});
+                    return price(discount ? *discount : projection, projection, swap).par_rate - q.rate.value;
+                };
+                double width = 0.25;
+                double flo = checked_evaluate(objective, -width);
+                double fhi = checked_evaluate(objective, width);
+                while (width < 50 && std::abs(flo) > settings_.quote_tolerance &&
+                       std::abs(fhi) > settings_.quote_tolerance && same_sign(flo, fhi)) {
+                    width = std::min(50.0, width * 2);
+                    flo = checked_evaluate(objective, -width);
+                    fhi = checked_evaluate(objective, width);
+                }
+                const auto root = solve_secant_bracket(objective, -width, width, flo, fhi, settings_);
                 df = std::exp(root.root);
                 iterations = root.iterations;
             } catch (const std::exception &error) {

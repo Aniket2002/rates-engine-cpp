@@ -7,6 +7,23 @@ A C++20 interest-rate pricing and risk engine with **OIS discounting, separately
 calibrated projection curves and full-rebootstrap quote DV01**. Independent
 Python and QuantLib implementations check calibration, cash flows and sensitivities.
 
+The captured SOFR example values a **USD 1 million payer, 3.75% fixed**, from
+1 October 2026 to 1 October 2028, as of **21 October 2026, 18:17:09 UTC**:
+
+| Seasoned SOFR valuation | Result |
+| --- | ---: |
+| Dirty PV | **-4,448.43 USD** |
+| Signed accrued | 144.94 USD |
+| Clean PV | **-4,593.36 USD** |
+| Daily observations | **15 realized / 484 projected** |
+
+Captured NY Fed fixings are combined with **synthetic OIS quotes**. The
+[SOFR validation record](docs/sofr-validation.md) reports **30,524 comparisons**,
+with a **2e-5 currency/bp tolerance for quote risk**; the captured-fixing replay
+uses **2e-5 currency for PV/cash flows**. These are scoped acceptance tolerances,
+not a general accuracy guarantee. [Inputs and reproduction](docs/worked-examples.md#seasoned-sofr-swap)
+retain the trade's observation conventions and valuation date.
+
 - **Pricing:** fixed/floating swaps, seasoned SOFR swaps with realized fixings,
   observation conventions, and compounded overnight basis swaps.
 - **Risk and hedging:** discount/projection quote sensitivities, shared portfolio
@@ -22,6 +39,8 @@ These plots show the introductory **single-curve, synthetic** example. Quote DV0
 bumps market inputs and rebuilds the curve; zero-node DV01 shifts node yields.
 [Inputs, outputs and reproduction](docs/worked-examples.md#build-and-price-one-swap)
 and [chart provenance](docs/charts/manifest.json) are retained.
+The [instantaneous forward plot](docs/methodology.md#interpolation) shows the
+jumps at pillars implied by log-linear discount interpolation.
 
 ## Current release results
 
@@ -113,6 +132,8 @@ Portfolio benchmarks demonstrate the **design choice of sharing calibrated
 scenarios across trades** versus rebuilding them independently. They do not
 benchmark against QuantLib. Workload definitions, absolute timings and machine
 details are in the [scenario-reuse study](docs/v2.md#linux-replay-and-profiling-evidence).
+The [solver study](docs/solver-review.md) measures calibration and risk on the
+same workload before and after the safeguarded-secant implementation.
 
 ## Documentation
 

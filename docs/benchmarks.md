@@ -1,5 +1,9 @@
 # Benchmark method and observed measurements
 
+The [27 October solver review](solver-review.md) measures the same calibration
+and risk workloads before and after safeguarded secant and trial-curve reuse.
+Its source hashes, numerical checks and absolute timings are retained separately.
+
 This page records the original v1 baseline. Current portfolio p50/p95/p99,
 shared-scenario comparisons and Linux profiling are described in [v2](v2.md).
 
