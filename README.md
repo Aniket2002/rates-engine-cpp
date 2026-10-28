@@ -52,10 +52,12 @@ Each row names its configuration or suite; the counts are not interchangeable.
 | Windows Release CTest, Python bindings enabled | **100/100 passed** | [Runtime record](docs/results/runtime/verification.json) |
 | Independent OIS / separate-projection validation | **230/230 comparisons passed**, QuantLib 1.44 | [Methods and tolerances](docs/multicurve.md), [report](docs/results/multicurve/report.json) |
 | Release-commit CI | **7/7 jobs passed**: Linux, Windows, macOS, sanitizers, static analysis and coverage | [CI record](docs/results/ci-v2.3.0.json) |
-| C++ library coverage, Linux Clang/LLVM 18 Debug | **92.50% lines / 80.13% branch outcomes** | [Scope and diagnostics](docs/coverage.md#current-release-v230) |
+| C++ library coverage, Linux Clang/LLVM 18 Debug | **92.50% lines / 80.13% branch outcomes**; **basis.cpp: 43.46% lines** | [Scope and diagnostics](docs/coverage.md#current-release-v230) |
 
 Coverage excludes CLI, bindings, Python code and dependencies. LLVM reported
 31 functions with mismatched data; the linked report retains that warning.
+Basis calibration and risk need stronger instrumented C++ test coverage; the
+aggregate percentage should not obscure that gap.
 [Historical measurements](docs/coverage.md#historical-measurements) use different
 code and configurations. The badge above shows the current workflow status.
 

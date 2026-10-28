@@ -1,0 +1,7 @@
+[1/7] Building CXX object CMakeFiles/rates_engine.dir/src/curve_bootstrapper.cpp.obj
+[2/7] Linking CXX static library librates_engine.a
+[3/7] Linking CXX executable rates_cli.exe
+[4/7] Linking CXX executable rates_batch.exe
+[5/7] Linking CXX executable rates_simulate.exe
+[6/7] Linking CXX executable rates_benchmark.exe
+[7/7] Linking CXX executable rates_portfolio_benchmark.exe

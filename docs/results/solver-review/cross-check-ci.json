@@ -1,0 +1,50 @@
+{
+  "commit": "b66a91c9cf7c22590b54d39f84e4f40493635662",
+  "run_url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/40567221798",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "coverage",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/40567221798/job/122411614092"
+    },
+    {
+      "name": "builds (windows-latest, cl, Release)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/40567221798/job/122411614450"
+    },
+    {
+      "name": "builds (macos-latest, clang++, Release)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/40567221798/job/122411614541"
+    },
+    {
+      "name": "builds (ubuntu-latest, g++, Release)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/40567221798/job/122411614615"
+    },
+    {
+      "name": "builds (ubuntu-latest, clang++, Debug)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/40567221798/job/122411614638"
+    },
+    {
+      "name": "sanitizers",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/40567221798/job/122411614682"
+    },
+    {
+      "name": "static",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/40567221798/job/122411614704"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "comparisons": 768,
+  "passed": 768,
+  "failures": [],
+  "quantlib_version": "1.44",
+  "synthetic_quotes": true,
+  "scope": "Independent overnight/overnight basis helpers; distinct fixing histories; seasoned/stub/observation conventions; three-coordinate recalibrated risk"
+}

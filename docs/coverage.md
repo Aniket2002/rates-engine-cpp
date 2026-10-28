@@ -15,6 +15,13 @@ This run used Linux Clang/LLVM 18, Debug, with benchmarks and optional Python
 bindings disabled. It measures the compiled C++ library; the Python hedge solver
 and SQLite journal wrapper are outside this coverage denominator.
 
+**Basis coverage is substantially lower than the aggregate:** `src/basis.cpp`
+executed **93/214 lines (43.46%)** and **44/104 branch outcomes (42.31%)** in
+this run. It needs additional instrumented C++ tests for calibration and risk.
+The separate QuantLib basis validator runs through optional Python bindings in
+regular validation builds; those bindings are disabled in this coverage job.
+Its passing comparisons do not fill the gaps in this instrumented report.
+
 The retained [summary](results/coverage-v2.3.0.json),
 [text report](results/coverage-v2.3.0-report.txt),
 [CTest log](results/coverage-v2.3.0-ctest.log) and

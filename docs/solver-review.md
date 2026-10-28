@@ -14,6 +14,15 @@ The public curve interface remains immutable. The separate seasoned SOFR and
 basis calibrators continue to use bisection; the Python reference uses
 safeguarded Newton and independent valuation formulas.
 
+This optimization deliberately targets `CurveBootstrapper`, including its OIS
+wrapper and separate-projection calibration. The seasoned SOFR and basis paths
+price different cash flows with fixing histories, observation/payment lags and
+additional curve dependencies. Extending trial-curve reuse there needs its own
+implementation and before/after measurements. Bisection continues to enforce
+their residual checks. Retaining it limits the scope of this change; it does not
+mean that secant methods would be invalid for those contracts. The timings below
+describe only the optimized vanilla/OIS path on the measured Windows machine.
+
 Bracket expansion is inside the instrument-context handler. A pricing error there
 now raises a `runtime_error` containing, for example, `Calibration failed for 5Y`
 and the original diagnostic. Previously a bracket-phase coverage error escaped as
@@ -100,5 +109,11 @@ Git's line-ending conversion from invalidating evidence hashes on another system
 The original verification record identifies the initial benchmark implementation;
 the [cross-check record](results/solver-review/cross-check.json) identifies the
 final source hashes, Release and fresh Debug test logs, static analysis and
-documentation checks. Cross-platform CI and sanitizer results for the published
-release remain separate evidence from these local Windows checks.
+documentation checks. Both local suites passed **107/107** tests. The solver
+commit `b66a91c` also passed all seven jobs in the
+[cross-platform CI run](https://github.com/Aniket2002/rates-engine-cpp/actions/runs/40567221798):
+Linux GCC Release, Linux Clang Debug, Windows MSVC Release, macOS Release,
+sanitizers, static analysis and coverage. The
+[retained CI record](results/solver-review/cross-check-ci.json) identifies those
+jobs. These checks belong to the solver commit; the Windows-only timing
+observations above are not cross-platform performance measurements.
