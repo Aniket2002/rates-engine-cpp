@@ -1,0 +1,17 @@
+Test project C:/Users/Aniket Bhardwaj/Desktop/Github/rates-engine-cpp/build/release
+    Start   1: CurveAmbiguity.LinearObjectiveEqualsCashflowPricingAndWitnessReprices
+1/6 Test   #1: CurveAmbiguity.LinearObjectiveEqualsCashflowPricingAndWitnessReprices ......   Passed    0.01 sec
+    Start   2: CurveAmbiguity.FixedProjectionObjectiveMatchesMulticurveAndPortfolioNets
+2/6 Test   #2: CurveAmbiguity.FixedProjectionObjectiveMatchesMulticurveAndPortfolioNets ...   Passed    0.01 sec
+    Start   3: CurveAmbiguity.RejectsInvalidInputsAndOutOfDomainTrades
+3/6 Test   #3: CurveAmbiguity.RejectsInvalidInputsAndOutOfDomainTrades ....................   Passed    0.01 sec
+    Start   4: CurveAmbiguity.WitnessRejectsInfeasibilityAndNonfiniteValues
+4/6 Test   #4: CurveAmbiguity.WitnessRejectsInfeasibilityAndNonfiniteValues ...............   Passed    0.01 sec
+    Start 104: curve_ambiguity
+5/6 Test #104: curve_ambiguity ............................................................   Passed    0.85 sec
+    Start 105: curve_ambiguity_study
+6/6 Test #105: curve_ambiguity_study ......................................................   Passed    1.00 sec
+
+100% tests passed, 0 tests failed out of 6
+
+Total Test time (real) =   2.00 sec

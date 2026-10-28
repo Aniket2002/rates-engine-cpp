@@ -65,7 +65,8 @@ TEST(CurveAmbiguity, FixedProjectionObjectiveMatchesMulticurveAndPortfolioNets) 
     const auto net = curve_ambiguity_problem(valuation_date(), quotes(), {t, target(Side::Receiver)},
                                              {0.01, 0.10}, unadjusted(), projection);
     for (const auto amount : net.objective)
-        EXPECT_DOUBLE_EQ(amount, 0);
+        // Floating-point contraction can leave rounding residue when netting opposite cash flows.
+        EXPECT_NEAR(amount, 0, 1e-8);
 }
 TEST(CurveAmbiguity, RejectsInvalidInputsAndOutOfDomainTrades) {
     const auto build = [](const std::vector<QuoteBand> &q, ForwardBounds f = {-0.01, 0.10}) {

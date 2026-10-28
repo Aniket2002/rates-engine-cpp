@@ -38,7 +38,19 @@
       "max_native_objective_error": 2.6193447411060333e-10,
       "max_quantlib_trade_pv_error": 2.764863893389702e-10
     },
-    "release_debug_extreme_pv_agreement_tolerance": 2e-06
+    "release_debug_extreme_pv_agreement_tolerance": 2e-06,
+    "portability_followup": {
+      "initial_ci_run": "https://github.com/Aniket2002/rates-engine-cpp/actions/runs/40744913168",
+      "affected_test": "CurveAmbiguity.FixedProjectionObjectiveMatchesMulticurveAndPortfolioNets",
+      "finding": "Linux GCC and macOS optimized builds left sub-picocurrency rounding residues when netting opposite projected cash flows. Exact-zero assertion was inappropriate.",
+      "change": "Net coefficient comparison now uses 1e-8 currency tolerance; production code unchanged.",
+      "local_release_checks_passed": 6,
+      "local_debug_checks_passed": 6,
+      "logs": [
+        "portability-release.txt",
+        "portability-debug.txt"
+      ]
+    }
   },
   "limits": [
     "Synthetic quotes and assumed forward bounds.",
@@ -132,7 +144,7 @@
     "src/sofr_curve.cpp": "cea5d253c4414275577b303fbecbfa1db230ec7e6d02cfbc3cf28a71f9171bf2",
     "src/swap_pricer.cpp": "56d807309157668fec6ed86a17a296009c690033e14fcf639abef58b0c8c2b7d",
     "src/trading.cpp": "70e03be0236a1a1a325bf79f96c9bcfab506c2a655eeac564994e680e8832e76",
-    "tests/test_curve_ambiguity.cpp": "ba479ca15171619c7227768260cbdd0a3772ab44fd63ec482c9dc2303d1d15ab",
+    "tests/test_curve_ambiguity.cpp": "547ffd8aa59ca16f60507021af14231dce1baeddd5750b28ce5c88af44ae67fa",
     "tests/test_engine.cpp": "ef47787b3d7239852e82e79544a1c3db104aeaa95498baa6a2ea75a0fa1abb58",
     "tests/test_lifecycle.cpp": "d00723dd70825b4fd1e2e6a0f6b01e39c49b12dbd58f00a943f946cf96fd9d64",
     "tests/test_multicurve.cpp": "49b1946748b1ae40d86571eda106d77eea5accf1efee72705f1abf78b8bb89b4",
@@ -146,6 +158,8 @@
     "curve-ambiguity.svg": "f8a285c2042c7b6211fb9353d9114319b0fd492e1769bb60c65c6fefbeeeea04",
     "debug-ctest.txt": "30222f6e3ffbd4cd4c7e165902d5bc44cec523d6832d9861d22ee8496c971102",
     "debug-final-targeted.txt": "b96b5a6764e227482ed5d3118e5ef952e3d25147d5b190551cbd3196f6bb776a",
+    "portability-debug.txt": "e838398cc5b9924bb0c5b6ad3a8235a92bbb34b11d83e6760db56a0912c80eee",
+    "portability-release.txt": "86cce6aa0dbd6ac0c47f46f72337c61334e4fc129ab75ecd10cce85fd65ff0dd",
     "python-tests.txt": "30c6b563bd538ef4602fa3405abfd04b123bd35be51bed4c4ab03c84a29b2f37",
     "release-ctest.txt": "ccdf97f2f027eed78657a2cef45f6040fde2a8138cc99d0279dd61e83960395d",
     "release-final-targeted.txt": "4f3614bc408842ea96a38982801605aa56ab93d91ef7ecbc7bec8ea82b271fd1",
