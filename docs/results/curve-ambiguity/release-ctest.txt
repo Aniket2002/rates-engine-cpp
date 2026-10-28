@@ -1,0 +1,231 @@
+Test project C:/Users/Aniket Bhardwaj/Desktop/Github/rates-engine-cpp/build/release
+        Start   1: CurveAmbiguity.LinearObjectiveEqualsCashflowPricingAndWitnessReprices
+  1/113 Test   #1: CurveAmbiguity.LinearObjectiveEqualsCashflowPricingAndWitnessReprices .......   Passed    0.01 sec
+        Start   2: CurveAmbiguity.FixedProjectionObjectiveMatchesMulticurveAndPortfolioNets
+  2/113 Test   #2: CurveAmbiguity.FixedProjectionObjectiveMatchesMulticurveAndPortfolioNets ....   Passed    0.01 sec
+        Start   3: CurveAmbiguity.RejectsInvalidInputsAndOutOfDomainTrades
+  3/113 Test   #3: CurveAmbiguity.RejectsInvalidInputsAndOutOfDomainTrades .....................   Passed    0.01 sec
+        Start   4: CurveAmbiguity.WitnessRejectsInfeasibilityAndNonfiniteValues
+  4/113 Test   #4: CurveAmbiguity.WitnessRejectsInfeasibilityAndNonfiniteValues ................   Passed    0.01 sec
+        Start   5: Basis.AnalyticalLegsParSpreadReceiverAndCalibration
+  5/113 Test   #5: Basis.AnalyticalLegsParSpreadReceiverAndCalibration .........................   Passed    0.05 sec
+        Start   6: Basis.DistinctFixingsSeasonedUnpaidAndSettled
+  6/113 Test   #6: Basis.DistinctFixingsSeasonedUnpaidAndSettled ...............................   Passed    0.01 sec
+        Start   7: Clearing.AcceptSettleNetAndIdempotentReplay
+  7/113 Test   #7: Clearing.AcceptSettleNetAndIdempotentReplay .................................   Passed    0.01 sec
+        Start   8: Clearing.RejectionAndTerminationReplaceUnpaidObligations
+  8/113 Test   #8: Clearing.RejectionAndTerminationReplaceUnpaidObligations ....................   Passed    0.01 sec
+        Start   9: Collateral.CallsSettlementInterestReturnAndReplay
+  9/113 Test   #9: Collateral.CallsSettlementInterestReturnAndReplay ...........................   Passed    0.01 sec
+        Start  10: Collateral.DirectionMtaValidationAndFailureAtomicity
+ 10/113 Test  #10: Collateral.DirectionMtaValidationAndFailureAtomicity ........................   Passed    0.01 sec
+        Start  11: Collateral.RoundedTargetIsStableWithZeroMinimumTransfer
+ 11/113 Test  #11: Collateral.RoundedTargetIsStableWithZeroMinimumTransfer .....................   Passed    0.01 sec
+        Start  12: SofrCalendar.BusinessDayLagsCrossWeekendsAndHolidays
+ 12/113 Test  #12: SofrCalendar.BusinessDayLagsCrossWeekendsAndHolidays ........................   Passed    0.02 sec
+        Start  13: SofrFixings.RevisionsAreSelectedByAvailabilityWithoutLookahead
+ 13/113 Test  #13: SofrFixings.RevisionsAreSelectedByAvailabilityWithoutLookahead ..............   Passed    0.01 sec
+        Start  14: SofrLifecycle.FutureCouponRecoversLegacyAndPaymentLagDiscountsLater
+ 14/113 Test  #14: SofrLifecycle.FutureCouponRecoversLegacyAndPaymentLagDiscountsLater .........   Passed    0.01 sec
+        Start  15: SofrLifecycle.SeasonedCouponMixesRealizedAndForecastAndAccrues
+ 15/113 Test  #15: SofrLifecycle.SeasonedCouponMixesRealizedAndForecastAndAccrues ..............   Passed    0.01 sec
+        Start  16: SofrLifecycle.ObservationShiftChangesWeightsAndLockoutRepeatsFixing
+ 16/113 Test  #16: SofrLifecycle.ObservationShiftChangesWeightsAndLockoutRepeatsFixing .........   Passed    0.01 sec
+        Start  17: SofrLifecycle.MaturedUnpaidPaymentDateAndSettledStates
+ 17/113 Test  #17: SofrLifecycle.MaturedUnpaidPaymentDateAndSettledStates ......................   Passed    0.01 sec
+        Start  18: SofrLifecycle.ShiftedRateNormalizesDifferentObservationAndInterestLengths
+ 18/113 Test  #18: SofrLifecycle.ShiftedRateNormalizesDifferentObservationAndInterestLengths ...   Passed    0.01 sec
+        Start  19: SofrLifecycle.RejectsInvalidEconomicsConventionsDatesAndFactors
+ 19/113 Test  #19: SofrLifecycle.RejectsInvalidEconomicsConventionsDatesAndFactors .............   Passed    0.02 sec
+        Start  20: SofrBootstrap.SpotSettlementAndPaymentPillarsReprice
+ 20/113 Test  #20: SofrBootstrap.SpotSettlementAndPaymentPillarsReprice ........................   Passed    0.11 sec
+        Start  21: SofrRisk.RealizedCouponsHaveNoProjectionRiskAndNegativeRatesCalibrate
+ 21/113 Test  #21: SofrRisk.RealizedCouponsHaveNoProjectionRiskAndNegativeRatesCalibrate .......   Passed    0.01 sec
+        Start  22: SofrRisk.TwoCurveQuotesFreezeRealizedFixingsAndRespectSettlement
+ 22/113 Test  #22: SofrRisk.TwoCurveQuotesFreezeRealizedFixingsAndRespectSettlement ............   Passed    0.21 sec
+        Start  23: MultiCurve.AnalyticalSeparateDiscountAndProjection
+ 23/113 Test  #23: MultiCurve.AnalyticalSeparateDiscountAndProjection ..........................   Passed    0.01 sec
+        Start  24: MultiCurve.EqualCurvesRecoverLegacyAndForwardBootstrapReprices
+ 24/113 Test  #24: MultiCurve.EqualCurvesRecoverLegacyAndForwardBootstrapReprices ..............   Passed    0.01 sec
+        Start  25: MultiCurve.RejectsMismatchedDatesPastTradesAndInsufficientCoverage
+ 25/113 Test  #25: MultiCurve.RejectsMismatchedDatesPastTradesAndInsufficientCoverage ..........   Passed    0.01 sec
+        Start  26: Sofr.CompoundsWeekendsHolidaysAndNegativeRates
+ 26/113 Test  #26: Sofr.CompoundsWeekendsHolidaysAndNegativeRates ..............................   Passed    0.01 sec
+        Start  27: Sofr.RejectsMissingDuplicateUnorderedExtraAndInvalidFixings
+ 27/113 Test  #27: Sofr.RejectsMissingDuplicateUnorderedExtraAndInvalidFixings .................   Passed    0.01 sec
+        Start  28: Ois.CalibrationCompoundedCouponsAndParIdentity
+ 28/113 Test  #28: Ois.CalibrationCompoundedCouponsAndParIdentity ..............................   Passed    0.01 sec
+        Start  29: MultiCurveRisk.RecalibratesForwardCurveAfterDiscountShock
+ 29/113 Test  #29: MultiCurveRisk.RecalibratesForwardCurveAfterDiscountShock ...................   Passed    0.03 sec
+        Start  30: TradingData.StrictAvailabilityRevisionsAndEventOrder
+ 30/113 Test  #30: TradingData.StrictAvailabilityRevisionsAndEventOrder ........................   Passed    0.01 sec
+        Start  31: TradingData.RejectsInvalidTapeAndRevisionChains
+ 31/113 Test  #31: TradingData.RejectsInvalidTapeAndRevisionChains .............................   Passed    0.01 sec
+        Start  32: TradingSimulation.HandCalculatedRoundTripAndRisk
+ 32/113 Test  #32: TradingSimulation.HandCalculatedRoundTripAndRisk ............................   Passed    0.01 sec
+        Start  33: TradingSimulation.CostsGapAffordabilityAndFixedOrderSize
+ 33/113 Test  #33: TradingSimulation.CostsGapAffordabilityAndFixedOrderSize ....................   Passed    0.01 sec
+        Start  34: TradingSimulation.RevisionsCannotFillAndFutureChangesDoNotChangePast
+ 34/113 Test  #34: TradingSimulation.RevisionsCannotFillAndFutureChangesDoNotChangePast ........   Passed    0.01 sec
+        Start  35: TradingSimulation.ExpiryLatencyAndLatePublication
+ 35/113 Test  #35: TradingSimulation.ExpiryLatencyAndLatePublication ...........................   Passed    0.01 sec
+        Start  36: TradingSimulation.MissingStaleAndRevisionFreshness
+ 36/113 Test  #36: TradingSimulation.MissingStaleAndRevisionFreshness ..........................   Passed    0.01 sec
+        Start  37: TradingSimulation.DelayedRevisionChangesOnlyLaterDecisions
+ 37/113 Test  #37: TradingSimulation.DelayedRevisionChangesOnlyLaterDecisions ..................   Passed    0.01 sec
+        Start  38: TradingSimulation.NumericalOverflowFailsWithoutPublishingResults
+ 38/113 Test  #38: TradingSimulation.NumericalOverflowFailsWithoutPublishingResults ............   Passed    0.01 sec
+        Start  39: TradingSimulation.ConfigurationAndNumericalBounds
+ 39/113 Test  #39: TradingSimulation.ConfigurationAndNumericalBounds ...........................   Passed    0.03 sec
+        Start  40: Timestamps.UtcValidationAndCalendarRollover
+ 40/113 Test  #40: Timestamps.UtcValidationAndCalendarRollover .................................   Passed    0.03 sec
+        Start  41: History.AsOfNeverSelectsFutureAndFreshnessBoundaryIsInclusive
+ 41/113 Test  #41: History.AsOfNeverSelectsFutureAndFreshnessBoundaryIsInclusive ...............   Passed    0.05 sec
+        Start  42: History.RejectsMissingDuplicateUnorderedAndChangedData
+ 42/113 Test  #42: History.RejectsMissingDuplicateUnorderedAndChangedData ......................   Passed    0.06 sec
+        Start  43: History.FutureQuoteChangesCannotChangeEarlierValuation
+ 43/113 Test  #43: History.FutureQuoteChangesCannotChangeEarlierValuation ......................   Passed    0.05 sec
+        Start  44: History.RejectsMalformedCsvAndAcceptsCrLf
+ 44/113 Test  #44: History.RejectsMalformedCsvAndAcceptsCrLf ...................................   Passed    0.05 sec
+        Start  45: Portfolio.ThousandTradesAggregateAndShareSchedules
+ 45/113 Test  #45: Portfolio.ThousandTradesAggregateAndShareSchedules ..........................   Passed    0.10 sec
+        Start  46: Portfolio.SharedScheduleOwnershipAndConventionKeys
+ 46/113 Test  #46: Portfolio.SharedScheduleOwnershipAndConventionKeys ..........................   Passed    0.01 sec
+        Start  47: Portfolio.FailedTradesAreExplicitAndDoNotPolluteAggregates
+ 47/113 Test  #47: Portfolio.FailedTradesAreExplicitAndDoNotPolluteAggregates ..................   Passed    0.01 sec
+        Start  48: Portfolio.AggregateOverflowFailsTheWholeCalculation
+ 48/113 Test  #48: Portfolio.AggregateOverflowFailsTheWholeCalculation .........................   Passed    0.01 sec
+        Start  49: HistoricalZeroQuotes.ExactDatesCompoundingAndRiskCoordinates
+ 49/113 Test  #49: HistoricalZeroQuotes.ExactDatesCompoundingAndRiskCoordinates ................   Passed    0.01 sec
+        Start  50: HistoricalZeroQuotes.FileStorePreservesContinuousZeroType
+ 50/113 Test  #50: HistoricalZeroQuotes.FileStorePreservesContinuousZeroType ...................   Passed    0.02 sec
+        Start  51: Dates.StrictIsoAndLeapYear
+ 51/113 Test  #51: Dates.StrictIsoAndLeapYear ..................................................   Passed    0.01 sec
+        Start  52: Dates.MonthEndAndTenors
+ 52/113 Test  #52: Dates.MonthEndAndTenors .....................................................   Passed    0.01 sec
+        Start  53: Dates.BusinessDaysAndExplicitHolidays
+ 53/113 Test  #53: Dates.BusinessDaysAndExplicitHolidays .......................................   Passed    0.01 sec
+        Start  54: Schedules.AnchoredMonthEndAndShortFinalStub
+ 54/113 Test  #54: Schedules.AnchoredMonthEndAndShortFinalStub .................................   Passed    0.01 sec
+        Start  55: Schedules.NonEndOfMonthDoesNotDrift
+ 55/113 Test  #55: Schedules.NonEndOfMonthDoesNotDrift .........................................   Passed    0.01 sec
+        Start  56: Schedules.InvalidAndCollapsedDates
+ 56/113 Test  #56: Schedules.InvalidAndCollapsedDates ..........................................   Passed    0.01 sec
+        Start  57: DayCounts.LeapAndEuropeanThirty360
+ 57/113 Test  #57: DayCounts.LeapAndEuropeanThirty360 ..........................................   Passed    0.01 sec
+        Start  58: Conventions.RateConversionsAndInvalidInputs
+ 58/113 Test  #58: Conventions.RateConversionsAndInvalidInputs .................................   Passed    0.01 sec
+        Start  59: Conventions.InvalidContractsAndZeroThirtyEAccrual
+ 59/113 Test  #59: Conventions.InvalidContractsAndZeroThirtyEAccrual ...........................   Passed    0.01 sec
+        Start  60: Curves.LogLinearInterpolation
+ 60/113 Test  #60: Curves.LogLinearInterpolation ...............................................   Passed    0.01 sec
+        Start  61: Curves.RejectsInvalidPillarsAndExtrapolation
+ 61/113 Test  #61: Curves.RejectsInvalidPillarsAndExtrapolation ................................   Passed    0.01 sec
+        Start  62: Curves.NegativeRatesAreAllowed
+ 62/113 Test  #62: Curves.NegativeRatesAreAllowed ..............................................   Passed    0.01 sec
+        Start  63: Solver.BracketingAndFailureDiagnostics
+ 63/113 Test  #63: Solver.BracketingAndFailureDiagnostics ......................................   Passed    0.01 sec
+        Start  64: Solver.SafeguardedSecantPreservesResidualAndCutsEvaluations
+ 64/113 Test  #64: Solver.SafeguardedSecantPreservesResidualAndCutsEvaluations .................   Passed    0.01 sec
+        Start  65: Solver.SafeguardedSecantEscapesFalsePositionStagnation
+ 65/113 Test  #65: Solver.SafeguardedSecantEscapesFalsePositionStagnation ......................   Passed    0.01 sec
+        Start  66: Solver.SafeguardedSecantRejectsInvalidAndUnconvergedObjectives
+ 66/113 Test  #66: Solver.SafeguardedSecantRejectsInvalidAndUnconvergedObjectives ..............   Passed    0.01 sec
+        Start  67: Solver.SafeguardedSecantChecksResidualInsideNarrowBrackets
+ 67/113 Test  #67: Solver.SafeguardedSecantChecksResidualInsideNarrowBrackets ..................   Passed    0.01 sec
+        Start  68: Solver.SafeguardedSecantCrossChecksDeterministicKnownRoots
+ 68/113 Test  #68: Solver.SafeguardedSecantCrossChecksDeterministicKnownRoots ..................   Passed    0.01 sec
+        Start  69: Bootstrap.RepricesSparseIntermediateCouponsAndSorts
+ 69/113 Test  #69: Bootstrap.RepricesSparseIntermediateCouponsAndSorts .........................   Passed    0.01 sec
+        Start  70: Bootstrap.BracketPricingFailureIncludesInstrumentLabel
+ 70/113 Test  #70: Bootstrap.BracketPricingFailureIncludesInstrumentLabel ......................   Passed    0.01 sec
+        Start  71: Bootstrap.SecantCalibratesPositiveAndNegativeQuotesEfficiently
+ 71/113 Test  #71: Bootstrap.SecantCalibratesPositiveAndNegativeQuotesEfficiently ..............   Passed    0.01 sec
+        Start  72: Bootstrap.InvalidQuotes
+ 72/113 Test  #72: Bootstrap.InvalidQuotes .....................................................   Passed    0.01 sec
+        Start  73: Bootstrap.ZeroAndNegativeQuotes
+ 73/113 Test  #73: Bootstrap.ZeroAndNegativeQuotes .............................................   Passed    0.01 sec
+        Start  74: Pricing.ParPayerReceiverCouponMonotonicityAndScaling
+ 74/113 Test  #74: Pricing.ParPayerReceiverCouponMonotonicityAndScaling ........................   Passed    0.01 sec
+        Start  75: Pricing.IndependentCouponSumsAndTelescoping
+ 75/113 Test  #75: Pricing.IndependentCouponSumsAndTelescoping .................................   Passed    0.01 sec
+        Start  76: Pricing.AnalyticalOnePeriodAndZeroCoupon
+ 76/113 Test  #76: Pricing.AnalyticalOnePeriodAndZeroCoupon ....................................   Passed    0.01 sec
+        Start  77: Pricing.InvalidTradeAndMissingFixings
+ 77/113 Test  #77: Pricing.InvalidTradeAndMissingFixings .......................................   Passed    0.01 sec
+        Start  78: Risk.ParallelAndBucketSumWithBumpStability
+ 78/113 Test  #78: Risk.ParallelAndBucketSumWithBumpStability ..................................   Passed    0.01 sec
+        Start  79: Risk.SymmetryNotionalAndUnmodifiedInputs
+ 79/113 Test  #79: Risk.SymmetryNotionalAndUnmodifiedInputs ....................................   Passed    0.01 sec
+        Start  80: Risk.ZeroNodesDifferFromQuoteCoordinates
+ 80/113 Test  #80: Risk.ZeroNodesDifferFromQuoteCoordinates ....................................   Passed    0.02 sec
+        Start  81: Risk.AnalyticalOnePeriodQuoteAndZeroNodeRisk
+ 81/113 Test  #81: Risk.AnalyticalOnePeriodQuoteAndZeroNodeRisk ................................   Passed    0.01 sec
+        Start  82: Risk.RejectsInvalidBumpAndShockedCalibrationFailure
+ 82/113 Test  #82: Risk.RejectsInvalidBumpAndShockedCalibrationFailure .........................   Passed    0.01 sec
+        Start  83: Risk.EmptyQuoteRiskIsAnError
+ 83/113 Test  #83: Risk.EmptyQuoteRiskIsAnError ................................................   Passed    0.01 sec
+        Start  84: Risk.QuoteBucketSymmetryAndScaling
+ 84/113 Test  #84: Risk.QuoteBucketSymmetryAndScaling ..........................................   Passed    0.02 sec
+        Start  85: Risk.NonlinearDifferencesShrinkWithBump
+ 85/113 Test  #85: Risk.NonlinearDifferencesShrinkWithBump .....................................   Passed    0.02 sec
+        Start  86: Regression.DeterministicRandomFlatCurves
+ 86/113 Test  #86: Regression.DeterministicRandomFlatCurves ....................................   Passed    0.01 sec
+        Start  87: Regression.PublishedDemoValues
+ 87/113 Test  #87: Regression.PublishedDemoValues ..............................................   Passed    0.01 sec
+        Start  88: PreparedPricing.OwnsSchedulesAndPreservesValuationChecks
+ 88/113 Test  #88: PreparedPricing.OwnsSchedulesAndPreservesValuationChecks ....................   Passed    0.01 sec
+        Start  89: ScenarioReuse.MatchesIndependentPerTradeRiskForHeterogeneousPortfolio
+ 89/113 Test  #89: ScenarioReuse.MatchesIndependentPerTradeRiskForHeterogeneousPortfolio .......   Passed    0.03 sec
+        Start  90: ScenarioReuse.SnapshotIsolationAndFailureSafety
+ 90/113 Test  #90: ScenarioReuse.SnapshotIsolationAndFailureSafety .............................   Passed    0.02 sec
+        Start  91: NumericalFailures.InvalidConversionsAndOverflow
+ 91/113 Test  #91: NumericalFailures.InvalidConversionsAndOverflow .............................   Passed    0.01 sec
+        Start  92: NumericalFailures.SolverEndpointsAndUnattainableAccuracy
+ 92/113 Test  #92: NumericalFailures.SolverEndpointsAndUnattainableAccuracy ....................   Passed    0.01 sec
+        Start  93: hedge_solver
+ 93/113 Test  #93: hedge_solver ................................................................   Passed    0.20 sec
+        Start  94: portable_windows_runtime
+ 94/113 Test  #94: portable_windows_runtime ....................................................   Passed    0.68 sec
+        Start  95: sofr_market_data_contract
+ 95/113 Test  #95: sofr_market_data_contract ...................................................   Passed    0.25 sec
+        Start  96: performance_contract
+ 96/113 Test  #96: performance_contract ........................................................   Passed    2.34 sec
+        Start  97: independent_python
+ 97/113 Test  #97: independent_python ..........................................................   Passed    1.36 sec
+        Start  98: cli_contract
+ 98/113 Test  #98: cli_contract ................................................................   Passed    0.25 sec
+        Start  99: pv_change_case_study
+ 99/113 Test  #99: pv_change_case_study ........................................................   Passed    0.44 sec
+        Start 100: convention_validation
+100/113 Test #100: convention_validation .......................................................   Passed    0.90 sec
+        Start 101: batch_replay_contract
+101/113 Test #101: batch_replay_contract .......................................................   Passed    0.63 sec
+        Start 102: real_historical_data
+102/113 Test #102: real_historical_data ........................................................   Passed    1.73 sec
+        Start 103: trading_contract
+103/113 Test #103: trading_contract ............................................................   Passed    0.67 sec
+        Start 104: curve_ambiguity
+104/113 Test #104: curve_ambiguity .............................................................   Passed    1.06 sec
+        Start 105: curve_ambiguity_study
+105/113 Test #105: curve_ambiguity_study .......................................................   Passed    1.28 sec
+        Start 106: sofr_hedging_study
+106/113 Test #106: sofr_hedging_study ..........................................................   Passed   17.51 sec
+        Start 107: durable_lifecycle
+107/113 Test #107: durable_lifecycle ...........................................................   Passed    5.82 sec
+        Start 108: python_bindings
+108/113 Test #108: python_bindings .............................................................   Passed    0.05 sec
+        Start 109: multicurve_validation
+109/113 Test #109: multicurve_validation .......................................................   Passed    0.40 sec
+        Start 110: sofr_lifecycle_validation
+110/113 Test #110: sofr_lifecycle_validation ...................................................   Passed    6.92 sec
+        Start 111: sofr_real_fixing_replay
+111/113 Test #111: sofr_real_fixing_replay .....................................................   Passed    1.12 sec
+        Start 112: basis_validation
+112/113 Test #112: basis_validation ............................................................   Passed    5.98 sec
+        Start 113: contractual_lifecycle
+113/113 Test #113: contractual_lifecycle .......................................................   Passed    0.97 sec
+
+100% tests passed, 0 tests failed out of 113
+
+Total Test time (real) =  52.46 sec

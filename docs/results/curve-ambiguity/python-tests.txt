@@ -1,0 +1,13 @@
+test_closed_form_interior_discount_bounds (__main__.AmbiguityTests.test_closed_form_interior_discount_bounds) ... ok
+test_deposit_band_reprices_at_both_extrema (__main__.AmbiguityTests.test_deposit_band_reprices_at_both_extrema) ... ok
+test_dual_witness_reconstructs_bound (__main__.AmbiguityTests.test_dual_witness_reconstructs_bound) ... ok
+test_fixed_projection_and_forward_starting_target (__main__.AmbiguityTests.test_fixed_projection_and_forward_starting_target) ... ok
+test_inconsistent_quotes_and_forward_bounds_fail_closed (__main__.AmbiguityTests.test_inconsistent_quotes_and_forward_bounds_fail_closed) ... ok
+test_more_information_narrows_and_wider_spreads_expand (__main__.AmbiguityTests.test_more_information_narrows_and_wider_spreads_expand) ... ok
+test_payer_receiver_symmetry_and_portfolio_netting (__main__.AmbiguityTests.test_payer_receiver_symmetry_and_portfolio_netting) ... ok
+test_quoted_swap_is_identified_but_intermediate_trade_is_not (__main__.AmbiguityTests.test_quoted_swap_is_identified_but_intermediate_trade_is_not) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.048s
+
+OK

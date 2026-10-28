@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "description": "Synthetic sparse quote experiment; forwards and spreads are assumptions, not observed market data.",
+  "valuation": "2025-01-02",
+  "forward_bounds": [-0.01, 0.10],
+  "quotes": [
+    {"type": "deposit", "label": "6M", "maturity": "2025-07-02", "bid": 0.030, "ask": 0.030},
+    {"type": "swap", "label": "2Y", "maturity": "2027-01-02", "bid": 0.032, "ask": 0.032},
+    {"type": "swap", "label": "5Y", "maturity": "2030-01-02", "bid": 0.036, "ask": 0.036},
+    {"type": "swap", "label": "10Y", "maturity": "2035-01-02", "bid": 0.040, "ask": 0.040}
+  ],
+  "portfolio": [
+    {"effective": "2025-01-02", "maturity": "2028-07-02", "notional": 1000000, "coupon": 0.034, "side": "payer"}
+  ],
+  "candidate_quotes": [
+    {"label": "1Y", "maturity": "2026-01-02"},
+    {"label": "3Y", "maturity": "2028-01-02"},
+    {"label": "4Y", "maturity": "2029-01-02"},
+    {"label": "7Y", "maturity": "2032-01-02"}
+  ],
+  "candidate_half_spread_bps": 0.5,
+  "forward_bound_sweep": [[-0.01, 0.10], [0.00, 0.08], [0.01, 0.06], [0.025, 0.045]],
+  "quote_hedge_experiment": true
+}

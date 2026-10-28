@@ -28,8 +28,13 @@
   short final stubs. No long/front stubs or IMM rolls. C++ calendars take explicit
   holidays; the SOFR pipeline exports a versioned QuantLib US Government Bond
   calendar with finite coverage. Operators must review calendar updates.
-- Log-linear discount interpolation only, with discontinuous instantaneous
-  forwards. No extrapolation, smoothing, global fit or quote bid/ask uncertainty.
+- The default bootstrap uses log-linear discount interpolation, with discontinuous
+  instantaneous forwards. No extrapolation or smoothing. The separate
+  [curve ambiguity experiment](curve-ambiguity-research.md) supports quote intervals
+  and explicit forward bounds on a complete cash-flow grid. It reports conditional
+  attainable PV ranges, not probability intervals or market-calibrated uncertainty.
+  Targets are unseasoned vanilla swaps; an optional projection curve is held fixed.
+  Joint discount/projection ambiguity and seasoned SOFR/basis ambiguity are unsupported.
 - Bootstrap solves within log-discount bounds [-50,50]. Pathological or
   inconsistent inputs may fail; failure is surfaced. No claim is made that
   arbitrary mixed quotes satisfy a complete arbitrage analysis.

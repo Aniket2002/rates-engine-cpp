@@ -19,7 +19,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(rates_engine STATIC src/date.cpp src/conventions.cpp src/schedule.cpp
   src/discount_curve.cpp src/swap_pricer.cpp src/curve_bootstrapper.cpp src/risk_engine.cpp
   src/portfolio.cpp src/history.cpp src/trading.cpp src/multicurve.cpp src/sofr.cpp src/sofr_curve.cpp
-  src/basis.cpp src/lifecycle.cpp)
+  src/basis.cpp src/lifecycle.cpp src/curve_ambiguity.cpp)
 add_library(rates::rates_engine ALIAS rates_engine)
 if(MINGW AND RATES_STATIC_RUNTIME)
   # Propagate to installed consumers too. Executables also embed winpthreads;
@@ -92,7 +92,7 @@ if(BUILD_TESTING)
       GIT_TAG v1.17.0 GIT_SHALLOW TRUE)
     FetchContent_MakeAvailable(googletest)
   endif()
-  add_executable(rates_tests tests/test_engine.cpp tests/test_v2.cpp tests/test_trading.cpp tests/test_multicurve.cpp tests/test_sofr.cpp tests/test_lifecycle.cpp)
+  add_executable(rates_tests tests/test_engine.cpp tests/test_v2.cpp tests/test_trading.cpp tests/test_multicurve.cpp tests/test_sofr.cpp tests/test_lifecycle.cpp tests/test_curve_ambiguity.cpp)
   target_link_libraries(rates_tests PRIVATE rates_engine GTest::gtest_main)
   rates_checks(rates_tests)
   include(GoogleTest)
@@ -147,7 +147,7 @@ if(RATES_BUILD_PYTHON)
   find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)
   set(PYBIND11_FINDPYTHON ON)
   find_package(pybind11 CONFIG REQUIRED)
-  pybind11_add_module(pyrates python/bindings.cpp python/sofr_bindings.cpp python/lifecycle_bindings.cpp)
+  pybind11_add_module(pyrates python/bindings.cpp python/sofr_bindings.cpp python/lifecycle_bindings.cpp python/ambiguity_bindings.cpp)
   target_link_libraries(pyrates PRIVATE rates_engine)
   if(MINGW)
     # Python 3.8+ does not search PATH for extension-module DLL dependencies.
@@ -156,6 +156,12 @@ if(RATES_BUILD_PYTHON)
   endif()
   rates_checks(pyrates)
   if(BUILD_TESTING)
+    add_test(NAME curve_ambiguity COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/python/test_curve_ambiguity.py --module-dir $<TARGET_FILE_DIR:pyrates>)
+    add_test(NAME curve_ambiguity_study COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/python/curve_ambiguity.py --module-dir $<TARGET_FILE_DIR:pyrates>
+      --input ${CMAKE_CURRENT_SOURCE_DIR}/examples/curve-ambiguity.json
+      --out ${CMAKE_CURRENT_BINARY_DIR}/curve-ambiguity --require-quantlib)
     add_test(NAME sofr_hedging_study COMMAND ${Python3_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/python/hedge_study.py --module-dir $<TARGET_FILE_DIR:pyrates>
       --out ${CMAKE_CURRENT_BINARY_DIR}/hedging)

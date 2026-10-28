@@ -11,7 +11,7 @@ Install CMake, a C++20 compiler, Ninja and Python 3.10+. Then:
 python -m venv .venv
 # POSIX activation; on PowerShell use .\.venv\Scripts\Activate.ps1
 . .venv/bin/activate
-python -m pip install ninja pybind11 QuantLib clang-format==23.1.3 clang-tidy==22.1.8
+python -m pip install ninja pybind11 QuantLib "scipy>=1.14,<2" clang-format==23.1.3 clang-tidy==22.1.8
 cmake --preset release -DPython3_EXECUTABLE="$(python -c 'import sys; print(sys.executable)')"
 cmake --build --preset release --parallel 4
 ctest --preset release
@@ -36,7 +36,7 @@ compiler installation was changed. From PowerShell:
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install ninja pybind11==3.1.0 QuantLib==1.44 clang-format==23.1.3
+.\.venv\Scripts\python.exe -m pip install ninja pybind11==3.1.0 QuantLib==1.44 "scipy>=1.14,<2" clang-format==23.1.3
 $env:PATH = "$PWD\.tools\llvm-mingw-20261006-ucrt-x86_64\bin;$PWD\.venv\Scripts;$env:PATH"
 cmake --preset release -DCMAKE_CXX_COMPILER=clang++ "-DPython3_EXECUTABLE=$PWD/.venv/Scripts/python.exe"
 cmake --build --preset release --parallel 4

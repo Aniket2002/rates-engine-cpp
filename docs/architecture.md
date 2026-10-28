@@ -7,6 +7,7 @@ schedule + DiscountCurve -> swap_pricer
 market quotes + swap_pricer -> CurveBootstrapper
 CurveBootstrapper + swap_pricer -> RiskEngine
 library -> CLI / benchmarks / optional pybind11 module
+quote bands + schedules + forward bounds -> CurveAmbiguityProblem -> optional SciPy/HiGHS adapter
 ```
 
 Public APIs live in `include/rates`; library translation units live in `src`.
@@ -16,6 +17,14 @@ parsing, console presentation and structured exports. Schedule generation is
 independent of both curves and valuation. The optional Python extension calls
 the same compiled library; `reference_pricer.py` is a separate validation-only
 implementation and is never used by the extension.
+
+`curve_ambiguity.hpp` exports an optimizer-independent linear constraint model on
+all relevant cash-flow dates. Its witness constructor checks the original
+constraints before returning a normal `DiscountCurve`. The optional Python
+research workflow solves both extrema with SciPy/HiGHS and audits primal/dual
+residuals; QuantLib independently reprices the exported witnesses. The native
+library has no optimization-library dependency. See the
+[curve ambiguity research](curve-ambiguity-research.md) for mathematics and scope.
 
 `DiscountCurve` owns its nodes and precomputed times/log discounts and has no
 mutating public methods. It inserts a time-zero anchor, validates sorted input

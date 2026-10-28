@@ -1,0 +1,4 @@
+# Optional research workflow. Native C++ core does not depend on SciPy.
+scipy>=1.14,<2
+QuantLib>=1.35,<2
+matplotlib>=3.9,<4

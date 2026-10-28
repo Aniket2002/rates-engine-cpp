@@ -3,9 +3,44 @@
 [![Build and validation](https://github.com/Aniket2002/rates-engine-cpp/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Aniket2002/rates-engine-cpp/actions/workflows/ci.yml)
 [![Release v2.3.0](https://img.shields.io/badge/release-v2.3.0-blue)](https://github.com/Aniket2002/rates-engine-cpp/releases/tag/v2.3.0)
 
-A C++20 interest-rate pricing and risk engine with **OIS discounting, separately
-calibrated projection curves and full-rebootstrap quote DV01**. Independent
-Python and QuantLib implementations check calibration, cash flows and sensitivities.
+A C++20 rates engine and **curve-risk research lab**. It combines OIS discounting,
+separate projection curves and full-rebootstrap quote DV01 with an experiment
+that asks: **what valuation uncertainty remains when every market quote fits?**
+Independent Python and QuantLib implementations check pricing and risk.
+
+## Curve ambiguity audit
+
+The research workflow finds minimum/maximum portfolio PVs compatible with quote
+intervals and explicit forward-rate bounds. It exports the curves that attain
+them, checks LP optimality conditions, reprices with QuantLib, and ranks
+hypothetical additional quotes by how much they narrow the range.
+
+In the synthetic 1 million, 3.5Y payer example, **quote DV01 can be hedged below
+1e-6 currency/bp while the same-quote valuation range remains unchanged**:
+
+| Assumed continuous forward bounds | Minimum PV | Maximum PV |
+| --- | ---: | ---: |
+| −1% to 10% | −66,244.31 | 63,956.10 |
+| 2.5% to 4.5% | −5,776.30 | 11,559.45 |
+
+The ordinary bootstrap PV is **2,720.35**. These are attainable ranges under
+stated assumptions, not confidence intervals or market forecasts. The broad
+range demonstrates why the forward assumptions matter.
+
+![Quote-compatible extreme curves and the information added by another tenor](docs/results/curve-ambiguity/curve-ambiguity.png)
+
+[Research, prior art and reproduction](docs/curve-ambiguity-research.md) ·
+[Inputs](examples/curve-ambiguity.json) ·
+[Witnesses and numerical evidence](docs/results/curve-ambiguity/report.json)
+
+Admissible curve bounds have established prior art. This project's contribution
+is an auditable experiment joining valuation ambiguity, a quote-neutral hedge
+counterexample and conditional quote prioritization; **no new mathematical
+theory or global novelty is claimed**. The native API also supports discount
+uncertainty with a separate projection curve held fixed. Joint curve uncertainty
+and seasoned SOFR ambiguity are outside this experiment's scope.
+
+## Captured SOFR example
 
 The captured SOFR example values a **USD 1 million payer, 3.75% fixed**, from
 1 October 2026 to 1 October 2028, as of **21 October 2026, 18:17:09 UTC**:
@@ -97,7 +132,7 @@ the first test build. For the configured Windows environment:
 On Linux/macOS, with the chosen Python environment active:
 
 ```sh
-python -m pip install pybind11 QuantLib
+python -m pip install pybind11 QuantLib "scipy>=1.14,<2"
 cmake --preset release -DRATES_BUILD_PYTHON=ON -Dpybind11_DIR="$(python -m pybind11 --cmakedir)" -DPython3_EXECUTABLE="$(python -c 'import sys; print(sys.executable)')"
 cmake --build --preset release --parallel 4
 ctest --preset release

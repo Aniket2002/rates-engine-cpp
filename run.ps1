@@ -28,7 +28,7 @@ try {
     $bindingArgs = @('-DRATES_BUILD_PYTHON=OFF')
     if ($WithPython) {
         $pybind = & $python -m pybind11 --cmakedir
-        if ($LASTEXITCODE -ne 0) { throw 'Install bindings dependencies: python -m pip install pybind11 QuantLib' }
+        if ($LASTEXITCODE -ne 0) { throw 'Install bindings/test dependencies: python -m pip install pybind11 QuantLib "scipy>=1.14,<2"' }
         $bindingArgs = @('-DRATES_BUILD_PYTHON=ON', "-Dpybind11_DIR=$pybind")
     }
     & cmake --preset $preset @compilerArgs @bindingArgs "-DPython3_EXECUTABLE=$python" -DRATES_STATIC_RUNTIME=ON
