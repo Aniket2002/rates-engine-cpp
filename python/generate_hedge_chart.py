@@ -27,7 +27,8 @@ def main():
         axes[0].bar([i+offset for i in range(len(buckets))], [r[field] for r in buckets],
                     width=.36, color=color, label=label)
     axes[0].set_xticks(range(len(buckets)), [r["label"] for r in buckets])
-    axes[0].set(title="Quote risk falls 51.68%, but remains", ylabel="Signed quote DV01 (USD/bp)",
+    axes[0].set(title=f"Quote-risk norm reduction: {report['bucket_norm_reduction']:.2%}",
+                ylabel="Signed quote DV01 (USD/bp)",
                 xlabel="Market quote tenor")
     axes[0].axhline(0, color="#526273", linewidth=.8)
     axes[0].legend(frameon=False)
@@ -42,7 +43,7 @@ def main():
     axes[1].axhline(0, color="#526273", linewidth=.8)
     axes[1].legend(frameon=False)
     fig.suptitle("5Y SOFR swap hedged with 2Y / 4Y / 6Y swaps", fontsize=16, fontweight="bold")
-    fig.text(.05, .025, "Synthetic quotes; fixed rounded hedge notionals. PV changes shown before assumed USD 379.73 entry costs.\n"
+    fig.text(.05, .025, f"Synthetic quotes; fixed rounded hedge notionals. PV changes shown before assumed USD {report['entry_cost_usd']:,.2f} entry costs.\n"
              "Same-date shocks, no carry or funding. Independent QuantLib calibration and quote-risk comparisons.",
              fontsize=9, color="#526273")
     fig.tight_layout(rect=(0, .10, 1, .94))

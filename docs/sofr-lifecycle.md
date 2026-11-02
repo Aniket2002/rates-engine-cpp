@@ -104,8 +104,8 @@ the validation example; no basis-swap calibration is implied.
 At the committed as-of time, the 1m notional, 3.75% fixed payer runs from
 1 October 2026 to 1 October 2028, with quarterly coupons, two-day lookback,
 observation shift and two-day payment lag. It has 15 realized observations and
-484 forecasts. Dirty PV is **âˆ’4,448.43**, accrued **144.94**, and clean PV
-**âˆ’4,593.36**. Fixings are actual NY Fed data; all example curve quotes are
+484 forecasts. Dirty PV is **-4,448.43**, accrued **144.94**, and clean PV
+**-4,593.36**. Fixings are actual NY Fed data; all example curve quotes are
 synthetic. These values are not executable market marks or trading returns.
 
 ## Reproduce the cash-flow chart

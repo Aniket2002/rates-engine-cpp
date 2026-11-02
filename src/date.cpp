@@ -9,8 +9,11 @@
 namespace rates {
 using namespace std::chrono;
 Date::Date(int y, unsigned m, unsigned d) {
+    // Validate before chrono narrows month/day to its internal representation.
+    if (y < 1900 || y > 2199 || m < 1 || m > 12 || d < 1 || d > 31)
+        throw std::invalid_argument("Invalid date or year outside 1900..2199");
     const year_month_day date{std::chrono::year{y}, std::chrono::month{m}, std::chrono::day{d}};
-    if (y < 1900 || y > 2199 || !date.ok())
+    if (!date.ok())
         throw std::invalid_argument("Invalid date or year outside 1900..2199");
     days_ = sys_days{date};
 }

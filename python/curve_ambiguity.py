@@ -66,6 +66,13 @@ def solve_range(problem):
     return results
 
 
+def export_lp(problem):
+    """Retain the actual rows used by the solver for an offline certificate audit."""
+    return {"objective": problem.objective,
+            "constraints": [{"label": row.label, "coefficients": row.coefficients,
+                             "upper": row.upper} for row in problem.constraints]}
+
+
 def native_inputs(r, data):
     if data.get("schema_version") != 1:
         raise ValueError("Expected ambiguity input schema_version=1")
@@ -243,21 +250,30 @@ def run_study(r, data, require_quantlib=False):
         v, qb, _, ts = native_inputs(r, widened)
         p = r.curve_ambiguity_problem(v, qb, ts, forwards)
         interval = solve_range(p)
+        for name in ("minimum", "maximum"):
+            check_witness(r, widened, p, interval[name], require_quantlib)
         spread_sweep.append({"added_half_spread_bps": spread_bps,
                              "minimum_pv": interval["minimum"]["pv"],
-                             "maximum_pv": interval["maximum"]["pv"], "width": interval["width"]})
+                             "maximum_pv": interval["maximum"]["pv"], "width": interval["width"],
+                             "dates": [str(d) for d in p.dates], "bounds": interval, "lp": export_lp(p)})
     forward_sweep = []
     for lower, upper in data.get("forward_bound_sweep", []):
+        bounded = dict(data, forward_bounds=[lower, upper])
         p = r.curve_ambiguity_problem(valuation, bands, trades, r.ForwardBounds(lower, upper))
         interval = solve_range(p)
+        for name in ("minimum", "maximum"):
+            check_witness(r, bounded, p, interval[name], require_quantlib)
         forward_sweep.append({"lower_forward": lower, "upper_forward": upper,
                               "minimum_pv": interval["minimum"]["pv"],
-                              "maximum_pv": interval["maximum"]["pv"], "width": interval["width"]})
+                              "maximum_pv": interval["maximum"]["pv"], "width": interval["width"],
+                              "dates": [str(d) for d in p.dates], "bounds": interval, "lp": export_lp(p)})
     hedge = (quote_hedge_experiment(r, data, baseline, bounds["width"], require_quantlib)
              if data.get("quote_hedge_experiment", False) else None)
     repriced = [bounds[name] for name in ("minimum", "maximum")]
     for candidate in candidates:
         repriced.extend(candidate["bounds"][name] for name in ("minimum", "maximum"))
+    for sweep in spread_sweep + forward_sweep:
+        repriced.extend(sweep["bounds"][name] for name in ("minimum", "maximum"))
     if hedge:
         repriced.extend(hedge["bounds"][name] for name in ("minimum", "maximum"))
     validation = {"quantlib_comparisons": sum(w["quantlib_comparisons"] for w in repriced),
@@ -269,9 +285,7 @@ def run_study(r, data, require_quantlib=False):
             "baseline_discounts": base_dfs, "dates": [str(d) for d in problem.dates],
             "bounds": bounds, "candidate_quotes": candidates, "spread_sweep": spread_sweep,
             "forward_bound_sweep": forward_sweep, "quote_hedge": hedge, "validation": validation,
-            "lp": {"objective": problem.objective,
-                   "constraints": [{"label": row.label, "coefficients": row.coefficients,
-                                    "upper": row.upper} for row in problem.constraints]},
+            "lp": export_lp(problem),
             "interpretation": "Conditional attainable range, not a confidence interval or a market forecast.",
             "scope": "Unseasoned vanilla single-curve swaps; explicit forward bounds; synthetic quotes.",
             "versions": {"python": platform.python_version(), "numpy": np.__version__,
@@ -287,10 +301,11 @@ def plot_report(report, out):
     time = np.asarray([(d - dates[0]).days / 365 for d in dates])
     fig, axes = plt.subplots(1, 3, figsize=(15, 4.7), layout="constrained")
     colors = {"minimum": "#c44e52", "maximum": "#287c8e", "baseline": "#444444"}
+    labels = {"minimum": "Minimum-PV witness", "maximum": "Maximum-PV witness", "baseline": "Baseline"}
     for name in ("minimum", "maximum", "baseline"):
         dfs = report["baseline_discounts"] if name == "baseline" else report["bounds"][name]["discounts"]
         forward = -np.diff(np.log(dfs)) / np.diff(time) * 100
-        axes[0].stairs(forward, time, label=name.capitalize(), color=colors[name], linewidth=1.6)
+        axes[0].stairs(forward, time, baseline=None, label=labels[name], color=colors[name], linewidth=1.6)
     axes[0].set(xlabel="Years (ACT/365F)", ylabel="Continuous forward (%)", title="Same quotes, different curves")
     axes[0].legend(frameon=False, fontsize=8)
     sweep = report["forward_bound_sweep"]

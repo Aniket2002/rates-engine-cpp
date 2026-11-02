@@ -22,6 +22,21 @@ for options in (["--unknown", "x"], ["--fixed-months", "0"], ["--fixed-months", 
 with tempfile.TemporaryDirectory() as name:
     directory = Path(name)
     broken = directory / "bad.csv"
+    # Exercise both file schemas: an extra trailing field must never be ignored.
+    for option, fixture in (("--quotes", "synthetic_quotes.csv"), ("--swap", "sample_swap.csv")):
+        lines = (root / "examples" / fixture).read_text().splitlines()
+        for ending in ("\n", "\r\n"):
+            for suffix in (",", ",,"):
+                malformed = list(lines)
+                malformed[1] += suffix
+                broken.write_bytes((ending.join(malformed) + ending).encode())
+                out = directory / "malformed-output"
+                result = run([option, str(broken), "--out", str(out)])
+                assert result.returncode != 0 and "rates_cli:" in result.stderr, result
+                assert not out.exists(), "Invalid input must fail before writing valuation files"
+            broken.write_bytes((ending.join(lines) + ending).encode())
+            result = run([option, str(broken), "--out", str(directory / "valid-output")])
+            assert result.returncode == 0, result.stderr
     for contents in ("wrong,header\n", "type,label,maturity,rate\n", "type,label,maturity,rate\ndeposit,1M,2025-02-02,nan\n",
                      "type,label,maturity,rate\ndeposit,1M,2025-02-02,0.03x\n"):
         broken.write_text(contents)

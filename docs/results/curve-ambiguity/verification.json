@@ -154,8 +154,6 @@
   },
   "artifacts_sha256": {
     "clang-tidy.txt": "f50fa44d08be9ed5b1186781daf72b1ab44667de20f7c3f5ebd7e14291c5f6c1",
-    "curve-ambiguity.png": "a513f124935e79fcf0f57a5252eee24430f69a41061d12ae70d6a3aaebca89c4",
-    "curve-ambiguity.svg": "f8a285c2042c7b6211fb9353d9114319b0fd492e1769bb60c65c6fefbeeeea04",
     "debug-ctest.txt": "30222f6e3ffbd4cd4c7e165902d5bc44cec523d6832d9861d22ee8496c971102",
     "debug-final-targeted.txt": "b96b5a6764e227482ed5d3118e5ef952e3d25147d5b190551cbd3196f6bb776a",
     "portability-debug.txt": "e838398cc5b9924bb0c5b6ad3a8235a92bbb34b11d83e6760db56a0912c80eee",
@@ -163,6 +161,9 @@
     "python-tests.txt": "30c6b563bd538ef4602fa3405abfd04b123bd35be51bed4c4ab03c84a29b2f37",
     "release-ctest.txt": "ccdf97f2f027eed78657a2cef45f6040fde2a8138cc99d0279dd61e83960395d",
     "release-final-targeted.txt": "4f3614bc408842ea96a38982801605aa56ab93d91ef7ecbc7bec8ea82b271fd1",
-    "report.json": "7afd10a54953b4b8d8076c91ef92af00a412f662e42b338afb02b94fbee92bba"
-  }
+    "archive/2026-10-28/report.json": "7afd10a54953b4b8d8076c91ef92af00a412f662e42b338afb02b94fbee92bba",
+    "archive/2026-10-28/curve-ambiguity.png": "a513f124935e79fcf0f57a5252eee24430f69a41061d12ae70d6a3aaebca89c4",
+    "archive/2026-10-28/curve-ambiguity.svg": "f8a285c2042c7b6211fb9353d9114319b0fd492e1769bb60c65c6fefbeeeea04"
+  },
+  "artifact_location_note": "On 2026-11-02 the original report and PNG/SVG chart were copied unchanged to archive/2026-10-28 before regeneration. Original hashes and validation counts are retained; consistency-verification.json describes the new artifacts."
 }

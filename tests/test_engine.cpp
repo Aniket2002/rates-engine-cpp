@@ -35,6 +35,19 @@ TEST(Dates, StrictIsoAndLeapYear) {
     EXPECT_EQ(Date(2024, 2, 28).add_days(2), Date(2024, 3, 1));
     EXPECT_THROW(Date(2199, 12, 31).add_days(1), std::invalid_argument);
 }
+TEST(Dates, ConstructorRejectsInvalidComponentsBeforeNarrowing) {
+    for (const unsigned month : {0U, 13U, 257U, std::numeric_limits<unsigned>::max()})
+        EXPECT_THROW(Date(2025, month, 1), std::invalid_argument);
+    for (const unsigned day : {0U, 32U, 257U, std::numeric_limits<unsigned>::max()})
+        EXPECT_THROW(Date(2025, 1, day), std::invalid_argument);
+    for (const int year : {1899, 2200, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()})
+        EXPECT_THROW(Date(year, 1, 1), std::invalid_argument);
+    EXPECT_THROW(Date(2025, 2, 29), std::invalid_argument);
+    EXPECT_THROW(Date(2025, 4, 31), std::invalid_argument);
+    EXPECT_EQ(Date(1900, 1, 1).str(), "1900-01-01");
+    EXPECT_EQ(Date(2199, 12, 31).str(), "2199-12-31");
+    EXPECT_EQ(Date(2024, 2, 29).str(), "2024-02-29");
+}
 TEST(Dates, MonthEndAndTenors) {
     EXPECT_EQ(Date(2024, 1, 31).add_months(1), Date(2024, 2, 29));
     EXPECT_EQ(Date(2024, 2, 29).add_months(1), Date(2024, 3, 31));

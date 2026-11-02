@@ -41,6 +41,47 @@ TEST(Basis, AnalyticalLegsParSpreadReceiverAndCalibration) {
     EXPECT_THROW(builder.build(d, b, ts(v.str()), {quotes[0], quotes[0]}), std::invalid_argument);
     EXPECT_THROW(builder.build(d, b, ts("2025-01-03"), quotes), std::invalid_argument);
 }
+TEST(Basis, QuotedInstrumentRiskIsConfinedToItsOwnBasisQuote) {
+    const Date v{2025, 1, 2};
+    SofrConventions c;
+    c.settlement_days = 0;
+    c.payment_lag_days = 0;
+    const SofrCurveBootstrapper db{c}, bb{c};
+    const BasisCurveBootstrapper ob{c, c};
+    const std::vector<SofrQuote> dq{{"2Y", 24, SimpleRate{.025}}, {"1Y", 12, SimpleRate{.02}}};
+    const std::vector<SofrQuote> bq{{"2Y", 24, SimpleRate{.035}}, {"1Y", 12, SimpleRate{.03}}};
+    const std::vector<BasisQuote> oq{{"2Y", 24, SimpleRate{-.001}}, {"1Y", 12, SimpleRate{.002}}};
+    auto trade = ob.instrument(v, 12, 1e6, SimpleRate{.002});
+    const auto risk = [&](BasisPoints bump) {
+        return basis_quote_risk(db, bb, ob, dq, bq, oq, trade, FixingStore{}, FixingStore{}, FixingStore{},
+                                ts(v.str()), bump);
+    };
+    const auto payer = risk(BasisPoints{1});
+    EXPECT_NEAR(payer.base.pv, 0, 3e-6);
+    // Recalibration keeps this quoted instrument at par when discount/base quotes move.
+    EXPECT_NEAR(payer.discount_parallel_dv01, 0, 3e-6);
+    EXPECT_NEAR(payer.base_parallel_dv01, 0, 3e-6);
+    for (const auto &bucket : payer.discount_quotes)
+        EXPECT_NEAR(bucket.dv01, 0, 3e-6);
+    for (const auto &bucket : payer.base_quotes)
+        EXPECT_NEAR(bucket.dv01, 0, 3e-6);
+    // One annual coupon: the 1Y OIS quote fixes D(T) analytically.
+    const double tau = 365. / 360;
+    const double expected = -trade.notional * tau / (1 + .02 * tau) * 1e-4;
+    ASSERT_EQ(payer.basis_quotes.size(), 2U);
+    EXPECT_EQ(payer.basis_quotes[0].label, "1Y");
+    EXPECT_EQ(payer.basis_quotes[1].label, "2Y");
+    EXPECT_NEAR(payer.basis_quotes[0].dv01, expected, 3e-6);
+    EXPECT_NEAR(payer.basis_quotes[1].dv01, 0, 3e-6);
+    EXPECT_NEAR(payer.basis_parallel_dv01, expected, 3e-6);
+    EXPECT_NEAR(risk(BasisPoints{.5}).basis_parallel_dv01, expected, 6e-6);
+    trade.side = Side::Receiver;
+    trade.notional *= 2;
+    EXPECT_NEAR(risk(BasisPoints{1}).basis_parallel_dv01, -2 * expected, 6e-6);
+    EXPECT_THROW(risk(BasisPoints{0}), std::invalid_argument);
+    EXPECT_THROW(risk(BasisPoints{-1}), std::invalid_argument);
+    EXPECT_THROW(risk(BasisPoints{1e-20}), std::invalid_argument);
+}
 TEST(Basis, DistinctFixingsSeasonedUnpaidAndSettled) {
     const Date start{2025, 1, 2}, end{2025, 1, 6}, v{2025, 1, 7};
     const auto d = flat_curve(v, .03);

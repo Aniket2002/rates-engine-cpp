@@ -1,4 +1,7 @@
-# Rates Engine 2.3.0 portable CLI and C++ library
+# Rates Engine @RATES_VERSION@ portable CLI and C++ library
+
+This is an unreleased development build. The published v2.3.0 release has
+separate validation records; its measurements do not certify this build.
 
 Extract the entire ZIP. Open PowerShell in the extracted folder on Windows x64:
 
@@ -19,13 +22,14 @@ packages use `./bin/rates_cli` and the operating system's normal runtime support
 
 `BUILD-INFO.txt` records the compiler/platform. `include/` and `lib/` provide the
 static C++ library and CMake package; consumers need an ABI-compatible compiler
-and matching runtime. The Windows release uses LLVM-MinGW x64.
+and matching runtime. Use the compiler recorded in `BUILD-INFO.txt`.
 
 Python SOFR/basis, hedging and SQLite workflows are available in the
 [source repository](https://github.com/Aniket2002/rates-engine-cpp). They require
 building the optional Python extension for your interpreter and are not included
 in this CLI ZIP. In a configured source checkout, run `./run.ps1 -WithPython -Test`.
-See [build instructions](https://github.com/Aniket2002/rates-engine-cpp/blob/v2.3.0/docs/reproducibility.md)
-and [model boundaries](https://github.com/Aniket2002/rates-engine-cpp/blob/v2.3.0/docs/limitations.md).
+See [build instructions](https://github.com/Aniket2002/rates-engine-cpp/blob/main/docs/reproducibility.md),
+[changes](https://github.com/Aniket2002/rates-engine-cpp/blob/main/CHANGELOG.md)
+and [model boundaries](https://github.com/Aniket2002/rates-engine-cpp/blob/main/docs/limitations.md).
 
 The engine is MIT licensed. Third-party runtime notices are in `licenses/`.

@@ -1,14 +1,16 @@
 """Analytic and adversarial tests for the C++ cash-flow LP and optimizer adapter."""
 import argparse
 from datetime import date
+import json
 import math
 from pathlib import Path
 import sys
 import unittest
+from unittest import mock
 
 import numpy as np
 
-from curve_ambiguity import solve_range
+from curve_ambiguity import check_witness, run_study, solve_range
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--module-dir", type=Path, required=True)
@@ -104,6 +106,62 @@ class AmbiguityTests(unittest.TestCase):
             curve = p.witness(result[name]["discounts"])
             pv = r.price_multicurve(curve, projection, trade).pv
             self.assertAlmostEqual(pv, result[name]["pv"], delta=2e-6)
+
+    def study_input(self):
+        return {"schema_version": 1, "valuation": "2025-01-02", "forward_bounds": [-.01, .10],
+                "quotes": [{"type": "zero", "label": "1Y", "maturity": "2026-01-02",
+                            "bid": .03, "ask": .03}],
+                "portfolio": [{"effective": "2025-01-02", "maturity": "2025-07-02",
+                               "notional": 1e6, "coupon": 0, "side": "payer"}],
+                "forward_bound_sweep": [[.01, .06]]}
+
+    def test_serialized_sweeps_retain_repriceable_curves_and_dual_certificates(self):
+        report = json.loads(json.dumps(run_study(r, self.study_input(), require_quantlib=True)))
+        sweeps = report["spread_sweep"] + report["forward_bound_sweep"]
+        self.assertEqual(len(sweeps), 5)
+        self.assertEqual(report["validation"]["repriced_witnesses"], 12)
+        self.assertEqual(report["validation"]["quantlib_comparisons"], 24)
+        for sweep in sweeps:
+            a = np.array([row["coefficients"] for row in sweep["lp"]["constraints"]])
+            b = np.array([row["upper"] for row in sweep["lp"]["constraints"]])
+            c = np.array(sweep["lp"]["objective"])
+            for name in ("minimum", "maximum"):
+                witness = sweep["bounds"][name]
+                x = np.array(witness["discounts"])
+                y = np.array(witness["dual_inequality"])
+                anchor = np.zeros(len(c))
+                anchor[0] = witness["dual_anchor"]
+                objective = c * witness["objective_direction"] / witness["objective_scale"]
+                self.assertLessEqual(np.max(a @ x - b), 1e-9)
+                self.assertAlmostEqual(x[0], 1, delta=1e-9)
+                self.assertLess(np.max(np.abs(a.T @ y + anchor - objective)), 1e-9)
+                self.assertLessEqual(np.max(y), 1e-10)
+                self.assertLess(abs(objective @ x - b @ y - anchor[0]), 1e-9)
+                self.assertEqual(witness["pv"], sweep[name + "_pv"])
+                curve = r.DiscountCurve(self.v, [(r.Date(d), df)
+                                                for d, df in zip(sweep["dates"][1:], x[1:])])
+                self.assertAlmostEqual(r.price(curve, self.trade()).pv, witness["pv"], delta=2e-6)
+                self.assertAlmostEqual(witness["quantlib_pv"], witness["pv"], delta=2e-6)
+                self.assertEqual(witness["quantlib_comparisons"], 2)
+                quote = witness["quote_repricing"][0]
+                half_spread = sweep.get("added_half_spread_bps", 0) * 1e-4
+                self.assertAlmostEqual(quote["bid"], .03 - half_spread)
+                self.assertAlmostEqual(quote["ask"], .03 + half_spread)
+                self.assertGreaterEqual(quote["model"], quote["bid"] - 1e-9)
+                self.assertLessEqual(quote["model"], quote["ask"] + 1e-9)
+
+    def test_sweep_repricing_failure_aborts_study(self):
+        data = self.study_input()
+        for sweep in ("spread", "forward"):
+            def reject_sweep(module, inputs, problem, witness, require_quantlib):
+                changed = (inputs["quotes"] != data["quotes"] if sweep == "spread"
+                           else inputs["forward_bounds"] != data["forward_bounds"])
+                if changed:
+                    raise AssertionError("Rejected sweep witness")
+                return check_witness(module, inputs, problem, witness, require_quantlib)
+            with self.subTest(sweep=sweep), mock.patch("curve_ambiguity.check_witness", side_effect=reject_sweep):
+                with self.assertRaisesRegex(AssertionError, "Rejected sweep witness"):
+                    run_study(r, data, require_quantlib=True)
 
     def test_deposit_band_reprices_at_both_extrema(self):
         p = self.problem([self.band(.03, kind=r.Instrument.Deposit, spread=.002)], [self.trade(12)])

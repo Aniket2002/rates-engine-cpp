@@ -53,15 +53,19 @@ constraints, dual weights, witness curves, quote repricing and package versions.
 
 The last two rows expose a specific blind spot: hedging the quoted risk factors
 does not identify the discount factors between the quoted instruments. The
-frictionless hedge solves a small linear system using four par swaps, including
-a single-fixed-coupon swap matching the deposit endpoint. Every hedge has zero
+frictionless hedge solves a small linear system over four candidate par swaps,
+including a single-fixed-coupon swap matching the deposit endpoint. The solution
+has three nonzero receiver positions (6M, 2Y and 5Y); the 10Y position is zero.
+Every hedge has zero
 PV on every exact-fit curve (within numerical tolerance), so the same-quote PV
 range survives. This is a static incomplete-information example, not evidence
 that DV01 hedging is generally ineffective or a claim about realized hedge P&L.
 
 ![Extreme forward curves, forward-bound sensitivity and conditional quote ranking](results/curve-ambiguity/curve-ambiguity.png)
 
-The extreme curves are intentionally jagged. They reveal the freedom permitted
+The chart's minimum/maximum labels identify portfolio-PV witnesses, not
+pointwise minimum/maximum forward rates. The extreme curves are intentionally
+jagged and substantially different. They reveal the freedom permitted
 by the assumptions; they are not estimated market forecasts. The broad initial
 range must be read alongside the forward-bound ablation:
 
@@ -132,8 +136,9 @@ SOFR or basis models to an LP.
 
 `src/curve_ambiguity.cpp` builds optimizer-independent constraints; SciPy's
 HiGHS dual simplex solves them in `python/curve_ambiguity.py`. The objective is
-scaled by its largest absolute coefficient (at least one). A result is accepted
-only after checking:
+scaled by its largest absolute coefficient (at least one). For the recorded run,
+`--require-quantlib` enforces all checks below for the main case, candidate quotes,
+hedged portfolio, and every forward-bound and spread-sweep extremum:
 
 - Every original inequality and the `D_0=1` anchor to 1e-9 absolute units;
   finite, strictly positive discounts; C++ witness construction.
@@ -145,8 +150,15 @@ only after checking:
   quote repricing agreement to 1e-10 decimal rate. QuantLib receives the witness
   discounts: this validates pricing, **not an independent optimization**.
 
-The report exports dual multipliers and scaling so the base LP's optimality
-conditions can be recomputed. These are floating-point numerical audits, not
+The report exports dual multipliers and scaling. Each sweep also retains its
+date grid, both witness curves, repricing results and the exact LP rows, so its
+optimality conditions can be recomputed from the JSON alone. The current report
+records **28 repriced witnesses and 154 QuantLib comparisons**, including the
+16 sweep witnesses omitted from the original external-validation count. Runs
+without `--require-quantlib` may omit external comparisons if QuantLib is absent;
+native feasibility and repricing checks still run.
+
+These are floating-point numerical audits, not
 formal interval-arithmetic certificates. Infeasible or failed solves raise an
 error and do not write a successful report. The baseline must satisfy the
 assumptions too. Alternate optimal witnesses may differ across solver versions
@@ -158,8 +170,10 @@ intermediate swap; conflicting quotes; impossible forward bounds; deposit
 intervals; payer/receiver symmetry; portfolio netting; forward-starting targets;
 fixed separate projection; and reconstruction of dual stationarity and bounds.
 The recorded study also verifies candidate-range nesting and hedge neutrality.
-The [verification record](results/curve-ambiguity/verification.json) retains
-test results and file hashes. Existing release coverage percentages do not
+The [original verification record](results/curve-ambiguity/verification.json) retains
+historical test results and hashes; its original report and chart are archived.
+The [consistency verification](results/curve-ambiguity/consistency-verification.json)
+identifies the regenerated report, chart and sweep checks. Existing release coverage percentages do not
 measure this new code.
 
 ## Reproduce and extend

@@ -1,0 +1,109 @@
+{
+  "generated_utc": "2026-11-02T06:01:20.355660+00:00",
+  "base_commit": "6a120542c399c953e4e54fa64d3c97ac9c44bee1",
+  "source_identity": "Uncommitted local follow-up on base_commit; normalized source hashes and tested module hashes identify this verification.",
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "packages": {
+      "python": "3.14.0",
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "quantlib": "1.44"
+    }
+  },
+  "validation": {
+    "python_unit_tests": 10,
+    "release_targeted_ctest": {
+      "passed": 6,
+      "failed": 0
+    },
+    "debug_targeted_ctest": {
+      "passed": 6,
+      "failed": 0
+    },
+    "quantlib": {
+      "quantlib_comparisons": 154,
+      "repriced_witnesses": 28,
+      "max_native_objective_error": 2.6193447411060333e-10,
+      "max_quantlib_trade_pv_error": 2.764863893389702e-10
+    },
+    "sweep_witnesses": 16,
+    "sweep_quantlib_comparisons": 80,
+    "serialized_sweep_primal_dual_recheck": "passed for all 16 extrema",
+    "original_numerical_results": "Baseline, original bounds, candidate rankings, hedge results and all sweep summary values unchanged exactly from archive/2026-10-28/report.json.",
+    "chart_checks": [
+      "Forward step paths start/end at the actual segment rate; no artificial zero baseline.",
+      "Minimum-PV witness and Maximum-PV witness labels verified.",
+      "Hedge SVG rendered with an alternate 12.34% reduction and USD 123.45 entry cost; old constants absent.",
+      "Regenerated production PNGs visually inspected."
+    ]
+  },
+  "commands": [
+    "python python/test_curve_ambiguity.py --module-dir build/release",
+    "ctest --preset release -R \"CurveAmbiguity\\.|^curve_ambiguity$|^curve_ambiguity_study$\" --output-on-failure",
+    "ctest --preset debug -R \"CurveAmbiguity\\.|^curve_ambiguity$|^curve_ambiguity_study$\" --output-on-failure",
+    "python python/curve_ambiguity.py --module-dir build/release --input examples/curve-ambiguity.json --out docs/results/curve-ambiguity --require-quantlib --plot",
+    "python python/generate_hedge_chart.py --report docs/results/hedging/report.json --out docs/charts"
+  ],
+  "limits": [
+    "Local Windows validation; no new remote CI or coverage measurement.",
+    "Synthetic quotes and assumed forward bounds; numerical witnesses, not exact-arithmetic certificates.",
+    "QuantLib checks pricing, not independent optimization."
+  ],
+  "source_sha256": {
+    "python/curve_ambiguity.py": "4122481419a95d41d1eb6558d9ea6e3fbf0b4d142a8795804c6bc7b45b2887f9",
+    "python/test_curve_ambiguity.py": "a38edcf0c447df8ed2a047121790f9af50063b6bf8346c7c42076bb696d7f2d5",
+    "python/generate_hedge_chart.py": "dbb225abf05ac5b5538be5fe2c25cb7ef4f60ae6a28610f298b84b6efee1a3d8",
+    "python/quantlib_reference.py": "8c222821ea322b174e2cd2be114e1bfff71c5c9dcd498d53cea92fe993ed5fa4",
+    "python/reference_pricer.py": "fd790b0ef7395656c98ca2b7652d51556b2db6445078de8234aebe385fa06599",
+    "examples/curve-ambiguity.json": "3b237764decd225ca740757f669d4a73b845d9e74b6dd5b9c0a8f277ac9cc2be",
+    "docs/curve-ambiguity-research.md": "4f3d92e4c9d24ca22a55448df69148c1fbd4e3f85029450563f6ad88ccc085cd",
+    "README.md": "c9407b7e6cc3c2df7cf3f2c3843da961e568fc183d5d37cb0a410f4bed6a7339",
+    "CHANGELOG.md": "9c30b8ff2f701d5742beb82fa7c9279b6326421619845fd54b634c07cbb90b23",
+    "include/rates/basis.hpp": "224753ffb723029d386e760c2e8b807169fc6dacf5b2ab53ff1c8429ab7e1800",
+    "include/rates/conventions.hpp": "2d29236d7eb4ba21423a6e935c763d4803b45b3ee96ac3198b9bb49127b3fb88",
+    "include/rates/curve_ambiguity.hpp": "e8a368f7342e6e2434eb352a44c1873a3bb41598e7859586ab2a1e31aa949125",
+    "include/rates/curve_bootstrapper.hpp": "18c06c2032c6f3d462b95ea3ee9841e3217812d26dbbe8f334815bd7cce99cc7",
+    "include/rates/date.hpp": "48b01baf7af2b41ebff68b9691759828cc79375428fc1f67c0e6e1054fe0ef9a",
+    "include/rates/discount_curve.hpp": "f790755609e7b779fa2deb8ea9f0418a0b7e82130f685c3bb9610bb29f8bd1be",
+    "include/rates/history.hpp": "0e71ba5ed81894e781570da293c07216687b4884795277b36a9e72fdbd8b4596",
+    "include/rates/lifecycle.hpp": "d873da518a4918cde052154cb0ad011f86e9c4702e3c4f22e676d9b095b7772c",
+    "include/rates/multicurve.hpp": "bd04df21bb8bb8dc862640463bdaa0ad51d7446bb14e8a0e05b85812e98e188b",
+    "include/rates/portfolio.hpp": "c27b113c4b19fc6182538e3575535ecd5e3bee64109764cd42999cace552787e",
+    "include/rates/risk_engine.hpp": "be3a1d831471f6588751cf3e5dead8b01047cb054899be5b45675f8ead564781",
+    "include/rates/schedule.hpp": "34787b253861c4c30798a3a8717d5fd1787476f08691dd272ec6500ce1f006f9",
+    "include/rates/sofr.hpp": "8dde6cc765d09d960fe1f7f2b320a7c79a88b42463e0d0ae19e233a99924e305",
+    "include/rates/sofr_curve.hpp": "f9c29903872f55ef96ee964f7ac35bc4fe78d362358f2ce8ad91a67bac270836",
+    "include/rates/swap.hpp": "98b6a04610b499a139ab0b441002e25f8021037a0adb4f8889b26705d210c9bc",
+    "include/rates/swap_pricer.hpp": "0c5730464a251a866d3a4ff46a0c27ed5b96559e44552c955346b89834cb3e36",
+    "include/rates/trading.hpp": "bf73d251478e76c5e07b50e3aac5fdef53c2a6bddb84e730b6c20f5d06504012",
+    "src/basis.cpp": "3a6b4e6fb23d74250176acb379cdfeab4e98885f62969de7b6e0f5b0bc31c0b8",
+    "src/conventions.cpp": "daa57d141ae82c22ef55cccc9a8d2ce95fd2606c937789bbdc540aab62cf3ead",
+    "src/curve_ambiguity.cpp": "4c54575f876ee18f7a96428947fdd7ef50938bc84d35db60bdeff8971c9fcd34",
+    "src/curve_bootstrapper.cpp": "2d41adbecfb71c8acaddf2a680a28a84af8fb9bc2590bebf0a6cc6eadccde38a",
+    "src/date.cpp": "e88c66b52de41b610a98d7578e450d8c6f6ba38a49bc31e34186eae1c29b95f6",
+    "src/discount_curve.cpp": "0c3323e93f307cdc0a7d339cad13842db44bdae17a328a597c3dc5b0a231c0d8",
+    "src/history.cpp": "1a1b9d60173f8b8bd322cf59c708620f31f815d96c69c961849c79ac9a96032b",
+    "src/lifecycle.cpp": "d5f6bc1a9e7154ad322fa80e359eb383375100c642d93bd5235859376f302bfa",
+    "src/multicurve.cpp": "887bff0947877d011c21fe26e4c784afc94283d2ed5658fac231c52b17dbb81a",
+    "src/portfolio.cpp": "b01bf6c7fd939f063cc5e6d118f7c57abcc343dd0b476f91b4e33469f9d45543",
+    "src/risk_engine.cpp": "fe0e60b43590f8ab519c0fdfbe24b4bc77ad5bb44c49637f13ac7fafd7231b31",
+    "src/schedule.cpp": "843114724c2049980d447b38118f794649ec1dad0143fc2409fb9913ec7e0009",
+    "src/sofr.cpp": "8c4d78ca62a854cc2da2d7743fef6f4d75fee929b27efc8dec86ecc257e7314f",
+    "src/sofr_curve.cpp": "cea5d253c4414275577b303fbecbfa1db230ec7e6d02cfbc3cf28a71f9171bf2",
+    "src/swap_pricer.cpp": "56d807309157668fec6ed86a17a296009c690033e14fcf639abef58b0c8c2b7d",
+    "src/trading.cpp": "70e03be0236a1a1a325bf79f96c9bcfab506c2a655eeac564994e680e8832e76"
+  },
+  "tested_modules_sha256": {
+    "build/release/pyrates.cp314-win_amd64.pyd": "bbaaa3d6f51312044d1dd25aa2066427cd8b814d5702e5a26d0a193d931b3805",
+    "build/debug/pyrates.cp314-win_amd64.pyd": "b7ac0dbe204ce7743f56e63195568914c48a9a0e57790cef6318b5d5713f616a"
+  },
+  "artifacts_sha256": {
+    "report.json": "9c23fda989fd22a35c719ac08d5512b0f7992ab9e86b199da5d6cdab488b9cfb",
+    "curve-ambiguity.png": "b6c65d45032f14a755c2bbefa5370fd4d043843aa88c124e719194ca92416185",
+    "curve-ambiguity.svg": "300841a8b928bb5fae02a06af8c36e5b7c28e0112920f876c1eb348313329071",
+    "../../charts/hedging.png": "4d978aad388ca015b34cb4d3bd03306cb9b21f574e097a0623ef015506ae9991",
+    "../../charts/hedging.svg": "88d5cd536307cbc45b27362543874c80a9f9a76027ad7ec4d6f5a5216a7b255e",
+    "../../charts/hedging-manifest.json": "de9764b9ebaf3428399c3b05552b2ff735fc7b77f618e1badec1519ce5aed4ba"
+  }
+}

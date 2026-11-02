@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
-project(rates_engine VERSION 2.3.0 LANGUAGES CXX)
+project(rates_engine VERSION 2.4.0 LANGUAGES CXX)
+# Main is development toward the next release; published v2.3.0 is unchanged.
+set(RATES_VERSION "${PROJECT_VERSION}-dev")
 include(CTest)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -191,7 +193,8 @@ install(TARGETS rates_engine EXPORT ratesEngineTargets ARCHIVE DESTINATION ${CMA
 install(TARGETS rates_cli rates_batch rates_simulate RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(DIRECTORY examples/ DESTINATION examples FILES_MATCHING PATTERN "*.csv" PATTERN "*.json")
 install(FILES LICENSE DESTINATION .)
-install(FILES cmake/package-readme.md DESTINATION . RENAME README.md)
+configure_file(cmake/package-readme.md.in ${CMAKE_CURRENT_BINARY_DIR}/package-readme.md @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/package-readme.md DESTINATION . RENAME README.md)
 install(DIRECTORY third_party/licenses/ DESTINATION licenses)
 configure_file(cmake/build-info.txt.in ${CMAKE_CURRENT_BINARY_DIR}/BUILD-INFO.txt @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/BUILD-INFO.txt DESTINATION .)
@@ -204,5 +207,6 @@ write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/rates_engineConfigV
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rates_engineConfig.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/rates_engineConfigVersion.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/rates_engine)
 set(CPACK_GENERATOR ZIP)
-set(CPACK_PACKAGE_FILE_NAME "rates-engine-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+set(CPACK_PACKAGE_VERSION "${RATES_VERSION}")
+set(CPACK_PACKAGE_FILE_NAME "rates-engine-${RATES_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
 include(CPack)

@@ -1,6 +1,7 @@
 /build*/
 /.tools/
 /.venv/
+/.vscode/
 __pycache__/
 *.pyc
 /results/

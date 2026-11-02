@@ -7,6 +7,11 @@ not numerical correctness or exhaustive input coverage.
 
 ## Current release: v2.3.0
 
+Unreleased 2.4.0-dev adds a native test of basis quote risk against an analytical
+one-coupon DV01, including downstream recalibration, bump stability and input
+rejection. It runs in the C++ coverage configuration. The measurements below
+remain historical; a new instrumented run is needed to quantify the improvement.
+
 The [22 October 2026 CI run](https://github.com/Aniket2002/rates-engine-cpp/actions/runs/39770829563)
 for commit `00519f48d7674220cdd328d7325fc2bd6e2fadae` measured
 **1,851/2,001 lines (92.50%)**, **992/1,238 branch outcomes (80.13%)** and

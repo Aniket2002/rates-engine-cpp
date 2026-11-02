@@ -1,3 +1,4 @@
+#include "batch_io.hpp"
 #include "rates/risk_engine.hpp"
 #include <filesystem>
 #include <fstream>
@@ -26,19 +27,7 @@ Rows read_csv(const std::string &path, const std::string &header, std::size_t co
             line.pop_back();
         if (line.empty())
             continue;
-        if (line.find('"') != std::string::npos)
-            throw std::invalid_argument("Quoted CSV fields are unsupported");
-        std::vector<std::string> row;
-        std::stringstream stream(line);
-        std::string field;
-        while (std::getline(stream, field, ','))
-            row.push_back(field);
-        if (row.size() != columns)
-            throw std::invalid_argument("Wrong CSV field count: " + line);
-        for (const auto &cell : row)
-            if (cell.empty())
-                throw std::invalid_argument("Empty CSV field");
-        rows.push_back(std::move(row));
+        rows.push_back(batch_io::split(line, columns));
     }
     if (input.bad())
         throw std::runtime_error("CSV read failure: " + path);
